@@ -1,6 +1,6 @@
 {
   "name": "plate-up",
-  "description": "PlateUp application, uses Argon React Native app template by Creative Tim",
+  "description": "Plate Up application, uses Argon React Native app template by Creative Tim",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
