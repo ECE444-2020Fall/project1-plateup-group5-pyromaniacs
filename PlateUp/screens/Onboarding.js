@@ -1,6 +1,6 @@
 import React from "react";
 import { Image, StyleSheet, StatusBar, Dimensions } from "react-native";
-import { Block, Button, theme } from "galio-framework";
+import { Block, Button, Text, theme } from "galio-framework";
 import { LinearGradient } from "expo-linear-gradient";
 
 const { width, height } = Dimensions.get("screen");
@@ -13,23 +13,36 @@ class Onboarding extends React.Component {
     const { navigation } = this.props;
 
     return (
-      <LinearGradient style={styles.container} colors={["#EB5757", "#F2994A"]}>
+      <LinearGradient
+        style={styles.container}
+        colors={[
+          argonTheme.COLORS.GRADIENT_START,
+          argonTheme.COLORS.GRADIENT_END,
+        ]}
+      >
         <StatusBar hidden />
         <Block center style={styles.logoContainer}>
           <Image source={Images.PlateUpLogo} style={styles.logoImage} />
           <Image source={Images.PlateUpName} style={styles.nameImage} />
         </Block>
-        <Block style={styles.padded}>
-          <Block center>
-            <Button
-              style={styles.button}
-              color={argonTheme.COLORS.SECONDARY}
+        <Block center style={styles.inputContainer}>
+          <Button
+            style={styles.button}
+            color={argonTheme.COLORS.SECONDARY}
+            onPress={() => navigation.navigate("Registration")}
+            textStyle={{ color: argonTheme.COLORS.BLACK }}
+          >
+            Get Started
+          </Button>
+          <Text style={styles.text}>
+            Already have an account?{" "}
+            <Text
+              style={styles.bold}
               onPress={() => navigation.navigate("App")}
-              textStyle={{ color: argonTheme.COLORS.BLACK }}
             >
-              Get Started
-            </Button>
-          </Block>
+              Login
+            </Text>
+          </Text>
         </Block>
       </LinearGradient>
     );
@@ -37,15 +50,25 @@ class Onboarding extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  bold: {
+    color: argonTheme.COLORS.BLUE,
+    fontWeight: "bold",
+  },
   button: {
     width: width - theme.SIZES.BASE * 4,
     height: theme.SIZES.BASE * 3,
     shadowRadius: 0,
     shadowOpacity: 0,
+    marginBottom: height * 0.0185,
   },
   container: {
     flex: 1,
     justifyContent: "flex-end",
+  },
+  inputContainer: {
+    paddingHorizontal: theme.SIZES.BASE * 2,
+    position: "relative",
+    bottom: height * 0.06,
   },
   logoImage: {
     width: width * 0.725,
@@ -62,10 +85,9 @@ const styles = StyleSheet.create({
     width: width * 0.725,
     height: width * 0.725 * (43 / 272),
   },
-  padded: {
-    paddingHorizontal: theme.SIZES.BASE * 2,
-    position: "relative",
-    bottom: theme.SIZES.BASE,
+  text: {
+    fontSize: 14,
+    lineHeight: 19,
   },
 });
 
