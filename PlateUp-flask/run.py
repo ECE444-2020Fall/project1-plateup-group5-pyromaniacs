@@ -1,6 +1,8 @@
 from flask import Response, request, jsonify
-from flask_restplus import Resource, fields
+from flask_restx import Resource, fields
 from flask_login import login_user, logout_user, login_required, current_user
+from sqlalchemy_utils import create_database, database_exists
+from werkzeug.utils import cached_property
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from models import User
@@ -28,8 +30,8 @@ class UserSchema(ma.Schema):
         fields = ('id', 'name', 'email', 'password', 'settings_id', 'shopping_id', 'inventory_id')
 
 # Init schemas
-user_schema = UserSchema(strict=True)
-users_schema = UserSchema(many=True, strict=True)
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
 
 
 # -----------------------------------------------------------------------------
@@ -193,7 +195,7 @@ if __name__ == '__main__':
     db.create_all()
     scheduler.start()
 
-    app.run(host='0.0.0.0', debug=True)
+    app.run(debug=True)
   
     # Terminate background tasks
     scheduler.shutdown()
