@@ -188,7 +188,7 @@ export default function OnboardingStack(props) {
         }}
       />
       <Stack.Screen name="App" component={AppStack} />
-      <Stack.Screen name="Register" component={Register} />
+      <Stack.Screen name="Registration" component={Register} />
     </Stack.Navigator>
   );
 }
@@ -226,7 +226,7 @@ function AppStack(props) {
     >
       <Drawer.Screen name="Home" component={HomeStack} />
       <Drawer.Screen name="Profile" component={ProfileStack} />
-      <Drawer.Screen name="Register" component={Register} />
+      <Drawer.Screen name="Registration" component={Register} />
       <Drawer.Screen name="Elements" component={ElementsStack} />
       <Drawer.Screen name="Articles" component={ArticlesStack} />
     </Drawer.Navigator>
