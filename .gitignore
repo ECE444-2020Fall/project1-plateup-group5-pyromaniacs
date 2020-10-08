@@ -7,3 +7,4 @@ PlateUp/node_modules
 
 # Flask
 PlateUp-flask/email_config.ini
+PlateUp-flask/db.sqlite
