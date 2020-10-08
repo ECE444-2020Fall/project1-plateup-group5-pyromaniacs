@@ -1,6 +1,6 @@
 import React from "react";
-import { Image, StyleSheet, StatusBar, Dimensions, Text } from "react-native";
-import { Block, Button, theme } from "galio-framework";
+import { Image, StyleSheet, StatusBar, Dimensions } from "react-native";
+import { Block, Button, Text, theme } from "galio-framework";
 import { LinearGradient } from "expo-linear-gradient";
 
 const { width, height } = Dimensions.get("screen");
@@ -13,13 +13,19 @@ class Onboarding extends React.Component {
     const { navigation } = this.props;
 
     return (
-      <LinearGradient style={styles.container} colors={["#EB5757", "#F2994A"]}>
+      <LinearGradient
+        style={styles.container}
+        colors={[
+          argonTheme.COLORS.GRADIENT_START,
+          argonTheme.COLORS.GRADIENT_END,
+        ]}
+      >
         <StatusBar hidden />
-        <Block style={styles.logoContainer}>
+        <Block center style={styles.logoContainer}>
           <Image source={Images.PlateUpLogo} style={styles.logoImage} />
           <Image source={Images.PlateUpName} style={styles.nameImage} />
         </Block>
-        <Block style={styles.inputContainer}>
+        <Block center style={styles.inputContainer}>
           <Button
             style={styles.button}
             color={argonTheme.COLORS.SECONDARY}
@@ -29,13 +35,13 @@ class Onboarding extends React.Component {
             Get Started
           </Button>
           <Text style={styles.text}>
+            Already have an account?{" "}
             <Text
-              style={[styles.text, styles.bold]}
+              style={styles.bold}
               onPress={() => navigation.navigate("App")}
             >
-              Login instead{" "}
+              Login
             </Text>
-            if you have an account
           </Text>
         </Block>
       </LinearGradient>
@@ -45,7 +51,7 @@ class Onboarding extends React.Component {
 
 const styles = StyleSheet.create({
   bold: {
-    color: "#225AA6",
+    color: argonTheme.COLORS.BLUE,
     fontWeight: "bold",
   },
   button: {
@@ -60,7 +66,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   inputContainer: {
-    alignItems: "center",
     paddingHorizontal: theme.SIZES.BASE * 2,
     position: "relative",
     bottom: height * 0.06,
@@ -70,7 +75,6 @@ const styles = StyleSheet.create({
     height: width * 0.725 * (201 / 279),
   },
   logoContainer: {
-    alignItems: "center",
     position: "absolute",
     width: "100%",
     top: height * 0.2648,

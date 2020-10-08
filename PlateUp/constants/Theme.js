@@ -8,18 +8,17 @@ export default {
     ERROR: "#F5365C",
     SUCCESS: "#2DCE89",
     WARNING: "#FB6340",
-    /*not yet changed */
     MUTED: "#ADB5BD",
     INPUT: "#DCDCDC",
     INPUT_SUCCESS: "#7BDEB2",
     INPUT_ERROR: "#FCB3A4",
-    ACTIVE: "#5E72E4", //same as primary
+    ACTIVE: "#5E72E4",
     BUTTON_COLOR: "#9C26B0",
     PLACEHOLDER: "#9FA5AA",
     SWITCH_ON: "#5E72E4",
     SWITCH_OFF: "#D4D9DD",
-    GRADIENT_START: "#6B24AA",
-    GRADIENT_END: "#AC2688",
+    GRADIENT_START: "#EB5757",
+    GRADIENT_END: "#F2994A",
     PRICE_COLOR: "#EAD5FB",
     BORDER_COLOR: "#E7E7E7",
     BLOCK: "#E7E7E7",
@@ -28,5 +27,6 @@ export default {
     BORDER: "#CAD1D7",
     WHITE: "#FFFFFF",
     BLACK: "#000000",
+    BLUE: "#225AA6",
   },
 };
