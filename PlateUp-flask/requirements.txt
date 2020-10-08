@@ -1,0 +1,12 @@
+flask
+flask-sqlalchemy
+flask-marshmallow 
+flask-restplus
+flask-login
+marshmallow-sqlalchemy
+requests
+pyopenssl
+werkzeug
+exchangelib
+apscheduler
+uuid
