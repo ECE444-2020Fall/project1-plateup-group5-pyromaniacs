@@ -1,3 +1,8 @@
+import os
+import json
+import requests
+import time
+
 from flask import Response, request, jsonify
 from flask_restx import Resource, fields
 from flask_login import login_user, logout_user, login_required, current_user
@@ -8,11 +13,6 @@ from datetime import datetime
 from models import User
 from emailservice import send_email_as_plateup
 from initializer import app, db, ma, api, login_manager, scheduler
-
-import os
-import json
-import requests
-import time
 
 # -----------------------------------------------------------------------------
 # Configure Namespaces

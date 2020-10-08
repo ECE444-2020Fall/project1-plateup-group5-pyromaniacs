@@ -1,5 +1,6 @@
 import configparser
 import smtplib
+
 from email.mime.text import MIMEText
 
 def send_email_as_plateup(to_recipients, subject, body):

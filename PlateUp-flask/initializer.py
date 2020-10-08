@@ -1,11 +1,12 @@
+import os
+import urllib3
+
 from flask import Flask, url_for
 from flask_sqlalchemy import SQLAlchemy 
 from flask_marshmallow import Marshmallow 
 from flask_restx import Api
 from flask_login import LoginManager
 from apscheduler.schedulers.background import BackgroundScheduler
-import os
-import urllib3
 
 # Disable SSL warning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

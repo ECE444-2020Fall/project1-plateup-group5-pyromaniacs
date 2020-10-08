@@ -1,9 +1,10 @@
+import json
+import datetime
+
 from flask_login import UserMixin
 from sqlalchemy.orm import relationship
 from initializer import db
-import json
 from uuid import uuid1
-import datetime
 
 # -----------------------------------------------------------------------------
 # DB Models
