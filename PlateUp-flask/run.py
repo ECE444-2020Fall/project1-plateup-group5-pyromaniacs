@@ -69,7 +69,7 @@ class UserAPI(Resource):
 
         currEmails = flat_list(User.query.with_entities(User.email).all())
         if email in currEmails:
-            return Response("Sorry, this user with email " + email + " already exists! Please log in instead.")
+            return Response("Sorry, this user with email " + email + " already exists! Please log in instead.", status=409)
 
         new_user = User(name, email, password)
 
