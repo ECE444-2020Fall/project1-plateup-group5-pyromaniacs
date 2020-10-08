@@ -4,3 +4,6 @@ PlateUp/.expo-shared
 
 # Node
 PlateUp/node_modules
+
+# Flask
+PlateUp-Flask/email_config.ini

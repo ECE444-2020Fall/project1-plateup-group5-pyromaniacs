@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from models import User
 from emailservice import send_email_as_plateup
-from init import app, db, ma, api, login_manager, scheduler
+from initializer import app, db, ma, api, login_manager, scheduler
 
 import os
 import json
@@ -26,7 +26,6 @@ mailR = api.namespace('mail', description='Mailing operations')
 class UserSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name', 'email', 'password', 'settings_id', 'shopping_id', 'inventory_id')
-
 
 # Init schemas
 user_schema = UserSchema(strict=True)
