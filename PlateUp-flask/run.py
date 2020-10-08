@@ -146,8 +146,12 @@ def load_user(uid):
 
 # sends the welcome email
 def sendWelcomeEmail(receipient, userID):
-    name = User.query.get(userID).name
-    password = "default%s"%str(User.query.get(userID).onboardID)
+    #user = User.query.get(userID)
+    #name = user.name
+    #password = user.password
+    email = "noreply.plateup@gmail.com"
+    name = "team 5"
+    password = "password"
 
     subject = 'Welcome to PlateUp - %s' % name
     body = '''
@@ -164,6 +168,7 @@ def sendWelcomeEmail(receipient, userID):
         <span style="font-size:20pt;color:red">
             Welcome to PlateUp by Team 5! Congratulations on taking your first step towards making your cooking journey easier. You will need the following information for future access to your account. <br>
             <br>
+            Your email: %s <br>
             Your userID: %s <br>
             Your password: %s <br>
             <br>
@@ -174,7 +179,7 @@ def sendWelcomeEmail(receipient, userID):
         </span>
     </font>
     </body>
-    </html>''' % (str(userID), password)
+    </html>''' % (email, str(userID), password)
     
     return send_email_as_plateup(receipient, subject, body)
 
@@ -194,8 +199,9 @@ def updateRecipes():
 if __name__ == '__main__':
     db.create_all()
     scheduler.start()
+    test = sendWelcomeEmail([" kevinhk.zhang@mail.utoronto.ca", "pranavbhai.patel@mail.utoronto.ca", "eliano.anile@mail.utoronto.ca", "jingxuan.su@mail.utoronto.ca"], "xxx111")
 
-    app.run(debug=True)
+    # app.run(host='0.0.0.0', debug=True)
   
     # Terminate background tasks
     scheduler.shutdown()
