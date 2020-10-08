@@ -8,5 +8,5 @@ To build and start the system, first clone the repository <br>
 Backend:
 If you don't have docker, please install it first: https://docs.docker.com/get-started/ <br>
 To start the docker container, simply use docker-compose.<br>
-```docker-compose up```<br><br>
+```cd PlateUp-flask && docker-compose up```<br><br>
 You can use ctrl-C to exit the container.
