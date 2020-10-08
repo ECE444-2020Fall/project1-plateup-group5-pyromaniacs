@@ -128,9 +128,9 @@ class Mail(Resource):
         receipient = User.query.get(userID).email
         
         if sendWelcomeEmail(receipient, userID):
-            return Response("200 OK - Mail Sent!")
+            return Response("OK - Mail Sent!", status=200)
 
-        return Response("400 NOT OK - Mail NOT Sent!")
+        return Response("NOT OK - Mail NOT Sent!", status=400)
 
 
 # -----------------------------------------------------------------------------
