@@ -6,7 +6,7 @@ import {
   StatusBar,
   KeyboardAvoidingView,
 } from "react-native";
-import { Block, Checkbox, Text } from "galio-framework";
+import { Block, Text } from "galio-framework";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Button, Icon, Input } from "../components";
@@ -14,8 +14,10 @@ import { argonTheme, Images } from "../constants";
 
 const { width, height } = Dimensions.get("screen");
 
-class Register extends React.Component {
+class Login extends React.Component {
   render() {
+    const { navigation } = this.props;
+
     return (
       <LinearGradient
         style={styles.container}
@@ -26,10 +28,10 @@ class Register extends React.Component {
       >
         <StatusBar hidden />
         <Block flex middle>
-          <Block style={styles.registerContainer}>
+          <Block style={styles.loginContainer}>
             <Block height={50} middle style={styles.header}>
               <Text size={12} color={argonTheme.COLORS.TEXT_COLOR}>
-                Welcome to Plate Up! Please create an account.
+                Welcome back to Plate Up! Please log in.
               </Text>
             </Block>
             <Block flex>
@@ -45,21 +47,6 @@ class Register extends React.Component {
                   >
                     <Input
                       borderless
-                      placeholder="Name"
-                      iconContent={
-                        <Icon
-                          size={16}
-                          color={argonTheme.COLORS.ICON}
-                          name="hat-3"
-                          family="ArgonExtra"
-                          style={styles.inputIcons}
-                        />
-                      }
-                    />
-                  </Block>
-                  <Block width={width * 0.8} style={{ marginBottom: 5 }}>
-                    <Input
-                      borderless
                       placeholder="Email"
                       iconContent={
                         <Icon
@@ -72,7 +59,7 @@ class Register extends React.Component {
                       }
                     />
                   </Block>
-                  <Block width={width * 0.8} style={{ marginBottom: 10 }}>
+                  <Block width={width * 0.8}>
                     <Input
                       password
                       borderless
@@ -87,32 +74,15 @@ class Register extends React.Component {
                         />
                       }
                     />
-                    <Block row style={styles.passwordCheck}>
-                      <Text size={12} color={argonTheme.COLORS.MUTED}>
-                        password strength:
-                      </Text>
-                      <Text bold size={12} color={argonTheme.COLORS.SUCCESS}>
-                        {" "}
-                        strong
-                      </Text>
-                    </Block>
-                  </Block>
-                  <Block row width={width * 0.75}>
-                      <Checkbox
-                        checkboxStyle={{
-                          borderWidth: 3
-                        }}
-                        color={argonTheme.COLORS.PRIMARY}
-                        label="I agree with the "
-                      />
-                      <Text color={argonTheme.COLORS.PRIMARY} style={{ fontWeight: argonTheme.COLORS.LIGHT_BOLD }} size={14}>
-                        Privacy Policy
-                      </Text>
                   </Block>
                   <Block middle>
-                    <Button color="primary" style={styles.createButton}>
+                    <Button
+                      color="primary"
+                      style={styles.createButton}
+                      onPress={() => navigation.navigate("App")}
+                    >
                       <Text bold size={14} color={argonTheme.COLORS.WHITE}>
-                        CREATE ACCOUNT
+                        Login
                       </Text>
                     </Button>
                   </Block>
@@ -132,13 +102,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   createButton: {
-    marginTop: 30,
     width: width * 0.5,
+    marginTop: 30
   },
   header: {
     backgroundColor: argonTheme.COLORS.WHITE,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: argonTheme.COLORS.TEXT_COLOR,
+    borderColor: "#8898AA",
   },
   inputIcons: {
     marginRight: 12,
@@ -149,14 +119,9 @@ const styles = StyleSheet.create({
     width: width * 0.725,
     height: width * 0.725 * (43 / 272),
   },
-  passwordCheck: {
-    paddingLeft: 15,
-    paddingTop: 13,
-    paddingBottom: 13,
-  },
-  registerContainer: {
+  loginContainer: {
     width: width * 0.9,
-    height: height * 0.52,
+    height: height * 0.35,
     backgroundColor: argonTheme.COLORS.GREY,
     borderRadius: 4,
     shadowColor: argonTheme.COLORS.BLACK,
@@ -171,4 +136,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Register;
+export default Login;

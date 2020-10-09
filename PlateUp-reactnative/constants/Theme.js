@@ -28,5 +28,8 @@ export default {
     WHITE: "#FFFFFF",
     BLACK: "#000000",
     BLUE: "#225AA6",
+    GREY: "#F4F5F7",
+    TEXT_COLOR: "#4F4F4F",
+    LIGHT_BOLD: "600"
   },
 };
