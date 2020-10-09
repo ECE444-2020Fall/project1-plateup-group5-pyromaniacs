@@ -34,11 +34,11 @@ class Onboarding extends React.Component {
           >
             Get Started
           </Button>
-          <Text style={styles.text}>
+          <Text style={styles.text} color={argonTheme.COLORS.TEXT_COLOR}>
             Already have an account?{" "}
             <Text
               style={styles.bold}
-              onPress={() => navigation.navigate("App")}
+              onPress={() => navigation.navigate("Login")}
             >
               Login
             </Text>

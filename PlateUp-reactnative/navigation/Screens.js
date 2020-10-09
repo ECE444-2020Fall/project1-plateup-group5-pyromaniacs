@@ -8,13 +8,14 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Block } from "galio-framework";
 
 // screens
+import Elements from "../screens/Elements";
+import Articles from "../screens/Articles";
 import Home from "../screens/Home";
+import Login from "../screens/Login";
 import Onboarding from "../screens/Onboarding";
 import Pro from "../screens/Pro";
 import Profile from "../screens/Profile";
 import Register from "../screens/Register";
-import Elements from "../screens/Elements";
-import Articles from "../screens/Articles";
 // drawer
 import CustomDrawerContent from "./Menu";
 
@@ -188,6 +189,7 @@ export default function OnboardingStack(props) {
         }}
       />
       <Stack.Screen name="App" component={AppStack} />
+      <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Registration" component={Register} />
     </Stack.Navigator>
   );

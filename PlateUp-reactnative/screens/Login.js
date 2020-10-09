@@ -14,8 +14,10 @@ import { argonTheme, Images } from "../constants";
 
 const { width, height } = Dimensions.get("screen");
 
-class Register extends React.Component {
+class Login extends React.Component {
   render() {
+    const { navigation } = this.props;
+
     return (
       <LinearGradient
         style={styles.container}
@@ -26,10 +28,10 @@ class Register extends React.Component {
       >
         <StatusBar hidden />
         <Block flex middle>
-          <Block style={styles.registerContainer}>
+          <Block style={styles.loginContainer}>
             <Block height={50} middle style={styles.header}>
               <Text size={12} color={argonTheme.COLORS.TEXT_COLOR}>
-                Welcome to Plate Up! Please create an account.
+                Welcome back to Plate Up! Please log in.
               </Text>
             </Block>
             <Block flex>
@@ -45,21 +47,6 @@ class Register extends React.Component {
                   >
                     <Input
                       borderless
-                      placeholder="Name"
-                      iconContent={
-                        <Icon
-                          size={16}
-                          color={argonTheme.COLORS.ICON}
-                          name="hat-3"
-                          family="ArgonExtra"
-                          style={styles.inputIcons}
-                        />
-                      }
-                    />
-                  </Block>
-                  <Block width={width * 0.8} style={{ marginBottom: 10 }}>
-                    <Input
-                      borderless
                       placeholder="Email"
                       iconContent={
                         <Icon
@@ -72,7 +59,7 @@ class Register extends React.Component {
                       }
                     />
                   </Block>
-                  <Block width={width * 0.8}>
+                  <Block width={width * 0.8} style={{ marginBottom: 10 }}>
                     <Input
                       password
                       borderless
@@ -87,20 +74,15 @@ class Register extends React.Component {
                         />
                       }
                     />
-                    <Block row style={styles.passwordCheck}>
-                      <Text size={12} color={argonTheme.COLORS.MUTED}>
-                        password strength:
-                      </Text>
-                      <Text bold size={12} color={argonTheme.COLORS.SUCCESS}>
-                        {" "}
-                        strong
-                      </Text>
-                    </Block>
                   </Block>
-                  <Block middle>
-                    <Button color="primary" style={styles.createButton}>
+                  <Block middle style={{ marginTop: 10 }}>
+                    <Button
+                      color="primary"
+                      style={styles.createButton}
+                      onPress={() => navigation.navigate("App")}
+                    >
                       <Text bold size={14} color={argonTheme.COLORS.WHITE}>
-                        CREATE ACCOUNT
+                        Login
                       </Text>
                     </Button>
                   </Block>
@@ -141,9 +123,9 @@ const styles = StyleSheet.create({
     paddingTop: 13,
     paddingBottom: 30,
   },
-  registerContainer: {
+  loginContainer: {
     width: width * 0.9,
-    height: height * 0.5,
+    height: height * 0.35,
     backgroundColor: argonTheme.COLORS.GREY,
     borderRadius: 4,
     shadowColor: argonTheme.COLORS.BLACK,
@@ -158,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Register;
+export default Login;
