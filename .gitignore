@@ -13,3 +13,4 @@ PlateUp-flask/db.sqlite
 setup.cfg
 PlateUp-flask/__pycache__
 package-lock.json
+PlateUp-reactnative/.vscode/
