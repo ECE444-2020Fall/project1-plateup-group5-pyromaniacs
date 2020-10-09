@@ -1,4 +1,9 @@
-import React from "react";
+import { userLoggedIn } from '../redux/actions'
+import axios from "axios";
+import { LinearGradient } from "expo-linear-gradient";
+import { Button, Icon, Input } from "../components";
+import { argonTheme, Images } from "../constants";
+import { Block, Checkbox, Text } from "galio-framework";
 import {
   StyleSheet,
   Dimensions,
@@ -6,15 +11,58 @@ import {
   StatusBar,
   KeyboardAvoidingView,
 } from "react-native";
-import { Block, Checkbox, Text } from "galio-framework";
-import { LinearGradient } from "expo-linear-gradient";
-
-import { Button, Icon, Input } from "../components";
-import { argonTheme, Images } from "../constants";
+import React from "react";
+import store from '../redux/store'
 
 const { width, height } = Dimensions.get("screen");
 
 class Register extends React.Component {
+  state = {
+    name: "",
+    email: "",
+    password: "",
+  }
+
+  handleCreateAccount = (navigation) => {
+    // Try POSTing to the server to create an account
+    axios.post('http://192.168.0.18:5000/user', {
+        name: this.state.name,
+        email: this.state.email,
+        password: this.state.password
+      })
+      .then(res => {
+        // If successful, login with the ID returned
+        // TODO: this information will probably be changed
+        if (res.status === 200) {
+          console.log(res.data.id, this.state.password)
+          axios.post('http://192.168.0.18:5000/login', {
+            id: res.data.id,
+            password: this.state.password
+          })
+          // If successful, set current user and navigate to the main app screen
+          .then(res => {
+            if (res.status === 200) {
+              store.dispatch(userLoggedIn(res.data.id, this.state.email));
+              navigation.navigate("App");
+            }
+            else {
+              console.log("Login failed!");
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        }
+        else {
+          console.log("Account creation failed!");
+        }
+        console.log(res.status);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
   render() {
     return (
       <LinearGradient
@@ -55,6 +103,7 @@ class Register extends React.Component {
                           style={styles.inputIcons}
                         />
                       }
+                      onChangeText={(name) => this.setState({name})}
                     />
                   </Block>
                   <Block width={width * 0.8} style={{ marginBottom: 5 }}>
@@ -70,6 +119,7 @@ class Register extends React.Component {
                           style={styles.inputIcons}
                         />
                       }
+                      onChangeText={(email) => this.setState({email})}
                     />
                   </Block>
                   <Block width={width * 0.8} style={{ marginBottom: 10 }}>
@@ -86,6 +136,7 @@ class Register extends React.Component {
                           style={styles.inputIcons}
                         />
                       }
+                      onChangeText={(password) => this.setState({password})}
                     />
                     <Block row style={styles.passwordCheck}>
                       <Text size={12} color={argonTheme.COLORS.MUTED}>
@@ -110,7 +161,11 @@ class Register extends React.Component {
                       </Text>
                   </Block>
                   <Block middle>
-                    <Button color="primary" style={styles.createButton}>
+                    <Button
+                      color="primary"
+                      style={styles.createButton}
+                      onPress={() => this.handleCreateAccount(this.props.navigation)}
+                    >
                       <Text bold size={14} color={argonTheme.COLORS.WHITE}>
                         CREATE ACCOUNT
                       </Text>
