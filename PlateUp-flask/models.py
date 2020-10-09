@@ -1,15 +1,12 @@
-import json
-import datetime
-
 from flask_login import UserMixin
-from sqlalchemy.orm import relationship
 from initializer import db
 from uuid import uuid1
+
 
 # -----------------------------------------------------------------------------
 # DB Models
 # -----------------------------------------------------------------------------
-# user table
+# User table
 class User(db.Model, UserMixin):
     __tablename__ = "user"
 
@@ -22,13 +19,14 @@ class User(db.Model, UserMixin):
     inventory_id = db.Column(db.String(40))
 
     def __init__(self, name, email, password):
-        self.id = uuid1()
+        self.id = str(uuid1())
         self.name = name
         self.email = email
         self.password = password
-        self.settings_id = uuid1()
-        self.shopping_id = uuid1()
-        self.inventory_id = uuid1()
+        self.settings_id = str(uuid1())
+        self.shopping_id = str(uuid1())
+        self.inventory_id = str(uuid1())
+
 
 # shopping table
 class ShoppingList(db.Model):
@@ -42,4 +40,3 @@ class ShoppingList(db.Model):
         self.id = id
         self.ingredient_name = ingredient_name
         self.quantity = quantity
-        

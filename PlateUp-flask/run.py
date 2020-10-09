@@ -1,18 +1,12 @@
-import os
-import json
-import requests
 import time
 
-from flask import Response, request, jsonify
-from flask_restx import Resource, fields
-from flask_login import login_user, logout_user, login_required, current_user
-from sqlalchemy_utils import create_database, database_exists
-from werkzeug.utils import cached_property
-from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
-from models import User
 from emailservice import send_email_as_plateup
-from initializer import app, db, ma, api, login_manager, scheduler
+from flask import jsonify, request, Response
+from flask_login import current_user, login_user, login_required, logout_user
+from flask_restx import fields, Resource
+from initializer import api, app, db, login_manager, ma, scheduler
+from models import User
+from werkzeug.security import check_password_hash, generate_password_hash
 
 # -----------------------------------------------------------------------------
 # Configure Namespaces
@@ -22,12 +16,14 @@ userR = api.namespace('user', description='User operations')
 loginR = api.namespace('login', description='Login/logout operations')
 mailR = api.namespace('mail', description='Mailing operations')
 
+
 # -----------------------------------------------------------------------------
 # DB Schemas (Marshmallow)
 # -----------------------------------------------------------------------------
 class UserSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name', 'email', 'password', 'settings_id', 'shopping_id', 'inventory_id')
+
 
 # Init schemas
 user_schema = UserSchema()
@@ -43,6 +39,7 @@ class Main(Resource):
     def get(self):
         return "Hello! This is the backend for PlateUp - a chef's co-pilot."
 
+
 # User API
 @userR.route('')
 class UserAPI(Resource):
@@ -57,12 +54,12 @@ class UserAPI(Resource):
     def get(self):
         all_users = User.query.all()
         result = users_schema.dump(all_users)
-        return jsonify(result.data)
+        return jsonify(result)
 
     # @login_required
     @userR.doc(description="Register a new user to the system with complete information.")
     @userR.expect(resource_fields, validate=True)
-    def post(self):    
+    def post(self):
         name = request.json['name']
         email = request.json['email']
         password = generate_password_hash(request.json['password'], "pbkdf2:sha256")
@@ -81,7 +78,7 @@ class UserAPI(Resource):
             return Response("Mail NOT Sent!", status=400)
 
         return user_schema.jsonify(new_user)
-    
+
     # @login_required
     @userR.doc(description="WARNING: Delete all user information stored in the database.")
     def delete(self):
@@ -94,7 +91,7 @@ class UserAPI(Resource):
 @loginR.route('')
 class Login(Resource):
     resource_fields = userR.model('Login Information', {
-        'id': fields.Integer,
+        'id': fields.String,
         'password': fields.String,
     })
 
@@ -104,17 +101,18 @@ class Login(Resource):
         userId = request.json['id']
         password = request.json['password']
         user = User.query.get(userId)
-                    
+
         if user is not None and check_password_hash(user.password, password):
             login_user(user)
-            return Response("Login successful. User %s"% userId, status=200)
+            return Response("Login successful. User %s" % userId, status=200)
 
         return Response("403 Forbidden", status=403)
 
     @loginR.doc(description="Logging current user out.")
     def delete(self):
-        logout_user(current_user)
-        return Response("Login successful. User %s"%current_user.id, status=200)
+        userId = current_user.id
+        logout_user()
+        return Response("Logout successful. User %s" % userId, status=200)
 
 
 # Mail API
@@ -126,7 +124,7 @@ class Mail(Resource):
     def get(self):
         userID = request.args.get("userID")
         receipient = User.query.get(userID).email
-        
+
         if sendWelcomeEmail(receipient, userID):
             return Response("OK - Mail Sent!", status=200)
 
@@ -139,10 +137,12 @@ class Mail(Resource):
 def flat_list(l):
     return ["%s" % v for v in l]
 
+
 # callback to reload the user object
 @login_manager.user_loader
 def load_user(uid):
-    return User.query.get(int(uid))
+    return User.query.get(uid)
+
 
 # sends the welcome email
 def sendWelcomeEmail(receipient, userID):
@@ -178,8 +178,9 @@ def sendWelcomeEmail(receipient, userID):
     </font>
     </body>
     </html>''' % (email, str(userID), password)
-    
+
     return send_email_as_plateup(receipient, subject, body)
+
 
 # -----------------------------------------------------------------------------
 # Background tasks
@@ -198,6 +199,6 @@ if __name__ == '__main__':
     db.create_all()
     scheduler.start()
     app.run(host='0.0.0.0', debug=True)
-  
+
     # Terminate background tasks
     scheduler.shutdown()

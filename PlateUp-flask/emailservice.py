@@ -3,14 +3,15 @@ import smtplib
 
 from email.mime.text import MIMEText
 
+
 def send_email_as_plateup(to_recipients, subject, body):
-    ''' 
+    '''
     Sends an email using smtp, specifically with plateup's gmail account.
     '''
     email_cfg = configparser.ConfigParser(interpolation=configparser.ExtendedInterpolation())
-    email_cfg.read('email_config.ini') 
-    sender_email = email_cfg["SENDER"]['email']     
-    sender_password = email_cfg["SENDER"]['pwd']  
+    email_cfg.read('email_config.ini')
+    sender_email = email_cfg["SENDER"]['email']
+    sender_password = email_cfg["SENDER"]['pwd']
 
     my_email = MIMEText(body, "html")
     my_email["From"] = sender_email
@@ -26,5 +27,5 @@ def send_email_as_plateup(to_recipients, subject, body):
         server.close()
 
         return True
-    except:
+    except Exception:
         return False
