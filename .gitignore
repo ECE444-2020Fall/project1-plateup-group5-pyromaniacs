@@ -1,9 +1,9 @@
 # Expo
-PlateUp/.expo
-PlateUp/.expo-shared
+PlateUp-reactnative/.expo
+PlateUp-reactnative/.expo-shared
 
 # Node
-PlateUp/node_modules
+PlateUp-reactnative/node_modules
 
 # Flask
 PlateUp-flask/email_config.ini

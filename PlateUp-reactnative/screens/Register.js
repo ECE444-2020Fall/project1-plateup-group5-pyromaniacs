@@ -6,7 +6,7 @@ import {
   StatusBar,
   KeyboardAvoidingView,
 } from "react-native";
-import { Block, Text } from "galio-framework";
+import { Block, Checkbox, Text } from "galio-framework";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { Button, Icon, Input } from "../components";
@@ -41,7 +41,7 @@ class Register extends React.Component {
                 >
                   <Block
                     width={width * 0.8}
-                    style={{ marginBottom: 10, marginTop: 10 }}
+                    style={{ marginBottom: 5, marginTop: 5 }}
                   >
                     <Input
                       borderless
@@ -57,7 +57,7 @@ class Register extends React.Component {
                       }
                     />
                   </Block>
-                  <Block width={width * 0.8} style={{ marginBottom: 10 }}>
+                  <Block width={width * 0.8} style={{ marginBottom: 5 }}>
                     <Input
                       borderless
                       placeholder="Email"
@@ -72,7 +72,7 @@ class Register extends React.Component {
                       }
                     />
                   </Block>
-                  <Block width={width * 0.8}>
+                  <Block width={width * 0.8} style={{ marginBottom: 10 }}>
                     <Input
                       password
                       borderless
@@ -97,6 +97,18 @@ class Register extends React.Component {
                       </Text>
                     </Block>
                   </Block>
+                  <Block row width={width * 0.75}>
+                      <Checkbox
+                        checkboxStyle={{
+                          borderWidth: 3
+                        }}
+                        color={argonTheme.COLORS.PRIMARY}
+                        label="I agree with the "
+                      />
+                      <Text color={argonTheme.COLORS.PRIMARY} style={{ fontWeight: argonTheme.COLORS.LIGHT_BOLD }} size={14}>
+                        Privacy Policy
+                      </Text>
+                  </Block>
                   <Block middle>
                     <Button color="primary" style={styles.createButton}>
                       <Text bold size={14} color={argonTheme.COLORS.WHITE}>
@@ -120,12 +132,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   createButton: {
+    marginTop: 30,
     width: width * 0.5,
   },
   header: {
     backgroundColor: argonTheme.COLORS.WHITE,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: "#8898AA",
+    borderColor: argonTheme.COLORS.TEXT_COLOR,
   },
   inputIcons: {
     marginRight: 12,
@@ -139,11 +152,11 @@ const styles = StyleSheet.create({
   passwordCheck: {
     paddingLeft: 15,
     paddingTop: 13,
-    paddingBottom: 30,
+    paddingBottom: 13,
   },
   registerContainer: {
     width: width * 0.9,
-    height: height * 0.5,
+    height: height * 0.52,
     backgroundColor: argonTheme.COLORS.GREY,
     borderRadius: 4,
     shadowColor: argonTheme.COLORS.BLACK,

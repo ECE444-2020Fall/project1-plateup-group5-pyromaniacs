@@ -52,7 +52,7 @@ class Onboarding extends React.Component {
 const styles = StyleSheet.create({
   bold: {
     color: argonTheme.COLORS.BLUE,
-    fontWeight: "bold",
+    fontWeight: argonTheme.COLORS.LIGHT_BOLD,
   },
   button: {
     width: width - theme.SIZES.BASE * 4,

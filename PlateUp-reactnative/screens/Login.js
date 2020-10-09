@@ -43,7 +43,7 @@ class Login extends React.Component {
                 >
                   <Block
                     width={width * 0.8}
-                    style={{ marginBottom: 10, marginTop: 10 }}
+                    style={{ marginBottom: 5, marginTop: 5 }}
                   >
                     <Input
                       borderless
@@ -59,7 +59,7 @@ class Login extends React.Component {
                       }
                     />
                   </Block>
-                  <Block width={width * 0.8} style={{ marginBottom: 10 }}>
+                  <Block width={width * 0.8}>
                     <Input
                       password
                       borderless
@@ -75,7 +75,7 @@ class Login extends React.Component {
                       }
                     />
                   </Block>
-                  <Block middle style={{ marginTop: 10 }}>
+                  <Block middle>
                     <Button
                       color="primary"
                       style={styles.createButton}
@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
   },
   createButton: {
     width: width * 0.5,
+    marginTop: 30
   },
   header: {
     backgroundColor: argonTheme.COLORS.WHITE,
@@ -117,11 +118,6 @@ const styles = StyleSheet.create({
     bottom: height * 0.0677,
     width: width * 0.725,
     height: width * 0.725 * (43 / 272),
-  },
-  passwordCheck: {
-    paddingLeft: 15,
-    paddingTop: 13,
-    paddingBottom: 30,
   },
   loginContainer: {
     width: width * 0.9,
