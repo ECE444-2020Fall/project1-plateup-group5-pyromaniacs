@@ -1,6 +1,6 @@
 import * as actions from './actionTypes'
 
-export const userLoggedIn = (id, email) => ({
+export const userLoggedIn = (id, name, email, inventoryId, shoppingId, settingsId) => ({
   type: actions.USER_LOGGED_IN,
-  payload: { id, email }
+  payload: { id, name, email, inventoryId, shoppingId, settingsId }
 })

@@ -1,9 +1,9 @@
-import { userLoggedIn } from '../redux/actions'
 import axios from "axios";
-import { LinearGradient } from "expo-linear-gradient";
 import { Button, Icon, Input } from "../components";
 import { argonTheme, Images } from "../constants";
+import { LinearGradient } from "expo-linear-gradient";
 import { Block, Checkbox, Text } from "galio-framework";
+import React from "react";
 import {
   StyleSheet,
   Dimensions,
@@ -11,8 +11,8 @@ import {
   StatusBar,
   KeyboardAvoidingView,
 } from "react-native";
-import React from "react";
-import store from '../redux/store'
+import { userLoggedIn } from "../redux/actions";
+import store from "../redux/store";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -30,35 +30,33 @@ class Register extends React.Component {
         email: this.state.email,
         password: this.state.password
       })
-      .then(res => {
+      .then(() => {
         // If successful, login with the ID returned
-        // TODO: this information will probably be changed
-        if (res.status === 200) {
-          console.log(res.data.id, this.state.password)
           axios.post('http://192.168.0.18:5000/login', {
-            id: res.data.id,
+            email: this.state.email,
             password: this.state.password
           })
           // If successful, set current user and navigate to the main app screen
           .then(res => {
-            if (res.status === 200) {
-              store.dispatch(userLoggedIn(res.data.id, this.state.email));
-              navigation.navigate("App");
-            }
-            else {
-              console.log("Login failed!");
-            }
+            store.dispatch(userLoggedIn(
+              res.data.id,
+              res.data.name,
+              res.data.email,
+              res.data.inventory_id,
+              res.data.shopping_id,
+              res.data.settings_id
+            ));
+            navigation.navigate("App");
           })
+          // TODO make this an error message in-app
           .catch(err => {
+            console.log("Login failed!");
             console.log(err);
           });
-        }
-        else {
-          console.log("Account creation failed!");
-        }
-        console.log(res.status);
       })
+      // TODO make this an error message in-app
       .catch(err => {
+        console.log("Account creation failed!");
         console.log(err);
       });
   }

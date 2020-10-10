@@ -1,3 +1,8 @@
+import axios from "axios";
+import { Button, Icon, Input } from "../components";
+import { argonTheme, Images } from "../constants";
+import { LinearGradient } from "expo-linear-gradient";
+import { Block, Text } from "galio-framework";
 import React from "react";
 import {
   StyleSheet,
@@ -6,18 +11,43 @@ import {
   StatusBar,
   KeyboardAvoidingView,
 } from "react-native";
-import { Block, Text } from "galio-framework";
-import { LinearGradient } from "expo-linear-gradient";
-
-import { Button, Icon, Input } from "../components";
-import { argonTheme, Images } from "../constants";
+import { userLoggedIn } from "../redux/actions";
+import store from "../redux/store";
 
 const { width, height } = Dimensions.get("screen");
 
 class Login extends React.Component {
-  render() {
-    const { navigation } = this.props;
+  state = {
+    email: "",
+    password: "",
+  }
 
+  handleLogin = (navigation) => {
+    // Try POSTing to the server to login
+    axios.post('http://192.168.0.18:5000/login', {
+      email: this.state.email,
+      password: this.state.password
+    })
+    // If successful, set current user and navigate to the main app screen
+    .then(res => {
+      store.dispatch(userLoggedIn(
+        res.data.id,
+        res.data.name,
+        res.data.email,
+        res.data.inventory_id,
+        res.data.shopping_id,
+        res.data.settings_id
+      ));
+      navigation.navigate("App");
+    })
+    // TODO make this an error message in-app
+    .catch(err => {
+      console.log("Login failed!");
+      console.log(err.response);
+    });
+  }
+
+  render() {
     return (
       <LinearGradient
         style={styles.container}
@@ -57,6 +87,7 @@ class Login extends React.Component {
                           style={styles.inputIcons}
                         />
                       }
+                      onChangeText={(email) => this.setState({email})}
                     />
                   </Block>
                   <Block width={width * 0.8}>
@@ -73,13 +104,14 @@ class Login extends React.Component {
                           style={styles.inputIcons}
                         />
                       }
+                      onChangeText={(password) => this.setState({password})}
                     />
                   </Block>
                   <Block middle>
                     <Button
                       color="primary"
                       style={styles.createButton}
-                      onPress={() => navigation.navigate("App")}
+                      onPress={() => this.handleLogin(this.props.navigation)}
                     >
                       <Text bold size={14} color={argonTheme.COLORS.WHITE}>
                         Login
