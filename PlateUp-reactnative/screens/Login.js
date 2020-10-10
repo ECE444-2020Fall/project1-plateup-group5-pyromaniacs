@@ -5,14 +5,15 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Block, Text } from "galio-framework";
 import React from "react";
 import {
-  StyleSheet,
   Dimensions,
   Image,
-  StatusBar,
   KeyboardAvoidingView,
+  StatusBar,
+  StyleSheet
 } from "react-native";
 import { userLoggedIn } from "../redux/actions";
 import store from "../redux/store";
+import * as util from "../util";
 
 const { width, height } = Dimensions.get("screen");
 
@@ -23,13 +24,19 @@ class Login extends React.Component {
   }
 
   handleLogin = (navigation) => {
+    // Don't try to log in if some information is missing
+    if (this.state.email.length === 0 || this.state.password.length === 0) {
+      util.toast("Please fill in all fields.");
+      return;
+    }
+
     // Try POSTing to the server to login
-    axios.post('http://192.168.0.18:5000/login', {
+    axios.post(util.SERVER_URL + "/login", {
       email: this.state.email,
       password: this.state.password
     })
-    // If successful, set current user and navigate to the main app screen
     .then(res => {
+      // Set current user and navigate to the main app screen
       store.dispatch(userLoggedIn(
         res.data.id,
         res.data.name,
@@ -40,10 +47,8 @@ class Login extends React.Component {
       ));
       navigation.navigate("App");
     })
-    // TODO make this an error message in-app
     .catch(err => {
-      console.log("Login failed!");
-      console.log(err.response);
+      util.toast("Login failed! Please confirm that the email and password are correct.");
     });
   }
 
