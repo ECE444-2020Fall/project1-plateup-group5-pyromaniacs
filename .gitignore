@@ -1,0 +1,15 @@
+# Expo
+PlateUp-reactnative/.expo
+PlateUp-reactnative/.expo-shared
+
+# Node
+PlateUp-reactnative/node_modules
+
+# Flask
+PlateUp-flask/email_config.ini
+PlateUp-flask/db.sqlite
+
+# Miscellaneous
+setup.cfg
+PlateUp-flask/__pycache__
+package-lock.json
