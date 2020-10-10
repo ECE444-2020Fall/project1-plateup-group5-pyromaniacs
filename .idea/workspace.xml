@@ -10,14 +10,53 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/recipe_database.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PlateUp-flask/recipe_database.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2870">
-              <caret line="82" column="34" lean-forward="true" selection-start-line="82" selection-start-column="34" selection-end-line="82" selection-end-column="34" />
+            <state relative-caret-position="836">
+              <caret line="46" column="29" lean-forward="true" selection-start-line="46" selection-start-column="29" selection-end-line="46" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/PlateUp-flask/run.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="450">
+              <caret line="176" column="18" selection-start-line="176" selection-start-column="18" selection-end-line="176" selection-end-column="18" />
               <folding>
-                <element signature="e#143#157#0" expanded="true" />
+                <element signature="e#0#11#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PlateUp-flask/requirements.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="621">
+              <caret line="45" column="24" selection-start-line="45" selection-start-column="24" selection-end-line="45" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PlateUp-flask/models.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="102">
+              <caret line="31" column="13" selection-start-line="31" selection-start-column="4" selection-end-line="31" selection-end-column="13" />
+              <folding>
+                <element signature="e#0#33#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/PlateUp-flask/initializer.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="9" lean-forward="true" selection-start-column="9" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -27,6 +66,11 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>__dataBaseLength</find>
+      <find>db</find>
+      <find>user_schema</find>
+      <find>recipe_table</find>
+      <find>query</find>
+      <find>User</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -36,12 +80,16 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/recipe_database.py" />
+        <option value="$PROJECT_DIR$/PlateUp-flask/initializer.py" />
+        <option value="$PROJECT_DIR$/PlateUp-flask/requirements.txt" />
+        <option value="$PROJECT_DIR$/PlateUp-flask/models.py" />
+        <option value="$PROJECT_DIR$/PlateUp-flask/run.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-9" />
-    <option name="y" value="-9" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
     <option name="width" value="1400" />
     <option name="height" value="784" />
   </component>
@@ -58,6 +106,16 @@
               <item name="project1-plateup-group5-pyromaniacs" type="b2602c69:ProjectViewProjectNode" />
               <item name="project1-plateup-group5-pyromaniacs" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="project1-plateup-group5-pyromaniacs" type="b2602c69:ProjectViewProjectNode" />
+              <item name="project1-plateup-group5-pyromaniacs" type="462c0819:PsiDirectoryNode" />
+              <item name=".github" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="project1-plateup-group5-pyromaniacs" type="b2602c69:ProjectViewProjectNode" />
+              <item name="project1-plateup-group5-pyromaniacs" type="462c0819:PsiDirectoryNode" />
+              <item name="PlateUp-flask" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -66,6 +124,11 @@
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\2020fall\ECE444\Project\Plate-up\project1-plateup-group5-pyromaniacs\PlateUp-flask" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -136,23 +199,82 @@
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Terminal" order="8" />
-      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" weight="0.03253796" />
       <window_info anchor="bottom" id="Python Console" order="10" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.3134879" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.28741866" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/account_database.py">
+    <entry file="file://$PROJECT_DIR$/account_database.py" />
+    <entry file="file://$PROJECT_DIR$/recipe_database.py" />
+    <entry file="file://$PROJECT_DIR$/PlateUp-flask/Dockerfile">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/recipe_database.py">
+    <entry file="file://$PROJECT_DIR$/PlateUp-flask/initializer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2870">
-          <caret line="82" column="34" lean-forward="true" selection-start-line="82" selection-start-column="34" selection-end-line="82" selection-end-column="34" />
+        <state>
+          <caret column="9" lean-forward="true" selection-start-column="9" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlateUp-flask/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="621">
+          <caret line="45" column="24" selection-start-line="45" selection-start-column="24" selection-end-line="45" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://E:/Anaconda/Lib/site-packages/flask_sqlalchemy/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="298">
+          <caret line="714" column="13" selection-start-line="714" selection-start-column="13" selection-end-line="714" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlateUp-flask/recipe_database.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="836">
+          <caret line="46" column="29" lean-forward="true" selection-start-line="46" selection-start-column="29" selection-end-line="46" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlateUp-flask/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="31" column="13" selection-start-line="31" selection-start-column="4" selection-end-line="31" selection-end-column="13" />
           <folding>
-            <element signature="e#143#157#0" expanded="true" />
+            <element signature="e#0#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlateUp-flask/run.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="176" column="18" selection-start-line="176" selection-start-column="18" selection-end-line="176" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>

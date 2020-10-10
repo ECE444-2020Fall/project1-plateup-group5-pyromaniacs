@@ -2,7 +2,6 @@ from flask_login import UserMixin
 from initializer import db
 from uuid import uuid1
 
-
 # -----------------------------------------------------------------------------
 # DB Models
 # -----------------------------------------------------------------------------
@@ -27,6 +26,23 @@ class User(db.Model, UserMixin):
         self.shopping_id = str(uuid1())
         self.inventory_id = str(uuid1())
 
+
+class Recipe_preview(db.Model):
+    __tablename__ = "Recipe_preview"
+    recipe_id = db.Column(db.String(40), primary_key=True)
+    name = db.Column(db.String(40))
+    ingredient = db.Column(db.String(100))
+    time = db.Column(db.Integer)
+    preview_text = db.Column(db.String(100))
+    preview_media = db.Column(db.String(100))
+
+    def __init__(self, name, ingredient, time, preview_text, preview_media):
+        self.recipe_id = str(uuid1())
+        self.name = name
+        self.ingredient = ingredient
+        self.time = time
+        self.preview_text = preview_text
+        self.preview_media = preview_media
 
 # shopping table
 class ShoppingList(db.Model):
