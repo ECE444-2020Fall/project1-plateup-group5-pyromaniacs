@@ -139,7 +139,7 @@ class Mail(Resource):
 
 # Recipe-preview API
 @Recipe_previewR.route('')
-class recipe_table(Resource):
+class recipeTable(Resource):
     resource_fields = Recipe_previewR.model('Information to get recipe preview', {
         'Name': fields.String,
         'Ingredient': fields.String,
@@ -152,8 +152,8 @@ class recipe_table(Resource):
 
     __dataBaseLength=0
     __parser=''
-    __debug=True
-    randomPick=False
+    __debug=False
+    random_pick=False
 
     #Retrive JSON stuff
     def __getJson(self, recipeItem):
@@ -165,32 +165,32 @@ class recipe_table(Resource):
     def __searchForRecipesByName(self, keyword):
         idList=[]
         keywords="%"+keyword+"%"
-        recipeList=db.session.query(Recipe_preview).filter(Recipe_preview.name.like(keywords)).all()
-        return recipeList
+        recipe_list=db.session.query(Recipe_preview).filter(Recipe_preview.name.like(keywords)).all()
+        return recipe_list
     '''
     filterRecipe
     '''
-    def __filterByCost(self, recipeList, filter_cost):
-        recipeList = [recipe for recipe in recipeList if recipe.cost <= filter_cost]
-        return recipeList
+    def __filterByCost(self, recipe_list, filter_cost):
+        recipe_list = [recipe for recipe in recipe_list if recipe.cost <= filter_cost]
+        return recipe_list
 
 
-    def __filterByTime(self, recipeList, filter_time):
-        recipeList = [recipe for recipe in recipeList if recipe.time <= filter_time]
-        return recipeList
+    def __filterByTime(self, recipe_list, filter_time):
+        recipe_list = [recipe for recipe in recipe_list if recipe.time <= filter_time]
+        return recipe_list
 
-    def __filterRecipe(self, recipeList, filter_cost, filter_time, filter_has_ingredient):
-        if len(recipeList)==0:
-            self.randomPick=True
-            recipeList=db.session.query(Recipe_preview).all()
-        recipeList=self.__filterByCost(recipeList, filter_cost)
-        recipeList=self.__filterByTime(recipeList, filter_time)
-        return recipeList
+    def __filterRecipe(self, recipe_list, filter_cost, filter_time, filter_has_ingredient):
+        if len(recipe_list)==0:
+            self.random_pick=True
+            recipe_list=db.session.query(Recipe_preview).all()
+        recipe_list=self.__filterByCost(recipe_list, filter_cost)
+        recipe_list=self.__filterByTime(recipe_list, filter_time)
+        return recipe_list
 
     '''
     Debug
     '''
-    def __debug_showList(self):
+    def __debug_show_table(self):
         list=db.session.query(Recipe_preview).all()
         print("current list")
         for i in range(len(list)):
@@ -230,8 +230,8 @@ class recipe_table(Resource):
     @Recipe_previewR.expect(resource_fields, validate=True)
     def post(self):
         #get id List
-        recipeList = []
-        recipeName=request.json['Name']
+        recipe_list = []
+        recipe_name=request.json['Name']
         ingredient=request.json['Ingredient']
         filter_time=request.json['Filter_time']
         filter_cost = request.json['Filter_cost']
@@ -242,32 +242,32 @@ class recipe_table(Resource):
         if self.__debug==True:
             self.__debug_clear_table()
             self.__debug_add_recipe()
-            self.__debug_showList()
+            self.__debug_show_table()
 
-        self.randomPick=False
+        self.random_pick=False
         #get list
-        if recipeName!=None:
-            recipeList=self.__searchForRecipesByName(recipeName)
-        recipeList = self.__filterRecipe(recipeList, filter_cost, filter_time, filter_has_ingredient)
+        if recipe_name!=None:
+            recipe_list=self.__searchForRecipesByName(recipe_name)
+        recipe_list = self.__filterRecipe(recipe_list, filter_cost, filter_time, filter_has_ingredient)
 
         #random list
-        if self.randomPick:
-            recipeList = random.choices(recipeList, k=min(len(recipeList),limit))
+        if self.random_pick:
+            recipe_list = random.sample(recipe_list, k=min(len(recipe_list),limit))
 
         #get JSON file by ID list by limit(control by j)
-        recipePreviewTextList=[]
-        recipePreviewMediaList=[]
+        recipe_preview_text_list=[]
+        recipe_preview_media_list=[]
         j=1
 
-        for i in range(page*limit, len(recipeList)):
-            previewText, previewMedia=self.__getJson(recipeList[i])
-            recipePreviewTextList.append(previewText)
-            recipePreviewMediaList.append(previewMedia)
+        for i in range(page*limit, len(recipe_list)):
+            preview_text, preview_media=self.__getJson(recipe_list[i])
+            recipe_preview_text_list.append(preview_text)
+            recipe_preview_media_list.append(preview_media)
             j=j+1
             if (j>limit):
                 break
-        print(jsonify(recipePreviewMediaList))
-        return jsonify(recipePreviewMediaList, recipePreviewTextList, self.randomPick)
+
+        return jsonify(recipe_preview_media_list, recipe_preview_text_list, self.random_pick)
 
 
 # -----------------------------------------------------------------------------
