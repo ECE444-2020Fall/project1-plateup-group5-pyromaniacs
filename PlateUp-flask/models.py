@@ -33,14 +33,16 @@ class Recipe_preview(db.Model):
     name = db.Column(db.String(40))
     ingredient = db.Column(db.String(100))
     time = db.Column(db.Integer)
+    cost = db.Column(db.Integer)
     preview_text = db.Column(db.String(100))
     preview_media = db.Column(db.String(100))
 
-    def __init__(self, name, ingredient, time, preview_text, preview_media):
+    def __init__(self, name, ingredient, time, cost, preview_text, preview_media):
         self.recipe_id = str(uuid1())
         self.name = name
         self.ingredient = ingredient
         self.time = time
+        self.cost = cost
         self.preview_text = preview_text
         self.preview_media = preview_media
 

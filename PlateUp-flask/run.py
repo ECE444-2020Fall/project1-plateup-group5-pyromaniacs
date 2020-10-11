@@ -8,6 +8,7 @@ from flask_restx import fields, Resource, reqparse
 from initializer import api, app, db, login_manager, ma, scheduler
 from models import User, Recipe_preview
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask_sqlalchemy import SQLAlchemy
 
 # -----------------------------------------------------------------------------
 # Configure Namespaces
@@ -156,8 +157,6 @@ class recipe_table(Resource):
     def __getJson(self, recipeItem):
         recipePreviewText = recipeItem.preview_text
         recipePreviewMedia = recipeItem.preview_media
-        print(recipePreviewText)
-        print(recipePreviewMedia)
         return recipePreviewText, recipePreviewMedia
 
     #Search by Name
@@ -166,12 +165,33 @@ class recipe_table(Resource):
         keywords="%"+keyword+"%"
         recipeList=db.session.query(Recipe_preview).filter(Recipe_preview.name.like(keywords)).all()
         return recipeList
+    '''
+    filterRecipe
+    '''
+    def __filterByCost(self, recipeList, filter_cost):
+        recipeList = [recipe for recipe in recipeList if recipe.cost <= filter_cost]
+        return recipeList
 
+
+    def __filterByTime(self, recipeList, filter_time):
+        recipeList = [recipe for recipe in recipeList if recipe.time <= filter_time]
+        return recipeList
+
+    def __filterRecipe(self, recipeList, filter_cost, filter_time, filter_has_ingredient):
+        recipeList=self.__filterByCost(recipeList, filter_cost)
+        recipeList=self.__filterByTime(recipeList, filter_time)
+        return recipeList
+
+    '''
+    Debug
+    '''
     def __debug_showList(self):
         list=db.session.query(Recipe_preview).all()
         print("current list")
         for i in range(len(list)):
             print(list[i].name)
+            print("cost"+str(list[i].cost))
+            print("time"+str(list[i].time))
         print("end")
 
     def __debug_add_recipe(self):
@@ -185,11 +205,11 @@ class recipe_table(Resource):
         data4_json = json.dumps(data4)
         data5 = [{'a': 5}]
         data5_json = json.dumps(data5)
-        new_recipe1 = Recipe_preview('us_meal', data_json, 10,data_json, data_json)
-        new_recipe2 = Recipe_preview('chinese_meal', data2_json, 20, data2_json, data2_json)
-        new_recipe3 = Recipe_preview('uk_meal', data3_json, 30, data3_json, data3_json)
-        new_recipe4 = Recipe_preview('french_meal', data4_json, 40, data4_json, data4_json)
-        new_recipe5 = Recipe_preview('russia_meal', data5_json, 50, data5_json, data5_json)
+        new_recipe1 = Recipe_preview('us_meal', data_json, 10, 100, data_json, data_json)
+        new_recipe2 = Recipe_preview('chinese_meal', data2_json, 20,200, data2_json, data2_json)
+        new_recipe3 = Recipe_preview('uk_meal', data3_json, 30, 300, data3_json, data3_json)
+        new_recipe4 = Recipe_preview('french_meal', data4_json, 40, 400,  data4_json, data4_json)
+        new_recipe5 = Recipe_preview('russia_meal', data5_json, 50, 500, data5_json, data5_json)
         db.session.add(new_recipe1)
         db.session.add(new_recipe2)
         db.session.add(new_recipe3)
@@ -209,21 +229,18 @@ class recipe_table(Resource):
         recipeName=request.json['Name']
         ingredient=request.json['Ingredient']
         filter_time=request.json['Filter_time']
-        filter_cost = request.json['Filter_time']
+        filter_cost = request.json['Filter_cost']
         filter_has_ingredient = request.json['Filter_has_ingredient']
         limit=request.json['Limit']
         page=request.json['Page']
 
-        self.__dataBaseLength = db.session.query(Recipe_preview).count()
-
-        #self.__debug_clear_table()
-        #self.__debug_add_recipe()
+        self.__debug_clear_table()
+        self.__debug_add_recipe()
         self.__debug_showList()
 
         if recipeName!=None:
             recipeList=self.__searchForRecipesByName(recipeName)
-        else:
-            recipeList = random.sample(range(1, self.__dataBaseLength), limit)
+        recipeList = self.__filterRecipe(recipeList, filter_cost, filter_time, filter_has_ingredient)
 
         #get JSON file by ID list by limit(control by j)
         recipePreviewTextList=[]
@@ -238,7 +255,7 @@ class recipe_table(Resource):
             if (j>limit):
                 break
 
-        #return recipePreviewTextList, recipePreviewTextList
+        return recipePreviewTextList, recipePreviewTextList
 
 
 # -----------------------------------------------------------------------------

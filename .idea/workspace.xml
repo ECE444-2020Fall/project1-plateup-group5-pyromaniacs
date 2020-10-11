@@ -22,8 +22,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/PlateUp-flask/run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="504">
-              <caret line="223" column="64" selection-start-line="223" selection-start-column="64" selection-end-line="223" selection-end-column="64" />
+            <state relative-caret-position="-2454">
+              <caret line="161" column="19" lean-forward="true" selection-start-line="161" selection-start-column="19" selection-end-line="161" selection-end-column="19" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -43,8 +43,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PlateUp-flask/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="35" column="16" selection-start-line="35" selection-start-column="4" selection-end-line="35" selection-end-column="16" />
+            <state relative-caret-position="-24">
+              <caret line="30" column="7" lean-forward="true" selection-start-line="30" selection-start-column="7" selection-end-line="30" selection-end-column="7" />
               <folding>
                 <element signature="e#0#33#0" expanded="true" />
               </folding>
@@ -55,8 +55,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/PlateUp-flask/initializer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="9" lean-forward="true" selection-start-column="9" selection-end-column="9" />
+            <state relative-caret-position="150">
+              <caret line="8" selection-start-line="8" selection-end-line="8" selection-end-column="39" />
             </state>
           </provider>
         </entry>
@@ -73,6 +73,9 @@
       <find>User</find>
       <find>filter_time</find>
       <find>Ingredient</find>
+      <find>cost</find>
+      <find>engine</find>
+      <find>session.configure</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -189,7 +192,7 @@
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.3134879" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.3134879" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -233,13 +236,6 @@
     <entry file="file://$PROJECT_DIR$/PlateUp-flask/Dockerfile">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/PlateUp-flask/initializer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="9" lean-forward="true" selection-start-column="9" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/PlateUp-flask/requirements.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="621">
@@ -261,10 +257,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/PlateUp-flask/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/PlateUp-flask/initializer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="8" selection-start-line="8" selection-end-line="8" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/PlateUp-flask/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="35" column="16" selection-start-line="35" selection-start-column="4" selection-end-line="35" selection-end-column="16" />
+        <state relative-caret-position="-24">
+          <caret line="30" column="7" lean-forward="true" selection-start-line="30" selection-start-column="7" selection-end-line="30" selection-end-column="7" />
           <folding>
             <element signature="e#0#33#0" expanded="true" />
           </folding>
@@ -273,8 +279,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/PlateUp-flask/run.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="504">
-          <caret line="223" column="64" selection-start-line="223" selection-start-column="64" selection-end-line="223" selection-end-column="64" />
+        <state relative-caret-position="-2454">
+          <caret line="161" column="19" lean-forward="true" selection-start-line="161" selection-start-column="19" selection-end-line="161" selection-end-column="19" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
