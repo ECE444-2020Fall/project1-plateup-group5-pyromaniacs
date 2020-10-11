@@ -152,6 +152,8 @@ class recipe_table(Resource):
 
     __dataBaseLength=0
     __parser=''
+    __debug=True
+    randomPick=False
 
     #Retrive JSON stuff
     def __getJson(self, recipeItem):
@@ -178,6 +180,9 @@ class recipe_table(Resource):
         return recipeList
 
     def __filterRecipe(self, recipeList, filter_cost, filter_time, filter_has_ingredient):
+        if len(recipeList)==0:
+            self.randomPick=True
+            recipeList=db.session.query(Recipe_preview).all()
         recipeList=self.__filterByCost(recipeList, filter_cost)
         recipeList=self.__filterByTime(recipeList, filter_time)
         return recipeList
@@ -234,13 +239,20 @@ class recipe_table(Resource):
         limit=request.json['Limit']
         page=request.json['Page']
 
-        self.__debug_clear_table()
-        self.__debug_add_recipe()
-        self.__debug_showList()
+        if self.__debug==True:
+            self.__debug_clear_table()
+            self.__debug_add_recipe()
+            self.__debug_showList()
 
+        self.randomPick=False
+        #get list
         if recipeName!=None:
             recipeList=self.__searchForRecipesByName(recipeName)
         recipeList = self.__filterRecipe(recipeList, filter_cost, filter_time, filter_has_ingredient)
+
+        #random list
+        if self.randomPick:
+            recipeList = random.choices(recipeList, k=min(len(recipeList),limit))
 
         #get JSON file by ID list by limit(control by j)
         recipePreviewTextList=[]
@@ -254,8 +266,8 @@ class recipe_table(Resource):
             j=j+1
             if (j>limit):
                 break
-
-        return recipePreviewTextList, recipePreviewTextList
+        print(jsonify(recipePreviewMediaList))
+        return jsonify(recipePreviewMediaList, recipePreviewTextList, self.randomPick)
 
 
 # -----------------------------------------------------------------------------
