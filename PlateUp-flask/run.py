@@ -152,24 +152,22 @@ class recipe_table(Resource):
     __dataBaseLength=0
     __parser=''
 
-    #SQL stuff to get json by recipe id
-    def __getJsonByID(self, ID):
-        recipePreviewText = Recipe_preview.query.filter_by(recipe_id=ID).first().name
-        recipePreviewMedia = Recipe_preview.query.filter_by(recipe_id=ID).first().preview_media
+    #Retrive JSON stuff
+    def __getJson(self, recipeItem):
+        recipePreviewText = recipeItem.preview_text
+        recipePreviewMedia = recipeItem.preview_media
         print(recipePreviewText)
         print(recipePreviewMedia)
         return recipePreviewText, recipePreviewMedia
 
-    #call the IR function, but now just a dummy one
-    def __searchForRecipeIDsByName(self, keyword):
+    #Search by Name
+    def __searchForRecipesByName(self, keyword):
         idList=[]
         keywords="%"+keyword+"%"
         recipeList=db.session.query(Recipe_preview).filter(Recipe_preview.name.like(keywords)).all()
-        for i in range(len(recipeList)):
-            idList.append(recipeList[i].recipe_id)
-        return idList
+        return recipeList
 
-    def __showList(self):
+    def __debug_showList(self):
         list=db.session.query(Recipe_preview).all()
         print("current list")
         for i in range(len(list)):
@@ -178,23 +176,38 @@ class recipe_table(Resource):
 
     def __debug_add_recipe(self):
         data = [{'a': 1}]
-        data2=json.dumps(data)
-        print(type(data2))
-        new_recipe1=Recipe_preview('french_meal', data2, 10,data2, data2)
+        data_json=json.dumps(data)
+        data2 = [{'a': 2}]
+        data2_json = json.dumps(data2)
+        data3 = [{'a': 3}]
+        data3_json = json.dumps(data3)
+        data4 = [{'a': 4}]
+        data4_json = json.dumps(data4)
+        data5 = [{'a': 5}]
+        data5_json = json.dumps(data5)
+        new_recipe1 = Recipe_preview('us_meal', data_json, 10,data_json, data_json)
+        new_recipe2 = Recipe_preview('chinese_meal', data2_json, 20, data2_json, data2_json)
+        new_recipe3 = Recipe_preview('uk_meal', data3_json, 30, data3_json, data3_json)
+        new_recipe4 = Recipe_preview('french_meal', data4_json, 40, data4_json, data4_json)
+        new_recipe5 = Recipe_preview('russia_meal', data5_json, 50, data5_json, data5_json)
         db.session.add(new_recipe1)
+        db.session.add(new_recipe2)
+        db.session.add(new_recipe3)
+        db.session.add(new_recipe4)
+        db.session.add(new_recipe5)
         db.session.commit()
-        row=db.session.query(Recipe_preview).all()
-        for i in range(len(row)):
-            print(row[i].name)
+
+    def __debug_clear_table(self):
+        db.session.query(Recipe_preview).delete()
 
     #search recipe by Name and Filter (Filter not implement yet)
     @Recipe_previewR.doc(description="Get recipe preview json by name and filter")
     @Recipe_previewR.expect(resource_fields, validate=True)
     def post(self):
         #get id List
-        idList = []
-
+        recipeList = []
         recipeName=request.json['Name']
+        ingredient=request.json['Ingredient']
         filter_time=request.json['Filter_time']
         filter_cost = request.json['Filter_time']
         filter_has_ingredient = request.json['Filter_has_ingredient']
@@ -203,21 +216,22 @@ class recipe_table(Resource):
 
         self.__dataBaseLength = db.session.query(Recipe_preview).count()
 
+        #self.__debug_clear_table()
         #self.__debug_add_recipe()
+        self.__debug_showList()
 
         if recipeName!=None:
-            idList=self.__searchForRecipeIDsByName(recipeName)
+            recipeList=self.__searchForRecipesByName(recipeName)
         else:
-            idList = random.sample(range(1, self.__dataBaseLength), limit)
+            recipeList = random.sample(range(1, self.__dataBaseLength), limit)
 
         #get JSON file by ID list by limit(control by j)
         recipePreviewTextList=[]
         recipePreviewMediaList=[]
         j=1
 
-        self.__showList()
-        for i in range(page*limit, len(idList)):
-            previewText, previewMedia=self.__getJsonByID(idList[i])
+        for i in range(page*limit, len(recipeList)):
+            previewText, previewMedia=self.__getJson(recipeList[i])
             recipePreviewTextList.append(previewText)
             recipePreviewMediaList.append(previewMedia)
             j=j+1
