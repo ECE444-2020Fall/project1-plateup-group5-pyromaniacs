@@ -3,7 +3,6 @@ PlateUp-reactnative/node_modules/**/*
 PlateUp-reactnative/.expo/*
 PlateUp-reactnative/.expo-shared/*
 PlateUp-reactnative/npm-debug.*
-PlateUp-reactnative/package-lock.json
 PlateUp-reactnative/yarn.lock
 PlateUp-reactnative/*.jks
 PlateUp-reactnative/*.p12
@@ -20,5 +19,4 @@ PlateUp-flask/db.sqlite
 ### Miscellaneous ###
 setup.cfg
 PlateUp-flask/__pycache__
-package-lock.json
 PlateUp-reactnative/.vscode/
