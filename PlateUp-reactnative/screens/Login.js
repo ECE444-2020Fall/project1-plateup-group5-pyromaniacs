@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Button, Icon, Input } from "../components";
 import { argonTheme, Images } from "../constants";
+import env from "../env";
 import { LinearGradient } from "expo-linear-gradient";
 import { Block, Text } from "galio-framework";
 import React from "react";
@@ -23,7 +24,7 @@ class Login extends React.Component {
     password: "",
   }
 
-  handleLogin = (navigation) => {
+  handleLogin = () => {
     // Don't try to log in if some information is missing
     if (this.state.email.length === 0 || this.state.password.length === 0) {
       util.toast("Please fill in all fields.");
@@ -31,7 +32,7 @@ class Login extends React.Component {
     }
 
     // Try POSTing to the server to login
-    axios.post(util.SERVER_URL + "/login", {
+    axios.post(`${env.SERVER_URL}/login`, {
       email: this.state.email,
       password: this.state.password
     })
@@ -45,10 +46,18 @@ class Login extends React.Component {
         res.data.shopping_id,
         res.data.settings_id
       ));
-      navigation.navigate("App");
+      this.props.navigation.navigate("App");
     })
     .catch(err => {
-      util.toast("Login failed! Please confirm that the email and password are correct.");
+      if (err.response.status === 403) {
+        util.toast("Login failed! Please confirm that the email and password are correct.");
+      }
+      else if (err.response.status === 500) {
+        util.toast("Internal server error.")
+      }
+      else {
+        util.toast("Unknown error occurred.")
+      }
     });
   }
 
@@ -116,7 +125,7 @@ class Login extends React.Component {
                     <Button
                       color="primary"
                       style={styles.createButton}
-                      onPress={() => this.handleLogin(this.props.navigation)}
+                      onPress={this.handleLogin}
                     >
                       <Text bold size={14} color={argonTheme.COLORS.WHITE}>
                         Login

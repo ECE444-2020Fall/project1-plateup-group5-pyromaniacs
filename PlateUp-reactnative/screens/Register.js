@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Button, Icon, Input } from "../components";
 import { argonTheme, Images } from "../constants";
+import env from "../env";
 import { LinearGradient } from "expo-linear-gradient";
 import { Block, Checkbox, Text } from "galio-framework";
 import React from "react";
@@ -24,7 +25,7 @@ class Register extends React.Component {
     password: "",
   }
 
-  handleCreateAccount = (navigation) => {
+  handleCreateAccount = () => {
     // Don't try to create an account if some information is missing
     if (this.state.name.length === 0 || this.state.email.length === 0 || this.state.password.length === 0) {
       util.toast("Please fill in all fields.");
@@ -32,14 +33,14 @@ class Register extends React.Component {
     }
 
     // Try POSTing to the server to create an account
-    axios.post(util.SERVER_URL + "/user", {
+    axios.post(`${env.SERVER_URL}/user`, {
         name: this.state.name,
         email: this.state.email,
         password: this.state.password
       })
       .then(() => {
         // If successful, log the user in
-          axios.post(util.SERVER_URL + "/login", {
+          axios.post(`${env.SERVER_URL}/login`, {
             email: this.state.email,
             password: this.state.password
           })
@@ -53,15 +54,29 @@ class Register extends React.Component {
               res.data.shopping_id,
               res.data.settings_id
             ));
-            navigation.navigate("App");
+            this.props.navigation.navigate("App");
           })
           .catch(() => {
-            util.toast("Login failed! Please confirm that the email and password are correct.");
+            if (err.response.status === 403) {
+              util.toast("Login failed! Please confirm that the email and password are correct.");
+            }
+            else if (err.response.status === 500) {
+              util.toast("Internal server error.")
+            }
+            else {
+              util.toast("Unknown error occurred.")
+            }
           });
       })
       .catch(err => {
         if (err.response.status === 409) {
           util.toast(`The user with email ${this.state.email} already exists. Please log in instead.`);
+        }
+        else if (err.response.status === 500) {
+          util.toast("Internal server error.")
+        }
+        else {
+          util.toast("Unknown error occurred.")
         }
       });
   }
@@ -167,7 +182,7 @@ class Register extends React.Component {
                     <Button
                       color="primary"
                       style={styles.createButton}
-                      onPress={() => this.handleCreateAccount(this.props.navigation)}
+                      onPress={this.handleCreateAccount}
                     >
                       <Text bold size={14} color={argonTheme.COLORS.WHITE}>
                         CREATE ACCOUNT
