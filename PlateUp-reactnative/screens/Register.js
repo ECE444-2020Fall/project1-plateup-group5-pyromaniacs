@@ -1,20 +1,86 @@
-import React from "react";
-import {
-  StyleSheet,
-  Dimensions,
-  Image,
-  StatusBar,
-  KeyboardAvoidingView,
-} from "react-native";
-import { Block, Checkbox, Text } from "galio-framework";
-import { LinearGradient } from "expo-linear-gradient";
-
+import axios from "axios";
 import { Button, Icon, Input } from "../components";
 import { argonTheme, Images } from "../constants";
+import env from "../env";
+import { LinearGradient } from "expo-linear-gradient";
+import { Block, Checkbox, Text } from "galio-framework";
+import React from "react";
+import {
+  Dimensions,
+  Image,
+  KeyboardAvoidingView,
+  StatusBar,
+  StyleSheet
+} from "react-native";
+import { userLoggedIn } from "../redux/actions";
+import store from "../redux/store";
+import * as util from "../util";
 
 const { width, height } = Dimensions.get("screen");
 
 class Register extends React.Component {
+  state = {
+    name: "",
+    email: "",
+    password: "",
+  }
+
+  handleCreateAccount = () => {
+    // Don't try to create an account if some information is missing
+    if (this.state.name.length === 0 || this.state.email.length === 0 || this.state.password.length === 0) {
+      util.toast("Please fill in all fields.");
+      return;
+    }
+
+    // Try POSTing to the server to create an account
+    axios.post(`${env.SERVER_URL}/user`, {
+        name: this.state.name,
+        email: this.state.email,
+        password: this.state.password
+      })
+      .then(() => {
+        // If successful, log the user in
+          axios.post(`${env.SERVER_URL}/login`, {
+            email: this.state.email,
+            password: this.state.password
+          })
+          .then(res => {
+            // Set current user and navigate to the main app screen
+            store.dispatch(userLoggedIn(
+              res.data.id,
+              res.data.name,
+              res.data.email,
+              res.data.inventory_id,
+              res.data.shopping_id,
+              res.data.settings_id
+            ));
+            this.props.navigation.navigate("App");
+          })
+          .catch(() => {
+            if (err.response.status === 403) {
+              util.toast("Login failed! Please confirm that the email and password are correct.");
+            }
+            else if (err.response.status === 500) {
+              util.toast("Internal server error.")
+            }
+            else {
+              util.toast("Unknown error occurred.")
+            }
+          });
+      })
+      .catch(err => {
+        if (err.response.status === 409) {
+          util.toast(`The user with email ${this.state.email} already exists. Please log in instead.`);
+        }
+        else if (err.response.status === 500) {
+          util.toast("Internal server error.")
+        }
+        else {
+          util.toast("Unknown error occurred.")
+        }
+      });
+  }
+
   render() {
     return (
       <LinearGradient
@@ -55,6 +121,7 @@ class Register extends React.Component {
                           style={styles.inputIcons}
                         />
                       }
+                      onChangeText={(name) => this.setState({name})}
                     />
                   </Block>
                   <Block width={width * 0.8} style={{ marginBottom: 5 }}>
@@ -70,6 +137,7 @@ class Register extends React.Component {
                           style={styles.inputIcons}
                         />
                       }
+                      onChangeText={(email) => this.setState({email})}
                     />
                   </Block>
                   <Block width={width * 0.8} style={{ marginBottom: 10 }}>
@@ -86,6 +154,7 @@ class Register extends React.Component {
                           style={styles.inputIcons}
                         />
                       }
+                      onChangeText={(password) => this.setState({password})}
                     />
                     <Block row style={styles.passwordCheck}>
                       <Text size={12} color={argonTheme.COLORS.MUTED}>
@@ -110,7 +179,11 @@ class Register extends React.Component {
                       </Text>
                   </Block>
                   <Block middle>
-                    <Button color="primary" style={styles.createButton}>
+                    <Button
+                      color="primary"
+                      style={styles.createButton}
+                      onPress={this.handleCreateAccount}
+                    >
                       <Text bold size={14} color={argonTheme.COLORS.WHITE}>
                         CREATE ACCOUNT
                       </Text>

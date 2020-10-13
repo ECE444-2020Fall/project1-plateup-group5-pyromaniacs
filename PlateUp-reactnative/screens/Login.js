@@ -1,23 +1,67 @@
-import React from "react";
-import {
-  StyleSheet,
-  Dimensions,
-  Image,
-  StatusBar,
-  KeyboardAvoidingView,
-} from "react-native";
-import { Block, Text } from "galio-framework";
-import { LinearGradient } from "expo-linear-gradient";
-
+import axios from "axios";
 import { Button, Icon, Input } from "../components";
 import { argonTheme, Images } from "../constants";
+import env from "../env";
+import { LinearGradient } from "expo-linear-gradient";
+import { Block, Text } from "galio-framework";
+import React from "react";
+import {
+  Dimensions,
+  Image,
+  KeyboardAvoidingView,
+  StatusBar,
+  StyleSheet
+} from "react-native";
+import { userLoggedIn } from "../redux/actions";
+import store from "../redux/store";
+import * as util from "../util";
 
 const { width, height } = Dimensions.get("screen");
 
 class Login extends React.Component {
-  render() {
-    const { navigation } = this.props;
+  state = {
+    email: "",
+    password: "",
+  }
 
+  handleLogin = () => {
+    // Don't try to log in if some information is missing
+    if (this.state.email.length === 0 || this.state.password.length === 0) {
+      util.toast("Please fill in all fields.");
+      return;
+    }
+
+    // Try POSTing to the server to login
+    axios.post(`${env.SERVER_URL}/login`, {
+      email: this.state.email,
+      password: this.state.password
+    })
+    .then(res => {
+      // Set current user and navigate to the main app screen
+      store.dispatch(userLoggedIn(
+        res.data.id,
+        res.data.name,
+        res.data.email,
+        res.data.inventory_id,
+        res.data.shopping_id,
+        res.data.settings_id
+      ));
+      this.props.navigation.navigate("App");
+    })
+    .catch(err => {
+      if (err.response.status === 403) {
+        util.toast("Login failed! Please confirm that the email and password are correct.");
+      }
+      else if (err.response.status === 500) {
+        util.toast("Internal server error.")
+      }
+      else {
+        util.toast("Unknown error occurred.")
+      }
+    });
+  }
+
+  render() {
     return (
       <LinearGradient
         style={styles.container}
@@ -57,6 +101,7 @@ class Login extends React.Component {
                           style={styles.inputIcons}
                         />
                       }
+                      onChangeText={(email) => this.setState({email})}
                     />
                   </Block>
                   <Block width={width * 0.8}>
@@ -73,13 +118,14 @@ class Login extends React.Component {
                           style={styles.inputIcons}
                         />
                       }
+                      onChangeText={(password) => this.setState({password})}
                     />
                   </Block>
                   <Block middle>
                     <Button
                       color="primary"
                       style={styles.createButton}
-                      onPress={() => navigation.navigate("App")}
+                      onPress={this.handleLogin}
                     >
                       <Text bold size={14} color={argonTheme.COLORS.WHITE}>
                         Login

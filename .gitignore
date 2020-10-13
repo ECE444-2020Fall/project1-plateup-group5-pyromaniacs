@@ -1,15 +1,22 @@
-# Expo
-PlateUp-reactnative/.expo
-PlateUp-reactnative/.expo-shared
+### React Native ###
+PlateUp-reactnative/node_modules/**/*
+PlateUp-reactnative/.expo/*
+PlateUp-reactnative/.expo-shared/*
+PlateUp-reactnative/npm-debug.*
+PlateUp-reactnative/yarn.lock
+PlateUp-reactnative/*.jks
+PlateUp-reactnative/*.p12
+PlateUp-reactnative/*.key
+PlateUp-reactnative/*.mobileprovision
 
-# Node
-PlateUp-reactnative/node_modules
+# Each developer should have a local version of this file
+PlateUp-reactnative/env.js
 
-# Flask
+### Flask ###
 PlateUp-flask/email_config.ini
 PlateUp-flask/db.sqlite
 
-# Miscellaneous
+### Miscellaneous ###
 setup.cfg
 PlateUp-flask/__pycache__
-package-lock.json
+PlateUp-reactnative/.vscode/
