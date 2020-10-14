@@ -169,47 +169,49 @@ class recipeTable(Resource):
         merged_list=oldList+list(in_new_not_old)
         return merged_list
 
-    def __search_in_database_by_keyword_ingredient(self, keywords, oldList):
-        new_elements = db.session.query(Recipe_preview).filter(Recipe_preview.ingredient.like(keywords)).all()
-        return self.__merge_list(oldList, new_elements)
+    def __search_in_database_by_keyword_ingredient(self, keywords):
+        recipe_found = db.session.query(Recipe_preview).filter(Recipe_preview.ingredient.like(keywords)).all()
+        return recipe_found
 
 
-    def __search_in_database_by_keyword_name(self, keywords, oldList):
-        new_elements = db.session.query(Recipe_preview).filter(Recipe_preview.name.like(keywords)).all()
-        return self.__merge_list(oldList, new_elements)
+    def __search_in_database_by_keyword_name(self, keywords):
+        recipe_found = db.session.query(Recipe_preview).filter(Recipe_preview.name.like(keywords)).all()
+        return recipe_found
+
+    def __search_keyword_list_for_search_by_name(self, keyword):
+        keyword_list=[]
+        keyword_list.append("% "+keyword+" %")
+        keyword_list.append("%" + keyword + " %")
+        keyword_list.append("% " + keyword + "%")
+        keyword_list.append("%" + keyword + "%")
+        return keyword_list
+
+    def __search_keyword_list_for_search_by_ingredient(self, keyword):
+        keyword_list=[]
+        keyword_list.append("%\"" + keyword + "\"%")
+        keyword_list.append("%\"" + keyword + " %")
+        keyword_list.append("%" + keyword + "\"%")
+        keyword_list.append("% "+keyword+" %")
+        keyword_list.append("%" + keyword + " %")
+        keyword_list.append("% " + keyword + "%")
+        keyword_list.append("%" + keyword + "%")
+        return keyword_list
+
 
     def __searchForRecipesByName(self, keyword):
-        idList=[]
-        recipe_list=[]
-        keywords="% "+keyword+" %"
-        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
-        keywords = "%" + keyword + " %"
-        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
-        keywords = "% " + keyword + "%"
-        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
-        keywords = "%" + keyword + "%"
-        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
+        recipe_list = []
+        keywordList = self.__search_keyword_list_for_search_by_name(keyword)
+        for i in range(len(keywordList)):
+            new_recipe_list = self.__search_in_database_by_keyword_name(keywordList[i])
+            recipe_list = self.__merge_list(recipe_list, new_recipe_list)
         return recipe_list
 
     def __searchForRecipesByIngredient(self, keyword):
-        idList = []
         recipe_list=[]
-        keywords = "%\"" + keyword + "\"%"
-        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
-        keywords = "%\"" + keyword + " %"
-        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
-        keywords = "%" + keyword + "\"%"
-        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
-        keywords = "% " + keyword + " %"
-        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
-        keywords = "%" + keyword + " %"
-        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
-        keywords = "% " + keyword + "%"
-        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
-        keywords = "%" + keyword + "%"
-        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
-       # myset = set(recipe_list)
-       # recipe_list=list(myset)
+        keywordList=self.__search_keyword_list_for_search_by_ingredient(keyword)
+        for i in range(len(keywordList)):
+            new_recipe_list = self.__search_in_database_by_keyword_ingredient(keywordList[i])
+            recipe_list=self.__merge_list(recipe_list, new_recipe_list)
         return recipe_list
     '''
     filterRecipe
@@ -290,10 +292,11 @@ class recipeTable(Resource):
         self.random_pick=False
         #get list
         if recipe_name!=None:
-            recipe_list=self.__searchForRecipesByName(recipe_name)
+            recipe_list_name=self.__searchForRecipesByName(recipe_name)
         if ingredient!=None:
-            recipe_list=self.__searchForRecipesByIngredient(ingredient)
+            recipe_list_ingredient=self.__searchForRecipesByIngredient(ingredient)
 
+        recipe_list=self.__merge_list(recipe_list_name, recipe_list_ingredient)
         recipe_list = self.__filterRecipe(recipe_list, filter_cost, filter_time, filter_has_ingredient)
 
         #random list
