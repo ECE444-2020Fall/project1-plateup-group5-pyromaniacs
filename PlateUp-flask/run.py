@@ -152,7 +152,7 @@ class recipeTable(Resource):
 
     __dataBaseLength=0
     __parser=''
-    __debug=False
+    __debug=True
     random_pick=False
 
     #Retrive JSON stuff
@@ -162,10 +162,54 @@ class recipeTable(Resource):
         return recipePreviewText, recipePreviewMedia
 
     #Search by Name
+    def __merge_list(self, oldList, newList):
+        in_old = set(oldList)
+        in_new = set(newList)
+        in_new_not_old=in_new-in_old
+        merged_list=oldList+list(in_new_not_old)
+        return merged_list
+
+    def __search_in_database_by_keyword_ingredient(self, keywords, oldList):
+        new_elements = db.session.query(Recipe_preview).filter(Recipe_preview.ingredient.like(keywords)).all()
+        return self.__merge_list(oldList, new_elements)
+
+
+    def __search_in_database_by_keyword_name(self, keywords, oldList):
+        new_elements = db.session.query(Recipe_preview).filter(Recipe_preview.name.like(keywords)).all()
+        return self.__merge_list(oldList, new_elements)
+
     def __searchForRecipesByName(self, keyword):
         idList=[]
-        keywords="%"+keyword+"%"
-        recipe_list=db.session.query(Recipe_preview).filter(Recipe_preview.name.like(keywords)).all()
+        recipe_list=[]
+        keywords="% "+keyword+" %"
+        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
+        keywords = "%" + keyword + " %"
+        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
+        keywords = "% " + keyword + "%"
+        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
+        keywords = "%" + keyword + "%"
+        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
+        return recipe_list
+
+    def __searchForRecipesByIngredient(self, keyword):
+        idList = []
+        recipe_list=[]
+        keywords = "%\"" + keyword + "\"%"
+        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
+        keywords = "%\"" + keyword + " %"
+        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
+        keywords = "%" + keyword + "\"%"
+        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
+        keywords = "% " + keyword + " %"
+        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
+        keywords = "%" + keyword + " %"
+        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
+        keywords = "% " + keyword + "%"
+        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
+        keywords = "%" + keyword + "%"
+        recipe_list = self.__search_in_database_by_keyword_ingredient(keywords, recipe_list)
+       # myset = set(recipe_list)
+       # recipe_list=list(myset)
         return recipe_list
     '''
     filterRecipe
@@ -195,20 +239,19 @@ class recipeTable(Resource):
         print("current list")
         for i in range(len(list)):
             print(list[i].name)
-            print("cost"+str(list[i].cost))
-            print("time"+str(list[i].time))
+            print("ingredient"+str(list[i].ingredient))
         print("end")
 
     def __debug_add_recipe(self):
-        data = [{'a': 1}]
+        data = [{'apple': 1}]
         data_json=json.dumps(data)
-        data2 = [{'a': 2}]
+        data2 = [{'driedapple': 2}]
         data2_json = json.dumps(data2)
-        data3 = [{'a': 3}]
+        data3 = [{'apple juice': 3}]
         data3_json = json.dumps(data3)
-        data4 = [{'a': 4}]
+        data4 = [{'processed apple process': 4}]
         data4_json = json.dumps(data4)
-        data5 = [{'a': 5}]
+        data5 = [{'trappletr': 5}]
         data5_json = json.dumps(data5)
         new_recipe1 = Recipe_preview('us_meal', data_json, 10, 100, data_json, data_json)
         new_recipe2 = Recipe_preview('chinese_meal', data2_json, 20,200, data2_json, data2_json)
@@ -229,7 +272,7 @@ class recipeTable(Resource):
     @Recipe_previewR.doc(description="Get recipe preview json by name and filter")
     @Recipe_previewR.expect(resource_fields, validate=True)
     def post(self):
-        #get id List
+        #get params
         recipe_list = []
         recipe_name=request.json['Name']
         ingredient=request.json['Ingredient']
@@ -248,6 +291,9 @@ class recipeTable(Resource):
         #get list
         if recipe_name!=None:
             recipe_list=self.__searchForRecipesByName(recipe_name)
+        if ingredient!=None:
+            recipe_list=self.__searchForRecipesByIngredient(ingredient)
+
         recipe_list = self.__filterRecipe(recipe_list, filter_cost, filter_time, filter_has_ingredient)
 
         #random list
