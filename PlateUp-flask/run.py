@@ -61,6 +61,7 @@ class UserAPI(Resource):
     def get(self):
         all_users = User.query.all()
         result = users_schema.dump(all_users)
+        result = {"users": result}
         return jsonify(result)
 
     # @login_required
@@ -313,8 +314,9 @@ class recipeTable(Resource):
 
         recipe_list=recipe_list[page*limit : page*limit+limit]
         result=recipes_schema.dump(recipe_list)
-
-        return jsonify(result, self.random_pick)
+        
+        #dict = {"recipes": result, "is_random": false}
+        return jsonify(dict)
 
 
 # -----------------------------------------------------------------------------
