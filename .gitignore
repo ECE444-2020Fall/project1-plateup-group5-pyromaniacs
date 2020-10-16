@@ -8,6 +8,7 @@ PlateUp-reactnative/*.jks
 PlateUp-reactnative/*.p12
 PlateUp-reactnative/*.key
 PlateUp-reactnative/*.mobileprovision
+PlateUp-reactnative/*.log
 
 # Each developer should have a local version of this file
 PlateUp-reactnative/env.js

@@ -19,33 +19,6 @@ class DrawerItem extends React.Component {
             color={focused ? "white" : argonTheme.COLORS.PRIMARY}
           />
         );
-      case "Elements":
-        return (
-          <Icon
-            name="map-big"
-            family="ArgonExtra"
-            size={14}
-            color={focused ? "white" : argonTheme.COLORS.ERROR}
-          />
-        );
-      case "Articles":
-        return (
-          <Icon
-            name="spaceship"
-            family="ArgonExtra"
-            size={14}
-            color={focused ? "white" : argonTheme.COLORS.PRIMARY}
-          />
-        );
-      case "Profile":
-        return (
-          <Icon
-            name="chart-pie-35"
-            family="ArgonExtra"
-            size={14}
-            color={focused ? "white" : argonTheme.COLORS.WARNING}
-          />
-        );
       case "Account":
         return (
           <Icon
@@ -62,15 +35,20 @@ class DrawerItem extends React.Component {
           size={14}
           color={focused ? "white" : "rgba(0,0,0,0.5)"}
         />);
-      case "Log out":
-        return <Icon />;
+      case "Logout":
+        return (<Icon
+          name="palette"
+          family="ArgonExtra"
+          size={14}
+          color={focused ? "white" : "rgba(0,0,0,0.5)"}
+        />);
       default:
         return null;
     }
   };
 
   render() {
-    const { focused, title, navigation } = this.props;
+    const { focused, title, navigation, navigationScreenName } = this.props;
 
     const containerStyles = [
       styles.defaultStyle,
@@ -80,13 +58,7 @@ class DrawerItem extends React.Component {
     return (
       <TouchableOpacity
         style={{ height: 60 }}
-        onPress={() =>
-          title == "Getting Started"
-            ? Linking.openURL(
-                "https://demos.creative-tim.com/argon-pro-react-native/docs/"
-              ).catch(err => console.error("An error occurred", err))
-            : navigation.navigate(title)
-        }
+        onPress={() => navigationScreenName ? navigation.navigate(navigationScreenName) : {}}
       >
         <Block flex row style={containerStyles}>
           <Block middle flex={0.1} style={{ marginRight: 5 }}>
