@@ -5,8 +5,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { Block } from "galio-framework";
-
 // screens
 import Elements from "../screens/Elements";
 import Articles from "../screens/Articles";
@@ -23,6 +21,7 @@ import CustomDrawerContent from "./Menu";
 
 // header for screens
 import { Header } from "../components";
+import { argonTheme } from "../constants";
 
 const { width } = Dimensions.get("screen");
 
@@ -40,7 +39,7 @@ function ElementsStack(props) {
           header: ({ navigation, scene }) => (
             <Header title="Elements" navigation={navigation} scene={scene} />
           ),
-          cardStyle: { backgroundColor: "#F8F9FE" },
+          cardStyle: { backgroundColor: argonTheme.COLORS.GREY },
         }}
       />
       <Stack.Screen
@@ -74,7 +73,7 @@ function ArticlesStack(props) {
           header: ({ navigation, scene }) => (
             <Header title="Articles" navigation={navigation} scene={scene} />
           ),
-          cardStyle: { backgroundColor: "#F8F9FE" },
+          cardStyle: { backgroundColor: argonTheme.COLORS.GREY },
         }}
       />
       <Stack.Screen
@@ -114,7 +113,7 @@ function ProfileStack(props) {
               scene={scene}
             />
           ),
-          cardStyle: { backgroundColor: "#FFFFFF" },
+          cardStyle: { backgroundColor: argonTheme.COLORS.WHITE },
           headerTransparent: true,
         }}
       />
@@ -139,26 +138,24 @@ function ProfileStack(props) {
   );
 }
 
-function HomeStack(props) {
+function HomeTabs(props) {
   return (
-    <Stack.Navigator
-      mode="card"
-      headerMode="float"
+    <Tab.Navigator
       screenOptions={{
         header: ({ navigation, scene }) => (
           <Header
             title="Home"
             search
-            options
             navigation={navigation}
             scene={scene}
           />
         ),
-        cardStyle: { backgroundColor: "#F8F9FE" },
-      }}>
-      <Stack.Screen name="Recipes" component={Recipes} />
-      <Stack.Screen name="Filters" component={Filters} />
-    </Stack.Navigator>
+        cardStyle: { backgroundColor: argonTheme.COLORS.GREY },
+      }}
+    >
+      <Tab.Screen name="Recipes" component={Recipes} />
+      <Tab.Screen name="Filters" component={Filters} />
+    </Tab.Navigator>
   );
 }
 
@@ -210,7 +207,7 @@ function AppStack(props) {
       }}
       initialRouteName="Home"
     >
-      <Drawer.Screen name="Home" component={HomeStack} />
+      <Drawer.Screen name="Home" component={HomeTabs} />
       <Drawer.Screen name="Profile" component={ProfileStack} />
       <Drawer.Screen name="Registration" component={Register} />
       <Drawer.Screen name="Elements" component={ElementsStack} />

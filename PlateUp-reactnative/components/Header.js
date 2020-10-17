@@ -37,6 +37,7 @@ class Header extends React.Component {
     const { back, navigation } = this.props;
     return (back ? navigation.goBack() : navigation.openDrawer());
   }
+
   renderRight = () => {
     const { white, title, navigation } = this.props;
 
@@ -53,6 +54,7 @@ class Header extends React.Component {
         break;
     }
   }
+
   renderSearch = () => {
     return (
       <Input
@@ -66,37 +68,18 @@ class Header extends React.Component {
       />
     );
   }
-  renderOptions = () => {
-    const { navigation } = this.props;
 
-    return (
-      <Block row style={styles.options}>
-        <Button shadowless style={[styles.tab, styles.divider]} onPress={() => navigation.navigate("Recipes")}>
-          <Block row middle>
-            <Icon size={14} name="diamond" family="ArgonExtra" style={styles.icon} />
-            <Text style={styles.tabTitle}> Recipes </Text>
-          </Block>
-        </Button>
-        <Button shadowless style={styles.tab} onPress={() => navigation.navigate("Filters")}>
-          <Block row middle>
-            <Icon size={14} name="bag-17" family="ArgonExtra" style={styles.icon} />
-            <Text style={styles.tabTitle}> Filters </Text>
-          </Block>
-        </Button>
-      </Block>
-    );
-  }
   renderHeader = () => {
-    const { search, options } = this.props;
-    if (search || options) {
+    if (this.props.search)
+    {
       return (
         <Block center>
-          {search ? this.renderSearch() : null}
-          {options ? this.renderOptions() : null}
+          {this.renderSearch()}
         </Block>
       );
     }
   }
+
   render() {
     const { back, title, white, transparent, bgColor, iconColor, titleColor, navigation, ...props } = this.props;
 
@@ -166,22 +149,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     elevation: 3,
   },
-  notify: {
-    backgroundColor: argonTheme.COLORS.LABEL,
-    borderRadius: 4,
-    height: theme.SIZES.BASE / 2,
-    width: theme.SIZES.BASE / 2,
-    position: 'absolute',
-    top: 9,
-    right: 12,
-  },
-  header: {
-    backgroundColor: theme.COLORS.WHITE,
-  },
-  divider: {
-    borderRightWidth: 0.3,
-    borderRightColor: theme.COLORS.ICON,
-  },
   search: {
     height: 48,
     width: width - 32,
@@ -190,29 +157,6 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     borderColor: argonTheme.COLORS.BORDER
   },
-  options: {
-    marginBottom: 24,
-    marginTop: 10,
-    elevation: 4,
-  },
-  tab: {
-    backgroundColor: theme.COLORS.TRANSPARENT,
-    width: width * 0.35,
-    borderRadius: 0,
-    borderWidth: 0,
-    height: 24,
-    elevation: 0,
-  },
-  tabTitle: {
-    fontSize: 16,
-    lineHeight: 19,
-    fontWeight: '400',
-    color: argonTheme.COLORS.HEADER
-  },
-  icon: {
-    paddingRight: 4,
-    color: argonTheme.COLORS.ICON
-  }
 });
 
 export default withNavigation(Header);
