@@ -1,12 +1,14 @@
 import time
-
+import random
+import json
 from emailservice import send_email_as_plateup
 from flask import jsonify, request, Response
 from flask_login import current_user, login_user, login_required, logout_user
-from flask_restx import fields, Resource
+from flask_restx import fields, Resource, reqparse
 from initializer import api, app, db, login_manager, ma, scheduler
-from models import User
+from models import User, recipe
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask_sqlalchemy import SQLAlchemy
 
 # -----------------------------------------------------------------------------
 # Configure Namespaces
@@ -15,6 +17,7 @@ plateupR = api.namespace('plate-up', description='PlateUp operations')
 userR = api.namespace('user', description='User operations')
 loginR = api.namespace('login', description='Login/logout operations')
 mailR = api.namespace('mail', description='Mailing operations')
+recipeR = api.namespace('recipe', description='Preview of recipe')
 
 
 # -----------------------------------------------------------------------------
@@ -24,11 +27,15 @@ class UserSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name', 'email', 'password', 'settings_id', 'shopping_id', 'inventory_id')
 
+class RecipeSchema(ma.Schema):
+    class Meta:
+        fields = ('id', 'recipe_id', 'name', 'ingredients', 'time_h', 'time_min', 'preview_text', 'preview_media_url')
 
 # Init schemas
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
-
+recipe_schema = RecipeSchema()
+recipes_schema = RecipeSchema(many=True)
 
 # -----------------------------------------------------------------------------
 # Flask API start
@@ -54,6 +61,7 @@ class UserAPI(Resource):
     def get(self):
         all_users = User.query.all()
         result = users_schema.dump(all_users)
+        result = {"users": result}
         return jsonify(result)
 
     # @login_required
@@ -128,6 +136,192 @@ class Mail(Resource):
             return Response("OK - Mail Sent!", status=200)
 
         return Response("NOT OK - Mail NOT Sent!", status=400)
+
+# Recipe-preview API
+@recipeR.route('', methods=['GET', 'POST'])
+class recipeTable(Resource):
+    resourceFields = recipeR.model('Information to get recipe preview', {
+        'Name': fields.String,
+        'Ingredients': fields.String,
+        'Filter_time_h' : fields.Integer,
+        'Filter_time_min': fields.Integer,
+        'Filter_cost': fields.Integer,
+        'Filter_has_ingredients' : fields.Boolean,
+        'Limit': fields.Integer,
+        'Page': fields.Integer,
+    })
+
+    __dataBaseLength=0
+    __parser=''
+    __debug=True
+    random_pick=False
+
+    #Retrive JSON stuff
+    def __getJson(self, recipeItem):
+        recipePreviewText = recipeItem.preview_text
+        recipePreviewMedia = recipeItem.preview_media_url
+        return recipePreviewText, recipePreviewMedia
+
+    #Search by Name
+    def __merge_list(self, oldList, newList):
+        in_old = set(oldList)
+        in_new = set(newList)
+        in_new_not_old=in_new-in_old
+        merged_list=oldList+list(in_new_not_old)
+        return merged_list
+
+    def __search_in_database_by_keyword_ingredient(self, keywords):
+        recipe_found = db.session.query(recipe).filter(recipe.ingredients.like(keywords)).all()
+        return recipe_found
+
+
+    def __search_in_database_by_keyword_name(self, keywords):
+        recipe_found = db.session.query(recipe).filter(recipe.name.like(keywords)).all()
+        return recipe_found
+
+    def __search_keyword_list_for_search_by_name(self, keyword):
+        keyword_list=[]
+        keyword_list.append("% "+keyword+" %")
+        keyword_list.append("%" + keyword + " %")
+        keyword_list.append("% " + keyword + "%")
+        keyword_list.append("%" + keyword + "%")
+        return keyword_list
+
+    def __search_keyword_list_for_search_by_ingredient(self, keyword):
+        keyword_list=[]
+        keyword_list.append("%\"" + keyword + "\"%")
+        keyword_list.append("%\"" + keyword + " %")
+        keyword_list.append("%" + keyword + "\"%")
+        keyword_list.append("% "+keyword+" %")
+        keyword_list.append("%" + keyword + " %")
+        keyword_list.append("% " + keyword + "%")
+        keyword_list.append("%" + keyword + "%")
+        return keyword_list
+
+
+    def __search_for_recipes_by_name(self, keyword):
+        recipe_list = []
+        keywordList = self.__search_keyword_list_for_search_by_name(keyword)
+        for i in range(len(keywordList)):
+            new_recipe_list = self.__search_in_database_by_keyword_name(keywordList[i])
+            print(new_recipe_list)
+            recipe_list = self.__merge_list(recipe_list, new_recipe_list)
+        return recipe_list
+
+    def __search_for_recipes_by_ingredient(self, keyword):
+        recipe_list=[]
+        keywordList=self.__search_keyword_list_for_search_by_ingredient(keyword)
+        for i in range(len(keywordList)):
+            new_recipe_list = self.__search_in_database_by_keyword_ingredient(keywordList[i])
+            print(new_recipe_list)
+            recipe_list=self.__merge_list(recipe_list, new_recipe_list)
+        return recipe_list
+    '''
+    filterRecipe
+    '''
+    def __filter_by_cost(self, recipe_list, filter_cost):
+        recipe_list = [recipe for recipe in recipe_list if recipe.cost <= int(filter_cost)]
+        return recipe_list
+
+
+    def __filter_by_time(self, recipe_list, filter_time_h, filter_time_min):
+        filter_time_h=int(filter_time_h)
+        filter_time_min=int(filter_time_min)
+        recipe_list_same_h=[recipe for recipe in recipe_list if recipe.time_h == int(filter_time_h) ]
+        recipe_list_same_h = [recipe for recipe in recipe_list_same_h if recipe.time_min <= int(filter_time_min)]
+        recipe_list = [recipe for recipe in recipe_list if recipe.time_h < int(filter_time_h)]
+        recipe_list=recipe_list_same_h+recipe_list
+        return recipe_list
+
+    def __filter_recipe(self, recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredient):
+        if len(recipe_list)==0:
+            self.random_pick=True
+            recipe_list=db.session.query(recipe).all()
+        if filter_cost!=None:
+            recipe_list=self.__filter_by_cost(recipe_list, filter_cost)
+        if filter_time_h != None and filter_time_min!=None:
+            recipe_list=self.__filter_by_time(recipe_list, filter_time_h, filter_time_min)
+        return recipe_list
+
+    '''
+    Debug
+    '''
+    def __debug_show_table(self):
+        list=db.session.query(recipe).all()
+        print("current list")
+        for i in range(len(list)):
+            print(list[i].name)
+            print("ingredient"+str(list[i].ingredients))
+        print("end")
+
+    def __debug_add_recipe(self):
+        data = [{'apple': 1}]
+        data_json=json.dumps(data)
+        data2 = [{'driedapple': 2}]
+        data2_json = json.dumps(data2)
+        data3 = [{'apple juice': 3}]
+        data3_json = json.dumps(data3)
+        data4 = [{'processed apple process': 4}]
+        data4_json = json.dumps(data4)
+        data5 = [{'trappletr': 5}]
+        data5_json = json.dumps(data5)
+        new_recipe1 = recipe('us_meal', data_json, 1, 12, 100, data_json, data_json)
+        new_recipe2 = recipe('chinese_meal', data2_json, 2, 12, 200, data2_json, data2_json)
+        new_recipe3 = recipe('uk_meal', data3_json, 3, 23, 300, data3_json, data3_json)
+        new_recipe4 = recipe('french_meal', data4_json, 4, 45, 400,  data4_json, data4_json)
+        new_recipe5 = recipe('russia_meal', data5_json, 5, 50, 500, data5_json, data5_json)
+        db.session.add(new_recipe1)
+        db.session.add(new_recipe2)
+        db.session.add(new_recipe3)
+        db.session.add(new_recipe4)
+        db.session.add(new_recipe5)
+        db.session.commit()
+
+    def __debug_clear_table(self):
+
+        db.session.query(recipe).delete()
+
+    #search recipe by Name and Filter (Filter not implement yet)
+    #Example: http://127.0.0.1:5000/recipe?Name=%22meal%22&Ingredients=%22meal%22&Filter_time_h=10&Filter_time_min=0&Filter_cost=10000&Page=0&Limit=2
+    @recipeR.doc(description="Get recipe preview json by name and filter")
+    def get(self):
+        #get params
+        recipe_list = []
+        recipe_name=request.args.get('Name')
+        ingredients=request.args.get('Ingredients')
+        filter_time_h= request.args.get('Filter_time_h')
+        filter_time_min = request.args.get('Filter_time_min')
+        filter_cost = request.args.get('Filter_cost')
+        filter_has_ingredients = request.args.get('Filter_has_ingredients')
+        limit=int(request.args.get('Limit'))
+        page=int(request.args.get('Page'))
+
+        if self.__debug==True:
+            self.__debug_clear_table()
+            self.__debug_add_recipe()
+            self.__debug_show_table()
+
+        self.random_pick=False
+        #get list
+        recipe_list_name=[]
+        recipe_list_ingredient=[]
+        if recipe_name!=None:
+            recipe_list_name=self.__search_for_recipes_by_name(recipe_name)
+        if ingredients!=None:
+            recipe_list_ingredient=self.__search_for_recipes_by_ingredient(ingredients)
+
+        recipe_list=self.__merge_list(recipe_list_name, recipe_list_ingredient)
+        recipe_list = self.__filter_recipe(recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredients)
+        print(max(len(recipe_list_name), len(recipe_list_ingredient)))
+        #random list
+        if self.random_pick:
+            recipe_list = random.sample(recipe_list, k=min(len(recipe_list),int(limit)))
+
+        recipe_list=recipe_list[page*limit : page*limit+limit]
+        return_result=recipes_schema.dump(recipe_list)
+        
+        return_dict = {"recipes": return_result, "is_random": self.random_pick}
+        return jsonify(return_dict)
 
 
 # -----------------------------------------------------------------------------
