@@ -25,7 +25,7 @@ class DrawerItem extends React.Component {
             name="calendar-date"
             family="ArgonExtra"
             size={14}
-            color={focused ? "white" : "rgba(0,0,0,0.5)"}
+            color={focused ? "white" : argonTheme.COLORS.TEXT_COLOR}
           />
         );
       case "Getting Started":
@@ -33,14 +33,14 @@ class DrawerItem extends React.Component {
           name="spaceship"
           family="ArgonExtra"
           size={14}
-          color={focused ? "white" : "rgba(0,0,0,0.5)"}
+          color={focused ? "white" : argonTheme.COLORS.TEXT_COLOR}
         />);
       case "Logout":
         return (<Icon
           name="palette"
           family="ArgonExtra"
           size={14}
-          color={focused ? "white" : "rgba(0,0,0,0.5)"}
+          color={focused ? "white" : argonTheme.COLORS.TEXT_COLOR}
         />);
       default:
         return null;
@@ -68,7 +68,7 @@ class DrawerItem extends React.Component {
             <Text
               size={15}
               bold={focused ? true : false}
-              color={focused ? "white" : "rgba(0,0,0,0.5)"}
+              color={focused ? "white" : argonTheme.COLORS.TEXT_COLOR}
             >
               {title}
             </Text>
