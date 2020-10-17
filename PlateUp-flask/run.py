@@ -152,7 +152,7 @@ class recipeTable(Resource):
 
     __dataBaseLength=0
     __parser=''
-    __debug=False
+    __debug=True
     random_pick=False
 
     #Retrive JSON stuff
@@ -203,7 +203,6 @@ class recipeTable(Resource):
         keywordList = self.__search_keyword_list_for_search_by_name(keyword)
         for i in range(len(keywordList)):
             new_recipe_list = self.__search_in_database_by_keyword_name(keywordList[i])
-            print(new_recipe_list)
             recipe_list = self.__merge_list(recipe_list, new_recipe_list)
         return recipe_list
 
@@ -212,7 +211,6 @@ class recipeTable(Resource):
         keywordList=self.__search_keyword_list_for_search_by_ingredient(keyword)
         for i in range(len(keywordList)):
             new_recipe_list = self.__search_in_database_by_keyword_ingredient(keywordList[i])
-            print(new_recipe_list)
             recipe_list=self.__merge_list(recipe_list, new_recipe_list)
         return recipe_list
     '''
@@ -287,7 +285,7 @@ class recipeTable(Resource):
         new_recipe_name=request.json["Name"]
         new_recipe_ingredients=request.json["Ingredients"]
         new_recipe_time_h =request.json["time_h"]
-        new_recipe_time_min = request.json["time_h"]
+        new_recipe_time_min = request.json["time_min"]
         new_recipe_cost = request.json["cost"]
         new_recipe_preview_text = request.json["preview_text"]
         new_recipe_preview_media_url = request.json["preview_media_url"]
@@ -328,8 +326,8 @@ class recipeTable(Resource):
         page=int(request.args.get('Page'))
 
         if self.__debug==True:
-            self.__debug_clear_table()
-            self.__debug_add_recipe()
+            #self.__debug_clear_table()
+            #self.__debug_add_recipe()
             self.__debug_show_table()
 
         self.random_pick=False
