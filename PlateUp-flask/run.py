@@ -205,6 +205,7 @@ class recipeTable(Resource):
         keywordList = self.__search_keyword_list_for_search_by_name(keyword)
         for i in range(len(keywordList)):
             new_recipe_list = self.__search_in_database_by_keyword_name(keywordList[i])
+            print(new_recipe_list)
             recipe_list = self.__merge_list(recipe_list, new_recipe_list)
         return recipe_list
 
@@ -213,6 +214,7 @@ class recipeTable(Resource):
         keywordList=self.__search_keyword_list_for_search_by_ingredient(keyword)
         for i in range(len(keywordList)):
             new_recipe_list = self.__search_in_database_by_keyword_ingredient(keywordList[i])
+            print(new_recipe_list)
             recipe_list=self.__merge_list(recipe_list, new_recipe_list)
         return recipe_list
     '''
@@ -301,22 +303,22 @@ class recipeTable(Resource):
         recipe_list_name=[]
         recipe_list_ingredient=[]
         if recipe_name!=None:
-            recipe_list_name=self.__search_for_recipes_by_ingredient(recipe_name)
+            recipe_list_name=self.__search_for_recipes_by_name(recipe_name)
         if ingredients!=None:
-            recipe_list_ingredient=self.__search_for_recipes_by_name(ingredients)
+            recipe_list_ingredient=self.__search_for_recipes_by_ingredient(ingredients)
 
         recipe_list=self.__merge_list(recipe_list_name, recipe_list_ingredient)
         recipe_list = self.__filter_recipe(recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredients)
-
+        print(max(len(recipe_list_name), len(recipe_list_ingredient)))
         #random list
         if self.random_pick:
             recipe_list = random.sample(recipe_list, k=min(len(recipe_list),int(limit)))
 
         recipe_list=recipe_list[page*limit : page*limit+limit]
-        result=recipes_schema.dump(recipe_list)
+        return_result=recipes_schema.dump(recipe_list)
         
-        #dict = {"recipes": result, "is_random": false}
-        return jsonify(dict)
+        return_dict = {"recipes": return_result, "is_random": self.random_pick}
+        return jsonify(return_dict)
 
 
 # -----------------------------------------------------------------------------
