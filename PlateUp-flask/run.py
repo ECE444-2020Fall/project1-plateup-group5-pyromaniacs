@@ -81,8 +81,7 @@ class UserAPI(Resource):
         db.session.add(new_user)
         db.session.commit()
 
-        userID = User.query.filter_by(email=email).first().id
-        if not sendWelcomeEmail(email, userID):
+        if not sendWelcomeEmail(email, new_user.id):
             return Response("Mail NOT Sent!", status=400)
 
         return user_schema.jsonify(new_user)
@@ -99,20 +98,20 @@ class UserAPI(Resource):
 @loginR.route('')
 class Login(Resource):
     resource_fields = userR.model('Login Information', {
-        'id': fields.String,
+        'email': fields.String,
         'password': fields.String,
     })
 
     @loginR.doc(description="Logging a user into the system and authenticating for access to deeper APIs.")
     @loginR.expect(resource_fields, validate=True)
     def post(self):
-        userId = request.json['id']
+        email = request.json['email']
         password = request.json['password']
-        user = User.query.get(userId)
+        user = User.query.filter_by(email=email).first()
 
         if user is not None and check_password_hash(user.password, password):
             login_user(user)
-            return Response("Login successful. User %s" % userId, status=200)
+            return user_schema.jsonify(user)
 
         return Response("403 Forbidden", status=403)
 
