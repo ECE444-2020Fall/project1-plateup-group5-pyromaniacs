@@ -80,7 +80,7 @@ class Header extends React.Component {
         <Block style={styles.options}>
           <Button shadowless style={[styles.tab]} onPress={() => {this.props.navigation.navigate("Filters")}}>
             <Block row>
-              <Icon size={16} style={styles.icon} name="diamond" family="ArgonExtra" color={argonTheme.COLORS.ICON} />
+              <Icon size={18} style={styles.icon} name="filter" family="Foundation" color={argonTheme.COLORS.ICON} />
               <Text size={16} style={styles.tabTitle}>Filters</Text>
             </Block>
           </Button>
@@ -188,6 +188,7 @@ const styles = StyleSheet.create({
     borderColor: argonTheme.COLORS.BORDER
   },
   icon: {
+    marginTop: 0,
     paddingRight: 8,
   }
 });
