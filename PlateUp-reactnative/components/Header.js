@@ -21,8 +21,8 @@ const BasketButton = ({isWhite, style, navigation}) => (
   </TouchableOpacity>
 );
 
-const SearchButton = ({isWhite, style, navigation}) => (
-  <TouchableOpacity style={[styles.button, style]} onPress={() => {}}>
+const SearchButton = ({isWhite, navigation}) => (
+  <TouchableOpacity style={styles.button} onPress={() => {}}>
     <Icon
       size={16}
       family="Galio"
@@ -111,7 +111,7 @@ class Header extends React.Component {
           style={navbarStyles}
           transparent={transparent}
           right={this.renderRight()}
-          rightStyle={{ alignItems: 'center' }}
+          rightStyle={{ alignItems: 'flex-end', flex: 0.25 }}
           left={
             <Icon
               name={back ? 'chevron-left' : "menu"} family="entypo"
@@ -137,7 +137,6 @@ class Header extends React.Component {
 const styles = StyleSheet.create({
   button: {
     padding: 12,
-    paddingRight: 20,
     position: 'relative',
   },
   title: {
@@ -148,6 +147,9 @@ const styles = StyleSheet.create({
   options: {
     marginBottom: 16,
     marginTop: 10,
+    marginEnd: 28,
+    flexDirection: "column",
+    alignItems: "flex-end"
   },
   tab: {
     backgroundColor: theme.COLORS.TRANSPARENT,
