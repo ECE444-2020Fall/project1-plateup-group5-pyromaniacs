@@ -44,11 +44,12 @@ class Header extends React.Component {
     switch (title) {
       case 'Home':
         return ([
-          <BasketButton key='basket-home' navigation={navigation} isWhite={white} />
-        ]);
-      case 'Search':
-        return ([
-          <BasketButton key='basket-search' navigation={navigation} isWhite={white} />
+          <Button shadowless style={styles.tab} onPress={() => {}}>
+            <Block row>
+              <Text style={styles.inventoryTitle}>Inventory</Text>
+              <BasketButton style={styles.icon} navigation={navigation} isWhite={white} />
+            </Block>
+          </Button>
         ]);
       default:
         break;
@@ -111,7 +112,7 @@ class Header extends React.Component {
           style={navbarStyles}
           transparent={transparent}
           right={this.renderRight()}
-          rightStyle={{ alignItems: 'flex-end', flex: 0.25 }}
+          rightStyle={styles.rightStyle}
           left={
             <Icon
               name={back ? 'chevron-left' : "menu"} family="entypo"
@@ -190,6 +191,17 @@ const styles = StyleSheet.create({
   icon: {
     marginTop: 0,
     paddingRight: 8,
+  },
+  rightStyle: {
+    alignItems: 'flex-end',
+    alignContent: "center",
+    flex: 0.6,
+  },
+  inventoryTitle: {
+    fontSize: 14,
+    marginTop: 11,
+    lineHeight: 19,
+    color: argonTheme.COLORS.HEADER,
   }
 });
 
