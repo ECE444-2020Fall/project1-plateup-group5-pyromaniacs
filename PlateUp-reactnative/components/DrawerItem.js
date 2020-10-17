@@ -25,7 +25,7 @@ class DrawerItem extends React.Component {
             name="calendar-date"
             family="ArgonExtra"
             size={14}
-            color={focused ? "white" : argonTheme.COLORS.INFO}
+            color={focused ? "white" : "rgba(0,0,0,0.5)"}
           />
         );
       case "Getting Started":
