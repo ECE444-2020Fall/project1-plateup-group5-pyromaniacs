@@ -351,44 +351,6 @@ class Elements extends React.Component {
     );
   };
 
-  renderNavigation = () => {
-    return (
-      <Block flex style={styles.group}>
-        <Text bold size={16} style={styles.title}>
-          Navigation
-        </Text>
-        <Block>
-          <Block style={{ marginBottom: theme.SIZES.BASE }}>
-            <Header back title="Title" navigation={this.props.navigation} />
-          </Block>
-
-          <Block style={{ marginBottom: theme.SIZES.BASE }}>
-            <Header white back title="Title" navigation={this.props.navigation} bgColor={argonTheme.COLORS.ACTIVE} titleColor="white" iconColor="white" />
-          </Block>
-
-          <Block style={{ marginBottom: theme.SIZES.BASE }}>
-            <Header search title="Title" navigation={this.props.navigation} />
-          </Block>
-
-          <Block style={{ marginBottom: theme.SIZES.BASE }}>
-            <Header tabs={tabs.categories} search title="Title" navigation={this.props.navigation} />
-          </Block>
-
-          <Block style={{ marginBottom: theme.SIZES.BASE }}>
-            <Header
-              options
-              search
-              title="Title"
-              optionLeft="Option 1"
-              optionRight="Option 2"
-              navigation={this.props.navigation}
-            />
-          </Block>
-        </Block>
-      </Block>
-    );
-  };
-
   render() {
     return (
       <Block flex center>
@@ -398,7 +360,6 @@ class Elements extends React.Component {
           {this.renderInputs()}
           {this.renderSocial()}
           {this.renderSwitches()}
-          {this.renderNavigation()}
           {this.renderTableCell()}
         </ScrollView>
       </Block>

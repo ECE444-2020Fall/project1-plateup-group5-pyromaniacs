@@ -6,7 +6,7 @@ import { Card } from '../components';
 import articles from '../constants/articles';
 const { width } = Dimensions.get('screen');
 
-class Home extends React.Component {
+class Recipes extends React.Component {
   renderArticles = () => {
     return (
       <ScrollView
@@ -27,7 +27,7 @@ class Home extends React.Component {
 
   render() {
     return (
-      <Block flex center style={styles.home}>
+      <Block flex center style={styles.recipes}>
         {this.renderArticles()}
       </Block>
     );
@@ -35,8 +35,8 @@ class Home extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  home: {
-    width: width,    
+  recipes: {
+    width: width,
   },
   articles: {
     width: width - theme.SIZES.BASE * 2,
@@ -44,4 +44,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default Recipes;

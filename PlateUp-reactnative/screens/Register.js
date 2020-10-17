@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { userLoggedIn } from "../redux/actions";
 import store from "../redux/store";
-import * as util from "../util";
+import * as util from "../constants/utils";
 
 const { width, height } = Dimensions.get("screen");
 
