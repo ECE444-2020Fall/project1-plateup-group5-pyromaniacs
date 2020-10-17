@@ -143,17 +143,16 @@ class recipeTable(Resource):
     resourceFields = recipeR.model('Information to get recipe preview', {
         'Name': fields.String,
         'Ingredients': fields.String,
-        'Filter_time_h' : fields.Integer,
-        'Filter_time_min': fields.Integer,
-        'Filter_cost': fields.Integer,
-        'Filter_has_ingredients' : fields.Boolean,
-        'Limit': fields.Integer,
-        'Page': fields.Integer,
+        'time_h' : fields.Integer,
+        'time_min': fields.Integer,
+        'cost': fields.Integer,
+        'preview_text' : fields.String,
+        'preview_media_url': fields.String,
     })
 
     __dataBaseLength=0
     __parser=''
-    __debug=True
+    __debug=False
     random_pick=False
 
     #Retrive JSON stuff
@@ -281,6 +280,38 @@ class recipeTable(Resource):
 
         db.session.query(recipe).delete()
 
+    #insert recipe to database
+    @recipeR.doc(description="Insert recipe to database")
+    @recipeR.expect(resourceFields, validate=True)
+    def post(self):
+        new_recipe_name=request.json["Name"]
+        new_recipe_ingredients=request.json["Ingredients"]
+        new_recipe_time_h =request.json["time_h"]
+        new_recipe_time_min = request.json["time_h"]
+        new_recipe_cost = request.json["cost"]
+        new_recipe_preview_text = request.json["preview_text"]
+        new_recipe_preview_media_url = request.json["preview_media_url"]
+
+        if new_recipe_name==None or new_recipe_ingredients==None \
+            or new_recipe_preview_text==None or new_recipe_preview_media_url==None\
+                or new_recipe_time_h==None or new_recipe_time_min==None or new_recipe_cost==None:
+            return Response("key information missing", status=400)
+
+        if new_recipe_time_min>60:
+            new_recipe_time_h=new_recipe_time_h+int(new_recipe_time_min/60)
+            new_recipe_time_min=new_recipe_time_min%60
+
+        new_recipe=recipe(new_recipe_name, new_recipe_ingredients, new_recipe_time_h,\
+                          new_recipe_time_min, new_recipe_cost, new_recipe_preview_text,\
+                          new_recipe_preview_media_url)
+
+        db.session.add(new_recipe)
+        db.session.commit()
+        if self.__debug:
+            self.__debug_show_table()
+        return Resource("recipe inserted!", status=200)
+
+
     #search recipe by Name and Filter (Filter not implement yet)
     #Example: http://127.0.0.1:5000/recipe?Name=%22meal%22&Ingredients=%22meal%22&Filter_time_h=10&Filter_time_min=0&Filter_cost=10000&Page=0&Limit=2
     @recipeR.doc(description="Get recipe preview json by name and filter")
@@ -312,7 +343,7 @@ class recipeTable(Resource):
 
         recipe_list=self.__merge_list(recipe_list_name, recipe_list_ingredient)
         recipe_list = self.__filter_recipe(recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredients)
-        print(max(len(recipe_list_name), len(recipe_list_ingredient)))
+
         #random list
         if self.random_pick:
             recipe_list = random.sample(recipe_list, k=min(len(recipe_list),int(limit)))
