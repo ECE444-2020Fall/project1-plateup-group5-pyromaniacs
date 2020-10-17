@@ -226,6 +226,8 @@ class recipeTable(Resource):
 
 
     def __filter_by_time(self, recipe_list, filter_time_h, filter_time_min):
+        filter_time_h=int(filter_time_h)
+        filter_time_min=int(filter_time_min)
         recipe_list_same_h=[recipe for recipe in recipe_list if recipe.time_h == int(filter_time_h) ]
         recipe_list_same_h = [recipe for recipe in recipe_list_same_h if recipe.time_min <= int(filter_time_min)]
         recipe_list = [recipe for recipe in recipe_list if recipe.time_h < int(filter_time_h)]
@@ -236,8 +238,10 @@ class recipeTable(Resource):
         if len(recipe_list)==0:
             self.random_pick=True
             recipe_list=db.session.query(recipe).all()
-        recipe_list=self.__filter_by_cost(recipe_list, filter_cost)
-        recipe_list=self.__filter_by_time(recipe_list, filter_time_h, filter_time_min)
+        if filter_cost!=None:
+            recipe_list=self.__filter_by_cost(recipe_list, filter_cost)
+        if filter_time_h != None and filter_time_min!=None:
+            recipe_list=self.__filter_by_time(recipe_list, filter_time_h, filter_time_min)
         return recipe_list
 
     '''
@@ -284,12 +288,12 @@ class recipeTable(Resource):
     def get(self):
         #get params
         recipe_list = []
-        recipe_name=str(request.args.get('Name'))
-        ingredients=str(request.args.get('Ingredients'))
-        filter_time_h= int(request.args.get('Filter_time_h'))
-        filter_time_min = int(request.args.get('Filter_time_min'))
-        filter_cost = int(request.args.get('Filter_cost'))
-        filter_has_ingredients = bool(request.args.get('Filter_has_ingredients'))
+        recipe_name=request.args.get('Name')
+        ingredients=request.args.get('Ingredients')
+        filter_time_h= request.args.get('Filter_time_h')
+        filter_time_min = request.args.get('Filter_time_min')
+        filter_cost = request.args.get('Filter_cost')
+        filter_has_ingredients = request.args.get('Filter_has_ingredients')
         limit=int(request.args.get('Limit'))
         page=int(request.args.get('Page'))
 
