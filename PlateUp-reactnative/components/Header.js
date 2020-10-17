@@ -70,14 +70,23 @@ class Header extends React.Component {
   }
 
   renderHeader = () => {
-    if (this.props.search)
-    {
-      return (
+    const { white, title, navigation } = this.props;
+
+    return (
+      <Block>
         <Block center>
-          {this.renderSearch()}
+          {this.props.search ? this.renderSearch() : null}
         </Block>
-      );
-    }
+        <Block style={styles.options}>
+          <Button shadowless style={[styles.tab]} onPress={() => {this.props.navigation.navigate("Filters")}}>
+            <Block row>
+              <Icon size={16} style={styles.icon} name="diamond" family="ArgonExtra" color={argonTheme.COLORS.ICON} />
+              <Text size={16} style={styles.tabTitle}>Filters</Text>
+            </Block>
+          </Button>
+        </Block>
+      </Block>
+    );
   }
 
   render() {
@@ -104,9 +113,9 @@ class Header extends React.Component {
           right={this.renderRight()}
           rightStyle={{ alignItems: 'center' }}
           left={
-            <Icon 
-              name={back ? 'chevron-left' : "menu"} family="entypo" 
-              size={20} onPress={this.handleLeftPress} 
+            <Icon
+              name={back ? 'chevron-left' : "menu"} family="entypo"
+              size={20} onPress={this.handleLeftPress}
               color={iconColor || (white ? argonTheme.COLORS.WHITE : argonTheme.COLORS.ICON)}
               style={{ marginTop: 2 }}
             />
@@ -128,12 +137,31 @@ class Header extends React.Component {
 const styles = StyleSheet.create({
   button: {
     padding: 12,
+    paddingRight: 20,
     position: 'relative',
   },
   title: {
     width: '100%',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  options: {
+    marginBottom: 16,
+    marginTop: 10,
+  },
+  tab: {
+    backgroundColor: theme.COLORS.TRANSPARENT,
+    width: width * 0.35,
+    borderRadius: 0,
+    borderWidth: 0,
+    height: 24,
+    elevation: 0,
+    alignItems: "flex-end"
+  },
+  tabTitle: {
+    lineHeight: 19,
+    fontWeight: '400',
+    color: argonTheme.COLORS.HEADER
   },
   navbar: {
     paddingVertical: 0,
@@ -157,6 +185,9 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     borderColor: argonTheme.COLORS.BORDER
   },
+  icon: {
+    paddingRight: 8,
+  }
 });
 
 export default withNavigation(Header);

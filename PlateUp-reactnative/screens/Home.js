@@ -6,7 +6,7 @@ import { Card } from '../components';
 import articles from '../constants/articles';
 const { width } = Dimensions.get('screen');
 
-class Recipes extends React.Component {
+class Home extends React.Component {
   renderArticles = () => {
     return (
       <ScrollView
@@ -44,4 +44,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Recipes;
+export default Home;

@@ -3,12 +3,11 @@ import { Dimensions } from "react-native";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 // screens
 import Elements from "../screens/Elements";
 import Articles from "../screens/Articles";
-import Recipes from "../screens/Recipes";
+import Home from "../screens/Home";
 import Login from "../screens/Login";
 import Onboarding from "../screens/Onboarding";
 import Pro from "../screens/Pro";
@@ -27,7 +26,6 @@ const { width } = Dimensions.get("screen");
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-const Tab = createBottomTabNavigator();
 
 function ElementsStack(props) {
   return (
@@ -138,24 +136,26 @@ function ProfileStack(props) {
   );
 }
 
-function HomeTabs(props) {
+function HomeStack(props) {
   return (
-    <Tab.Navigator
-      screenOptions={{
-        header: ({ navigation, scene }) => (
-          <Header
-            title="Home"
-            search
-            navigation={navigation}
-            scene={scene}
-          />
-        ),
-        cardStyle: { backgroundColor: argonTheme.COLORS.GREY },
-      }}
-    >
-      <Tab.Screen name="Recipes" component={Recipes} />
-      <Tab.Screen name="Filters" component={Filters} />
-    </Tab.Navigator>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Home"
+        component={Home}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title="Home"
+              search
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          cardStyle: { backgroundColor: argonTheme.COLORS.GREY },
+        }}
+      />
+      <Stack.Screen name="Filters" component={Filters} />
+    </Stack.Navigator>
   );
 }
 
@@ -207,7 +207,7 @@ function AppStack(props) {
       }}
       initialRouteName="Home"
     >
-      <Drawer.Screen name="Home" component={HomeTabs} />
+      <Drawer.Screen name="Home" component={HomeStack} />
       <Drawer.Screen name="Profile" component={ProfileStack} />
       <Drawer.Screen name="Registration" component={Register} />
       <Drawer.Screen name="Elements" component={ElementsStack} />

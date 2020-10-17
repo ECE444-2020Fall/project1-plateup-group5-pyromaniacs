@@ -4,7 +4,7 @@ import { ScrollView, StyleSheet, Dimensions, TouchableOpacity } from "react-nati
 import { Block, Text, Button as GaButton, theme } from "galio-framework";
 // Argon themed components
 import { argonTheme, tabs } from "../constants/";
-import { Button, Select, Icon, Input, Header, Switch } from "../components/";
+import { Button, Icon, Input, Header, Switch } from "../components/";
 
 const { width } = Dimensions.get("screen");
 
@@ -63,17 +63,11 @@ class Elements extends React.Component {
           </Block>
           <Block row space="evenly">
             <Block flex left>
-              <Select
-                defaultIndex={1}
-                options={["01", "02", "03", "04", "05"]}
-              />
-            </Block>
-            <Block flex center>
               <Button small center color="default" style={styles.optionsButton}>
                 DELETE
               </Button>
             </Block>
-            <Block flex={1.25} right>
+            <Block flex right>
               <Button center color="default" style={styles.optionsButton}>
                 SAVE FOR LATER
               </Button>
