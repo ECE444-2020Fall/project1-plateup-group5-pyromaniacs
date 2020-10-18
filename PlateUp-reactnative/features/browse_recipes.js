@@ -5,34 +5,34 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 // Created using Redux Toolkit documentation example
 
 const initialState = {
-    recipePreviews: [],
+    recipes: [],
     status: "idle",
     error: null
 }
 
-export const fetchRecipePreviews = createAsyncThunk('recipe_previews/fetchRecipePreviews', async () => {
+export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRecipes', async () => {
     const response = await axios.get(`${env.SERVER_URL}/recipe`);
     return response.data;
 })
   
-const recipePreviewsSlice = createSlice({
-    name: 'recipePreviews',
+const browseRecipesSlice = createSlice({
+    name: 'browseRecipes',
     initialState,
     reducers: {},
     extraReducers: {
-        [fetchRecipePreviews.pending]: (state) => {
+        [fetchBrowseRecipes.pending]: (state) => {
             state.status = 'fetching'
             state.error = null
         },
-        [fetchRecipePreviews.fulfilled]: (state, action) => {
+        [fetchBrowseRecipes.fulfilled]: (state, action) => {
             state.status = 'success'
-            state.recipePreviews = action.payload
+            state.recipes = action.payload
         },
-        [fetchRecipePreviews.rejected]: (state, action) => {
+        [fetchBrowseRecipes.rejected]: (state, action) => {
             state.status = 'failed'
             state.error = action.error.message
         }
     }
 })
 
-export default recipePreviewsSlice.reducer
+export default browseRecipesSlice.reducer

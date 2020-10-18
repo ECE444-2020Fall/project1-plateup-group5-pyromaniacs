@@ -3,7 +3,7 @@ import { StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { connect } from 'react-redux'
 import { Block, theme, Text } from 'galio-framework';
 import { Card } from '../components';
-import { fetchRecipePreviews } from '../features/recipes_preview';
+import { fetchBrowseRecipes } from '../features/browse_recipes';
 const { width } = Dimensions.get('screen');
 
 class Home extends React.Component {
@@ -17,12 +17,21 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    this.props.fetchRecipePreviews()
+    this.props.fetchBrowseRecipes();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.loading == true && this.props.browseRecipes.status == "failure") {
+      this.setState({ loading: false, error: "Something went wrong." })
+    }
+    else if (prevState.loading == true && this.props.browseRecipes.status == "success") {
+      this.setState({ loading: false })
+    }
   }
 
   renderRecipes() {
-    const recipes = this.props.recipes.recipePreviews.recipes
-    let recipeItems = []
+    const recipes = this.props.browseRecipes.recipes.recipes;
+    let recipeItems = [];
 
     for (let recipe of recipes) {
       recipeItems.push({
@@ -35,21 +44,18 @@ class Home extends React.Component {
           icon: require("../assets/imgs/timer.png")
         }
       })
-    }
+    };
 
     const cardsToRender = recipeItems.map((recipeItem, index) => 
       <Card key={index} item={recipeItem} horizontal />
-    )
+    );
 
     return cardsToRender;
   }
 
   render() {
-    const recipePreviews = this.props.recipes;
-    const loading = recipePreviews.status === "idle" || recipePreviews.status === "fetching";
-    const error = recipePreviews && recipePreviews.error;
-
-    console.log(recipePreviews)
+    const loading = this.state.loading;
+    const error = this.state.error;
 
     return (
         <Block flex center style={styles.home}>
@@ -61,10 +67,10 @@ class Home extends React.Component {
             :
             <ScrollView
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.articles}
+              contentContainerStyle={styles.browsingContainer}
             >
               <Block flex>
-                {this.renderRecipes()}
+                {this.props.browseRecipes.recipes && this.renderRecipes()}
               </Block>
             </ScrollView>
           )}
@@ -77,7 +83,7 @@ const styles = StyleSheet.create({
   home: {
     width: width,    
   },
-  articles: {
+  browsingContainer: {
     width: width - theme.SIZES.BASE * 2,
     paddingVertical: theme.SIZES.BASE,
   },
@@ -85,10 +91,10 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    recipes: state.recipePreviews
+    browseRecipes: state.browseRecipes
   }
 }
 
-const mapDispatchToProps = { fetchRecipePreviews };
+const mapDispatchToProps = { fetchBrowseRecipes };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

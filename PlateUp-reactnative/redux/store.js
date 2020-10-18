@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
 import userReducer from './reducer'
-import recipePreviewsReducer from '../features/recipes_preview'
+import browseRecipesReducer from '../features/browse_recipes'
 
 const store = configureStore({
     reducer: {
-        recipePreviews: recipePreviewsReducer,
+        browseRecipes: browseRecipesReducer,
         user: userReducer
     }
 });
