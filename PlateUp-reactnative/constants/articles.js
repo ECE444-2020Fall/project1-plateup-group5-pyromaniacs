@@ -1,6 +1,6 @@
 export default [
   {
-    title: 'Ice cream is made with carrageenan …',
+    title: 'Ice cream is made with carrageenan …Coffee is more than just a drink: It’s …Coffee is more than just a drink: It’s …Coffee is more than just a drink: It’s …Coffee is more than just a drink: It’s …Coffee is more than just a drink: It’s …Coffee is more than just a drink: It’s …Coffee is more than just a drink: It’s …',
     image: 'https://images.unsplash.com/photo-1516559828984-fb3b99548b21?ixlib=rb-1.2.1&auto=format&fit=crop&w=2100&q=80',
     cta: 'View article', 
     horizontal: true
@@ -11,7 +11,7 @@ export default [
     cta: 'View article'
   },
   {
-    title: 'Coffee is more than just a drink: It’s …',
+    title: 'Coffee is more than just a drink: It’s …Coffee is more than just a drink: It’s …Coffee is more than just a drink: It’s …Coffee is more than just a drink: It’s …Coffee is more than just a drink: It’s …Coffee is more than just a drink: It’s …Coffee is more than just a drink: It’s …',
     image: 'https://images.unsplash.com/photo-1500522144261-ea64433bbe27?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2102&q=80',
     cta: 'View article' 
   },

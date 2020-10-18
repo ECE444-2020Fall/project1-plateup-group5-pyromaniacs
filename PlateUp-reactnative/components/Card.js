@@ -9,13 +9,13 @@ import { argonTheme } from '../constants';
 
 class Card extends React.Component {
   render() {
-    const { navigation, item, horizontal, full, style, ctaColor, imageStyle } = this.props;
+    const { navigation, item, tag, horizontal, full, style, ctaColor, imageStyle } = this.props;
     
     const imageStyles = [
       full ? styles.fullImage : styles.horizontalImage,
       imageStyle
     ];
-    const cardContainer = [styles.card, styles.shadow, style];
+    const cardContainer = [styles.card, horizontal ? styles.cardHorizontal : styles.cardVertical, styles.shadow, style];
     const imgContainer = [styles.imageContainer,
       horizontal ? styles.horizontalStyles : styles.verticalStyles,
       styles.shadow
@@ -31,7 +31,15 @@ class Card extends React.Component {
         <TouchableWithoutFeedback onPress={() => {}}>
           <Block flex space="between" style={styles.cardDescription}>
             <Text size={14} style={styles.cardTitle}>{item.title}</Text>
-            <Text size={12} muted={!ctaColor} color={ctaColor || argonTheme.COLORS.ACTIVE} bold>{item.cta}</Text>
+            <Block row space="between">
+              <Text size={12} muted={!ctaColor} color={ctaColor} bold>{item.cta}</Text>
+              { tag &&
+                <Block row style={styles.tagContainer}>
+                  {tag.icon && <Image source={require('../assets/imgs/timer.png')} style={styles.tagImage} />}
+                  <Text size={12} style={styles.tagText}>{tag.text}</Text>
+                </Block>
+              }
+            </Block>
           </Block>
         </TouchableWithoutFeedback>
       </Block>
@@ -39,12 +47,27 @@ class Card extends React.Component {
   }
 }
 
+Card.defaultProps = {
+  ctaColor: argonTheme.COLORS.SECONDARY,
+  handlePress: null,
+  imageStyle: {},
+  tag: {
+    icon: "wow",
+    text: "3h21m"
+  }
+}
+
 Card.propTypes = {
-  item: PropTypes.object,
-  horizontal: PropTypes.bool,
-  full: PropTypes.bool,
   ctaColor: PropTypes.string,
+  full: PropTypes.bool,
+  handlePress: PropTypes.func,
+  horizontal: PropTypes.bool,
   imageStyle: PropTypes.any,
+  item: PropTypes.object,
+  tag: PropTypes.shape({
+    icon: PropTypes.string,
+    text: PropTypes.string
+  })
 }
 
 const styles = StyleSheet.create({
@@ -52,8 +75,13 @@ const styles = StyleSheet.create({
     backgroundColor: theme.COLORS.WHITE,
     marginVertical: theme.SIZES.BASE,
     borderWidth: 0,
-    minHeight: 114,
     marginBottom: 16
+  },
+  cardHorizontal: {
+    maxHeight: 122,
+  },
+  cardVertical: {
+    minHeight: 114,
   },
   cardTitle: {
     flex: 1,
@@ -63,13 +91,8 @@ const styles = StyleSheet.create({
   cardDescription: {
     padding: theme.SIZES.BASE / 2
   },
-  imageContainer: {
-    borderRadius: 3,
-    elevation: 1,
-    overflow: 'hidden',
-  },
-  image: {
-    // borderRadius: 3,
+  fullImage: {
+    height: 215
   },
   horizontalImage: {
     height: 122,
@@ -79,12 +102,13 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
   },
-  verticalStyles: {
-    borderBottomRightRadius: 0,
-    borderBottomLeftRadius: 0
+  image: {
+    // borderRadius: 3,
   },
-  fullImage: {
-    height: 215
+  imageContainer: {
+    borderRadius: 3,
+    elevation: 1,
+    overflow: 'hidden',
   },
   shadow: {
     shadowColor: theme.COLORS.BLACK,
@@ -93,6 +117,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     elevation: 2,
   },
+  tagImage: {
+    height: 20,
+    width: 20
+  },
+  tagText: {
+    lineHeight: 20,
+    color: argonTheme.COLORS.TEXT_COLOR
+  },
+  verticalStyles: {
+    borderBottomRightRadius: 0,
+    borderBottomLeftRadius: 0
+  }
 });
 
 export default withNavigation(Card);
