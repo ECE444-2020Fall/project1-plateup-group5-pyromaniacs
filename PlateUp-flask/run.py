@@ -431,6 +431,9 @@ def fetchRecipes():
         i += 1
 
     response = sp_api.get_random_recipes(number=100)
+    
+    if not os.path.exists('recipes'):
+        os.makedirs('recipes')
 
     with open('recipes/recipes%s.json' % i, 'w') as outfile:
         json.dump(response.json(), outfile, ensure_ascii=False, indent=2)
