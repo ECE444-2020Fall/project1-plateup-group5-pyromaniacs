@@ -1,33 +1,21 @@
-import React from 'react';
 import { withNavigation } from '@react-navigation/compat';
-import { TouchableOpacity, StyleSheet, Platform, Dimensions } from 'react-native';
+import argonTheme from '../constants/Theme';
 import { Button, Block, NavBar, Text, theme } from 'galio-framework';
-
 import Icon from './Icon';
 import Input from './Input';
-import argonTheme from '../constants/Theme';
+import React from 'react';
+import { TouchableOpacity, StyleSheet, Platform, Dimensions } from 'react-native';
 
 const { height, width } = Dimensions.get('window');
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 
-const BasketButton = ({isWhite, style, navigation}) => (
+const BasketButton = ({style, navigation}) => (
   <TouchableOpacity style={[styles.button, style]} onPress={() => {}}>
     <Icon
       family="ArgonExtra"
       size={16}
       name="basket"
-      color={argonTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
-    />
-  </TouchableOpacity>
-);
-
-const SearchButton = ({isWhite, navigation}) => (
-  <TouchableOpacity style={styles.button} onPress={() => {}}>
-    <Icon
-      size={16}
-      family="Galio"
-      name="search-zoom-in"
-      color={theme.COLORS[isWhite ? 'WHITE' : 'ICON']}
+      color={argonTheme.COLORS.ICON}
     />
   </TouchableOpacity>
 );
@@ -39,7 +27,7 @@ class Header extends React.Component {
   }
 
   renderRight = () => {
-    const { white, title, navigation } = this.props;
+    const { title, navigation } = this.props;
 
     switch (title) {
       case "Home":
@@ -47,7 +35,7 @@ class Header extends React.Component {
           <Button shadowless style={styles.tab} onPress={() => {}}>
             <Block row>
               <Text style={styles.inventoryTitle}>Inventory</Text>
-              <BasketButton style={styles.icon} navigation={navigation} isWhite={white} />
+              <BasketButton style={styles.icon} navigation={navigation} />
             </Block>
           </Button>
         );
@@ -71,7 +59,7 @@ class Header extends React.Component {
   }
 
   renderHeader = () => {
-    const { white, title, navigation } = this.props;
+    const { navigation } = this.props;
 
     return (
       <Block>
@@ -79,7 +67,7 @@ class Header extends React.Component {
           {this.props.search ? this.renderSearch() : null}
         </Block>
         <Block style={styles.options}>
-          <Button shadowless style={[styles.tab]} onPress={() => {this.props.navigation.navigate("Filters")}}>
+          <Button shadowless style={[styles.tab]} onPress={() => {navigation.navigate("Filters")}}>
             <Block row>
               <Icon size={18} style={styles.icon} name="filter" family="Foundation" color={argonTheme.COLORS.ICON} />
               <Text size={16} style={styles.tabTitle}>Filters</Text>
@@ -91,7 +79,7 @@ class Header extends React.Component {
   }
 
   render() {
-    const { back, title, white, transparent, bgColor, iconColor, titleColor, navigation, ...props } = this.props;
+    const { back, title, transparent, bgColor, iconColor, titleColor, ...props } = this.props;
 
     const noShadow = ['Search', 'Profile'].includes(title);
     const headerStyles = [
@@ -117,14 +105,14 @@ class Header extends React.Component {
             <Icon
               name={back ? 'chevron-left' : "menu"} family="entypo"
               size={20} onPress={this.handleLeftPress}
-              color={iconColor || (white ? argonTheme.COLORS.WHITE : argonTheme.COLORS.ICON)}
+              color={iconColor || argonTheme.COLORS.ICON}
               style={{ marginTop: 2 }}
             />
           }
           leftStyle={{ paddingVertical: 12, flex: 0.2 }}
           titleStyle={[
             styles.title,
-            { color: argonTheme.COLORS[white ? 'WHITE' : 'HEADER'] },
+            { color: argonTheme.COLORS.HEADER },
             titleColor && { color: titleColor }
           ]}
           {...props}
