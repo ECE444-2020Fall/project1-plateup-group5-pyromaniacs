@@ -9,7 +9,7 @@ import { argonTheme } from '../constants';
 
 class Card extends React.Component {
   render() {
-    const { navigation, item, tag, horizontal, full, style, ctaColor, imageStyle } = this.props;
+    const { navigation, item, horizontal, full, style, ctaColor, imageStyle } = this.props;
     
     const imageStyles = [
       full ? styles.fullImage : styles.horizontalImage,
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     height: 215
   },
   horizontalImage: {
-    minHeight: 122,
+    height: 122,
     width: 'auto',
   },
   horizontalStyles: {
