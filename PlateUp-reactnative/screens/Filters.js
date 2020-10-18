@@ -14,9 +14,7 @@ const defaultFilters = {
 
 class Filters extends React.Component {
   state = {
-    max_cost: "",
-    max_cook_time: "",
-    "recipes-with-your-ingredients": false,
+    ...defaultFilters,
     "activate-filters": true
   };
 
