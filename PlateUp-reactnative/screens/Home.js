@@ -23,12 +23,11 @@ class Home extends React.Component {
   renderRecipes() {
     const recipes = this.props.recipes.recipePreviews.recipes
     let recipeItems = []
-    console.log(recipes)
 
     for (let recipe of recipes) {
       recipeItems.push({
         id: recipe.recipe_id,
-        title: recipe.preview_text,
+        title: recipe.name,
         image: recipe.preview_media_url,
         cta: "View recipe",
         tag: {
@@ -38,8 +37,8 @@ class Home extends React.Component {
       })
     }
 
-    const cardsToRender = recipeItems.map((recipeItem) => 
-      <Card key={recipeItem.recipe_id} item={recipeItem} horizontal />
+    const cardsToRender = recipeItems.map((recipeItem, index) => 
+      <Card key={index} item={recipeItem} horizontal />
     )
 
     return cardsToRender;

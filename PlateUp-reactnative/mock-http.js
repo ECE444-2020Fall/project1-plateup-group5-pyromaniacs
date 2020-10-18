@@ -29,7 +29,7 @@ export default mockHTTP = () => {
                 }
             })
 
-            this.get("/recipes", () => {
+            this.get("/recipe", () => {
                 return {
                     recipes: [
                         { 
@@ -43,21 +43,21 @@ export default mockHTTP = () => {
                         },
                         { 
                             ingredients: {},
-                            name: "Over-roast Prime",
+                            name: "Expresso",
                             preview_media_url: Image.resolveAssetSource(recipe2Img).uri,
-                            preview_text: "Easy to make oven-roast prime...",
+                            preview_text: "Pulling the best shot of expresso...",
                             recipe_id: "2",
-                            time_h: 3, 
-                            time_min: 0 
+                            time_h: 1, 
+                            time_min: 30 
                         },
                         { 
                             ingredients: {},
-                            name: "Expresso",
+                            name: "Over-roast Prime",
                             preview_media_url: Image.resolveAssetSource(recipe3Img).uri,
-                            preview_text: "Pulling the best shot of expresso...",
+                            preview_text: "Easy to make oven-roast prime...",
                             recipe_id: "3",
-                            time_h: 1, 
-                            time_min: 30 
+                            time_h: 3, 
+                            time_min: 0 
                         },
                         { 
                             ingredients: {},

@@ -11,7 +11,7 @@ const initialState = {
 }
 
 export const fetchRecipePreviews = createAsyncThunk('recipe_previews/fetchRecipePreviews', async () => {
-    const response = await axios.get(`${env.SERVER_URL}/recipes`);
+    const response = await axios.get(`${env.SERVER_URL}/recipe`);
     return response.data;
 })
   

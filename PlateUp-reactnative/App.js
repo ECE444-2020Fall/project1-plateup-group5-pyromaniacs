@@ -14,7 +14,8 @@ import { argonTheme } from "./constants";
 
 export default () => {
 
-  mockHTTP();
+  // Uncomment below line if you want to use stub data when running the application
+  // mockHTTP();
   return (
     <Provider store={store}>
       <NavigationContainer>
