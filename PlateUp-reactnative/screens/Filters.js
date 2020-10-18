@@ -3,11 +3,10 @@ import { StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { Block, Button, Text, theme } from 'galio-framework';
 import { Switch, Input } from '../components/';
 import { argonTheme } from "../constants";
-import { TouchableOpacity as TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const { width } = Dimensions.get('screen');
 
-const defaultState = {
+const defaultFilters = {
   max_cost: "",
   max_cook_time: "",
   "recipes-with-your-ingredients": false,
@@ -26,7 +25,17 @@ class Filters extends React.Component {
   }
 
   handleOnPress = () => {
-    console.log(this.state);
+    let filters = {};
+
+    if (this.state["activate-filters"]) {
+      filters = { ...this.state };
+      delete filters["activate-filters"];
+    }
+    else {
+      filters = { ...defaultFilters };
+    }
+
+    console.log("\n\nFilters: ", filters, "\nState: ", this.state);
   }
 
   renderFilters = () => {
