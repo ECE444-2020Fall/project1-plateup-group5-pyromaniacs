@@ -28,7 +28,7 @@ class User(db.Model, UserMixin):
 
 
 class recipe(db.Model):
-    __tablename__ = "Recipe_preview"
+    __tablename__ = "recipe"
     recipe_id = db.Column(db.String(40), primary_key=True)
     name = db.Column(db.String(150))
     ingredients = db.Column(db.String)
@@ -37,8 +37,9 @@ class recipe(db.Model):
     cost = db.Column(db.Float)
     preview_text = db.Column(db.String)
     preview_media_url = db.Column(db.String)
+    tags = db.Column(db.String)
 
-    def __init__(self, name, ingredients, time_h, time_min, cost, preview_text, preview_media):
+    def __init__(self, name, ingredients, time_h, time_min, cost, preview_text, preview_media, tags):
         self.recipe_id = str(uuid1())
         self.name = name
         self.ingredients = ingredients
@@ -47,6 +48,7 @@ class recipe(db.Model):
         self.cost = cost
         self.preview_text = preview_text
         self.preview_media_url = preview_media
+        self.tags = tags
 
 # shopping table
 class ShoppingList(db.Model):

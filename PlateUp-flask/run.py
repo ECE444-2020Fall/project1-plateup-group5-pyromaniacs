@@ -1,14 +1,16 @@
 import time
 import random
 import json
+import os
 from emailservice import send_email_as_plateup
 from flask import jsonify, request, Response
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_restx import fields, Resource, reqparse
-from initializer import api, app, db, login_manager, ma, scheduler
+from initializer import api, app, db, login_manager, ma, scheduler, sp_api
 from models import User, recipe
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
+
 
 # -----------------------------------------------------------------------------
 # Configure Namespaces
@@ -380,18 +382,44 @@ def sendWelcomeEmail(receipient, userID):
 # -----------------------------------------------------------------------------
 # update stuff as a scheduled job while server is active
 @scheduler.scheduled_job('interval', seconds=3600)
-def updateRecipes():
-    print("updating recipes...")
+def fetchRecipes():
+    print("fetching recipes...")
+    i = 0
+    while os.path.exists("recipes/recipes%s.json" % i):
+        i += 1
+
+    response = sp_api.get_random_recipes(number=100)
+
+    with open('recipes/recipes%s.json' % i, 'w') as outfile:
+        json.dump(response.json(), outfile, ensure_ascii=False, indent=2)
+        
     # do some process
     time.sleep(10)
+    print("done fetching recipes.")
+
+@scheduler.scheduled_job('interval', seconds=4000)
+def updateRecipesToDB():
+    print("updating recipes...")
+
+    i = 0
+    while os.path.exists("recipes/recipes%s.json" % i):
+        with open('recipes/recipes%s.json' % i, 'w') as outfile:
+            json.load(outfile)
+            
+            i += 1
+
+       
+    # do some process
+    time.sleep(30)
     print("done updating recipes.")
+
 
 
 # Run Server
 if __name__ == '__main__':
     db.create_all()
     scheduler.start()
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0')
 
     # Terminate background tasks
     scheduler.shutdown()
