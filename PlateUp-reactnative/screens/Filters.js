@@ -1,39 +1,28 @@
-import React from 'react';
-import { StyleSheet, Dimensions, ScrollView } from 'react-native';
-import { Block, Button, Text, theme } from 'galio-framework';
 import { Switch, Input } from '../components/';
 import { argonTheme } from "../constants";
+import { saveFilters } from "../features/filter_settings";
+import { Block, Button, Text, theme } from 'galio-framework';
+import React from 'react';
+import { StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { connect } from "react-redux";
 
 const { width } = Dimensions.get('screen');
 
-const defaultFilters = {
-  max_cost: "",
-  max_cook_time: "",
-  "recipes-with-your-ingredients": false,
-};
-
 class Filters extends React.Component {
-  state = {
-    ...defaultFilters,
-    "activate-filters": true
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.props.filterSettings,
+    };
+  }
 
   handleToggleSwitch = switchId => {
     this.setState({ [switchId]: !this.state[switchId] });
   }
 
   handleOnPress = () => {
-    let filters = {};
-
-    if (this.state["activate-filters"]) {
-      filters = { ...this.state };
-      delete filters["activate-filters"];
-    }
-    else {
-      filters = { ...defaultFilters };
-    }
-
-    console.log("\n\nFilters: ", filters, "\nState: ", this.state);
+    this.props.saveFilters({ ...this.state });
+    this.props.navigation.navigate("Home");
   }
 
   renderFilters = () => {
@@ -44,11 +33,12 @@ class Filters extends React.Component {
           <Input
             style={[
               styles.textInput,
-              !this.state["activate-filters"] && { borderColor: argonTheme.COLORS.MUTED }
+              !this.state.activateFilters && { borderColor: argonTheme.COLORS.MUTED }
             ]}
+            value={this.state.maxCookTime}
             placeholder="e.g 90"
-            onChangeText={max_cook_time => this.setState({ max_cook_time })}
-            editable={this.state["activate-filters"] ? true : false}
+            onChangeText={maxCookTime => this.setState({ maxCookTime })}
+            editable={this.state.activateFilters ? true : false}
           />
         </Block>
         <Block style={styles.filter}>
@@ -56,11 +46,12 @@ class Filters extends React.Component {
           <Input
             style={[
               styles.textInput,
-              !this.state["activate-filters"] && { borderColor: argonTheme.COLORS.MUTED }
+              !this.state.activateFilters && { borderColor: argonTheme.COLORS.MUTED }
             ]}
+            value={this.state.maxCost}
             placeholder="e.g $100"
-            onChangeText={max_cost => this.setState({ max_cost })}
-            editable={this.state["activate-filters"] ? true : false}
+            onChangeText={maxCost => this.setState({ maxCost })}
+            editable={this.state.activateFilters ? true : false}
           />
         </Block>
         <Block style={[styles.filter, { borderBottomWidth: 1 }]}>
@@ -68,20 +59,20 @@ class Filters extends React.Component {
           <Switch
             style={[
               styles.switch,
-              !this.state["activate-filters"] && { opacity: 0.5 }
+              !this.state.activateFilters && { opacity: 0.5 }
             ]}
-            value={this.state["recipes-with-your-ingredients"]}
-            onValueChange={() => this.handleToggleSwitch("recipes-with-your-ingredients")}
-            disabled={this.state["activate-filters"] ? false : true}
+            value={this.state.recipesWithOwnedIngredients}
+            onValueChange={() => this.handleToggleSwitch("recipesWithOwnedIngredients")}
             trackColor={{true: argonTheme.COLORS.PRIMARY, false: argonTheme.COLORS.MUTED}}
+            disabled={this.state.activateFilters ? false : true}
             />
         </Block>
         <Block style={[styles.filter, { borderBottomWidth: 0, paddingVertical: 25 }]}>
           <Text style={[styles.filterText, { fontWeight: "bold" }]}>Activate filters</Text>
           <Switch
             style={styles.switch}
-            value={this.state["activate-filters"]}
-            onValueChange={() => this.handleToggleSwitch("activate-filters")}
+            value={this.state.activateFilters}
+            onValueChange={() => this.handleToggleSwitch("activateFilters")}
             trackColor={{true: argonTheme.COLORS.PRIMARY, false: argonTheme.COLORS.MUTED}}
           />
         </Block>
@@ -153,4 +144,14 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Filters;
+const mapStateToProps = state => {
+  return {
+    filterSettings: state.filterSettings
+  }
+}
+
+const mapDispatchToProps = {
+  saveFilters,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Filters);
