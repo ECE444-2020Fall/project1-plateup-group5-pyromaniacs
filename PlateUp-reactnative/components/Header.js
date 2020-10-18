@@ -42,12 +42,12 @@ class Header extends React.Component {
     const { white, title, navigation } = this.props;
 
     switch (title) {
-      case 'Home':
+      case "Home":
         return ([
           <Button shadowless style={styles.tab} onPress={() => {}}>
             <Block row>
               <Text style={styles.inventoryTitle}>Inventory</Text>
-              <BasketButton style={styles.icon} navigation={navigation} isWhite={white} />
+              <BasketButton key="basket-home" style={styles.icon} navigation={navigation} isWhite={white} />
             </Block>
           </Button>
         ]);
