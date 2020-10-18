@@ -15,7 +15,7 @@ class Card extends React.Component {
       full ? styles.fullImage : styles.horizontalImage,
       imageStyle
     ];
-    const cardContainer = [styles.card, horizontal ? styles.cardHorizontal : styles.cardVertical, styles.shadow, style];
+    const cardContainer = [styles.card, styles.shadow, style];
     const imgContainer = [styles.imageContainer,
       horizontal ? styles.horizontalStyles : styles.verticalStyles,
       styles.shadow
@@ -33,10 +33,10 @@ class Card extends React.Component {
             <Text size={14} style={styles.cardTitle}>{item.title}</Text>
             <Block row space="between">
               <Text size={12} muted={!ctaColor} color={ctaColor} bold>{item.cta}</Text>
-              { tag &&
+              { item.tag &&
                 <Block row style={styles.tagContainer}>
-                  {tag.icon && <Image source={require('../assets/imgs/timer.png')} style={styles.tagImage} />}
-                  <Text size={12} style={styles.tagText}>{tag.text}</Text>
+                  {item.tag.icon && <Image source={item.tag.icon} style={styles.tagImage} />}
+                  <Text size={12} style={styles.tagText}>{item.tag.text}</Text>
                 </Block>
               }
             </Block>
@@ -51,10 +51,6 @@ Card.defaultProps = {
   ctaColor: argonTheme.COLORS.SECONDARY,
   handlePress: null,
   imageStyle: {},
-  tag: {
-    icon: "wow",
-    text: "3h21m"
-  }
 }
 
 Card.propTypes = {
@@ -75,13 +71,8 @@ const styles = StyleSheet.create({
     backgroundColor: theme.COLORS.WHITE,
     marginVertical: theme.SIZES.BASE,
     borderWidth: 0,
-    marginBottom: 16
-  },
-  cardHorizontal: {
-    maxHeight: 122,
-  },
-  cardVertical: {
     minHeight: 114,
+    marginBottom: 16
   },
   cardTitle: {
     flex: 1,
@@ -95,7 +86,7 @@ const styles = StyleSheet.create({
     height: 215
   },
   horizontalImage: {
-    height: 122,
+    minHeight: 122,
     width: 'auto',
   },
   horizontalStyles: {
@@ -109,6 +100,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     elevation: 1,
     overflow: 'hidden',
+    justifyContent: "center"
   },
   shadow: {
     shadowColor: theme.COLORS.BLACK,

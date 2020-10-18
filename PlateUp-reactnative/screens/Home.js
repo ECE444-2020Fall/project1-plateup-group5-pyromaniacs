@@ -3,7 +3,6 @@ import { StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { connect } from 'react-redux'
 import { Block, theme, Text } from 'galio-framework';
 import { Card } from '../components';
-import articles from '../constants/articles';
 import { fetchRecipePreviews } from '../features/recipes_preview';
 const { width } = Dimensions.get('screen');
 
@@ -21,10 +20,35 @@ class Home extends React.Component {
     this.props.fetchRecipePreviews()
   }
 
+  renderRecipes() {
+    const recipes = this.props.recipes.recipePreviews.recipes
+    let recipeItems = []
+    console.log(recipes)
+
+    for (let recipe of recipes) {
+      recipeItems.push({
+        id: recipe.recipe_id,
+        title: recipe.preview_text,
+        image: recipe.preview_media_url,
+        cta: "View recipe",
+        tag: {
+          text: `${recipe.time_h}hr${recipe.time_min}m`,
+          icon: require("../assets/imgs/timer.png")
+        }
+      })
+    }
+
+    const cardsToRender = recipeItems.map((recipeItem) => 
+      <Card key={recipeItem.recipe_id} item={recipeItem} horizontal />
+    )
+
+    return cardsToRender;
+  }
+
   render() {
     const recipePreviews = this.props.recipes;
     const loading = recipePreviews.status === "idle" || recipePreviews.status === "fetching";
-    const error = recipePreviews && recipePreviews.error
+    const error = recipePreviews && recipePreviews.error;
 
     console.log(recipePreviews)
 
@@ -38,14 +62,10 @@ class Home extends React.Component {
             :
             <ScrollView
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.articles}>
+              contentContainerStyle={styles.articles}
+            >
               <Block flex>
-                <Card item={articles[0]} horizontal />
-                <Block flex row>
-                  <Card item={articles[1]} style={{ marginRight: theme.SIZES.BASE }} />
-                  <Card item={articles[2]} />
-                </Block>
-                <Card item={articles[3]} horizontal />
+                {this.renderRecipes()}
               </Block>
             </ScrollView>
           )}
