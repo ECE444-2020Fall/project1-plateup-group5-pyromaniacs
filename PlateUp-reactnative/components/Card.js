@@ -93,9 +93,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
   },
-  image: {
-    // borderRadius: 3,
-  },
   imageContainer: {
     borderRadius: 3,
     elevation: 1,
