@@ -3,29 +3,29 @@ import { Dimensions } from "react-native";
 
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 // screens
 import Home from "../screens/Home";
 import Login from "../screens/Login";
 import Onboarding from "../screens/Onboarding";
 import Register from "../screens/Register";
+import Filters from "../screens/Filters"
 
 // drawer
 import CustomDrawerContent from "./Menu";
 
 // header for screens
 import { Header } from "../components";
+import { argonTheme } from "../constants";
 
 const { width } = Dimensions.get("screen");
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-const Tab = createBottomTabNavigator();
 
 function HomeStack(props) {
   return (
-    <Stack.Navigator mode="card" headerMode="screen">
+    <Stack.Navigator>
       <Stack.Screen
         name="Home"
         component={Home}
@@ -34,14 +34,14 @@ function HomeStack(props) {
             <Header
               title="Home"
               search
-              options
               navigation={navigation}
               scene={scene}
             />
           ),
-          cardStyle: { backgroundColor: "#F8F9FE" },
+          cardStyle: { backgroundColor: argonTheme.COLORS.GREY },
         }}
       />
+      <Stack.Screen name="Filters" component={Filters} />
     </Stack.Navigator>
   );
 }

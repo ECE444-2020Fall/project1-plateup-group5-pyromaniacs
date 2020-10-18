@@ -27,7 +27,7 @@ class Home extends React.Component {
 
   render() {
     return (
-      <Block flex center style={styles.home}>
+      <Block flex center style={styles.recipes}>
         {this.renderArticles()}
       </Block>
     );
@@ -35,8 +35,8 @@ class Home extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  home: {
-    width: width,    
+  recipes: {
+    width: width,
   },
   articles: {
     width: width - theme.SIZES.BASE * 2,
