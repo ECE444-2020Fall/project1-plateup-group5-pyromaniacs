@@ -361,7 +361,6 @@ class RecipeAPI(Resource):
             page = 0
 
         recipe_list=recipe_list[page*limit : page*limit+limit]
- 
         
         return_result=recipes_schema.dump(recipe_list)
         
