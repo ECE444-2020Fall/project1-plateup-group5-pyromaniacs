@@ -80,8 +80,8 @@ class Home extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  home: {
-    width: width,    
+  recipes: {
+    width: width,
   },
   browsingContainer: {
     width: width - theme.SIZES.BASE * 2,
