@@ -20,16 +20,24 @@ class Filters extends React.Component {
     this.setState({ [switchId]: !this.state[switchId] });
   }
 
-  handleOnPress = () => {
+  handleApplyFilters = () => {
     this.props.saveFilters({ ...this.state });
-    this.props.navigation.navigate("Home");
+    // The only way to get to this screen is from the Home screen, so simply go back to it
+    this.props.navigation.goBack();
   }
 
   renderFilters = () => {
     return (
       <ScrollView showsVerticalScrollIndicator={false}>
         <Block style={[styles.filter, { paddingTop: 10 }]}>
-          <Text style={styles.filterText}>Show recipes below a maximum cook time (in minutes)</Text>
+          <Text
+            style={[
+              styles.filterText,
+              !this.state.activateFilters && { opacity: 0.5 },
+            ]}
+          >
+            Show recipes below a maximum cook time (in minutes)
+          </Text>
           <Input
             style={[
               styles.textInput,
@@ -42,7 +50,14 @@ class Filters extends React.Component {
           />
         </Block>
         <Block style={styles.filter}>
-          <Text style={styles.filterText}>Show recipes below a maximum cost</Text>
+          <Text
+            style={[
+              styles.filterText,
+              !this.state.activateFilters && { opacity: 0.5 },
+            ]}
+          >
+            Show recipes below a maximum cost
+          </Text>
           <Input
             style={[
               styles.textInput,
@@ -55,7 +70,14 @@ class Filters extends React.Component {
           />
         </Block>
         <Block style={[styles.filter, { borderBottomWidth: 1 }]}>
-          <Text style={styles.filterText}>Show only recipes you have ingredients for</Text>
+          <Text
+            style={[
+              styles.filterText,
+              !this.state.activateFilters && { opacity: 0.5 },
+            ]}
+          >
+            Show only recipes you have ingredients for
+          </Text>
           <Switch
             style={[
               styles.switch,
@@ -87,7 +109,7 @@ class Filters extends React.Component {
           {this.renderFilters()}
         </Block>
         <Block style={styles.applyFilters}>
-          <Button colour="primary" onPress={this.handleOnPress}>
+          <Button colour="primary" onPress={this.handleApplyFilters}>
             <Text style={styles.buttonText}>Apply Filters</Text>
           </Button>
         </Block>
