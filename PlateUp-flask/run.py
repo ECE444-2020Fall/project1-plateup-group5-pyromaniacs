@@ -145,7 +145,7 @@ class recipeTable(Resource):
         'Ingredients': fields.String,
         'time_h' : fields.Integer,
         'time_min': fields.Integer,
-        'cost': fields.Integer,
+        'cost': fields.Float,
         'preview_text' : fields.String,
         'preview_media_url': fields.String,
     })
@@ -289,11 +289,6 @@ class recipeTable(Resource):
         new_recipe_cost = request.json["cost"]
         new_recipe_preview_text = request.json["preview_text"]
         new_recipe_preview_media_url = request.json["preview_media_url"]
-
-        if new_recipe_name==None or new_recipe_ingredients==None \
-            or new_recipe_preview_text==None or new_recipe_preview_media_url==None\
-                or new_recipe_time_h==None or new_recipe_time_min==None or new_recipe_cost==None:
-            return Response("key information missing", status=400)
 
         if new_recipe_time_min>60:
             new_recipe_time_h=new_recipe_time_h+int(new_recipe_time_min/60)
