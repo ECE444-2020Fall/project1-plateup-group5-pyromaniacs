@@ -43,14 +43,14 @@ class Header extends React.Component {
 
     switch (title) {
       case "Home":
-        return ([
+        return (
           <Button shadowless style={styles.tab} onPress={() => {}}>
             <Block row>
               <Text style={styles.inventoryTitle}>Inventory</Text>
-              <BasketButton key="basket-home" style={styles.icon} navigation={navigation} isWhite={white} />
+              <BasketButton style={styles.icon} navigation={navigation} isWhite={white} />
             </Block>
           </Button>
-        ]);
+        );
       default:
         break;
     }
