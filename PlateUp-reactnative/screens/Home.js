@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { Block, theme, Text } from 'galio-framework';
 import { Card } from '../components';
 import { fetchBrowseRecipes } from '../features/browse_recipes';
+import { argonTheme } from '../constants';
 const { width } = Dimensions.get('screen');
 
 class Home extends React.Component {
@@ -41,7 +42,11 @@ class Home extends React.Component {
         cta: "View recipe",
         tag: {
           text: `${recipe.time_h}hr${recipe.time_min}m`,
-          icon: require("../assets/imgs/timer.png")
+          icon: {
+            name: "clock",
+            family: "Foundation",
+            color: argonTheme.COLORS.TEXT_COLOR
+          }
         }
       })
     };

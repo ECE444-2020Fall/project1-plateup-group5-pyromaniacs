@@ -1,8 +1,9 @@
 import React from 'react';
 import { withNavigation } from '@react-navigation/compat';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions, Image, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
 import { Block, Text, theme } from 'galio-framework';
+import Icon from './Icon';
 
 import { argonTheme } from '../constants';
 
@@ -35,7 +36,7 @@ class Card extends React.Component {
               <Text size={12} muted={!ctaColor} color={ctaColor} bold>{item.cta}</Text>
               { item.tag &&
                 <Block row style={styles.tagContainer}>
-                  {item.tag.icon && <Image source={item.tag.icon} style={styles.tagImage} />}
+                  {item.tag.icon && <Icon size={20} style={styles.tagIcon} name={item.tag.icon.name} family={item.tag.icon.family} color={item.tag.icon.color} />}
                   <Text size={12} style={styles.tagText}>{item.tag.text}</Text>
                 </Block>
               }
@@ -106,9 +107,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     elevation: 2,
   },
-  tagImage: {
-    height: 20,
-    width: 20
+  tagIcon: {
+    paddingRight: 5
   },
   tagText: {
     lineHeight: 20,
