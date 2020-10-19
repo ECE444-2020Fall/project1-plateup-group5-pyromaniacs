@@ -1,14 +1,16 @@
 import time
 import random
 import json
+import os
 from emailservice import send_email_as_plateup
 from flask import jsonify, request, Response
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_restx import fields, Resource, reqparse
-from initializer import api, app, db, login_manager, ma, scheduler
-from models import User, recipe
+from initializer import api, app, db, login_manager, ma, scheduler, sp_api
+from models import User, Recipe, Instruction, ShoppingList
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
+
 
 # -----------------------------------------------------------------------------
 # Configure Namespaces
@@ -29,13 +31,18 @@ class UserSchema(ma.Schema):
 
 class RecipeSchema(ma.Schema):
     class Meta:
-        fields = ('id', 'recipe_id', 'name', 'ingredients', 'time_h', 'time_min', 'preview_text', 'preview_media_url')
+        fields = ('id', 'name', 'ingredients', 'time_h', 'time_min', 'cost', 'preview_text', 'preview_media_url', 'tags')
+
+class InstructionSchema(ma.Schema):
+    class Meta:
+        fields = ('recipe_id', 'step_num', 'step', 'ingredients', 'equipment')
 
 # Init schemas
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 recipe_schema = RecipeSchema()
 recipes_schema = RecipeSchema(many=True)
+instructions_schema = InstructionSchema(many=True)
 
 # -----------------------------------------------------------------------------
 # Flask API start
@@ -75,14 +82,16 @@ class UserAPI(Resource):
         currEmails = flat_list(User.query.with_entities(User.email).all())
         if email in currEmails:
             return Response("Sorry, this user with email " + email + " already exists! Please log in instead.", status=409)
-
+        
         new_user = User(name, email, password)
+
+        if not sendWelcomeEmail(email, new_user.id):
+            return Response("Mail NOT Sent!", status=400)
 
         db.session.add(new_user)
         db.session.commit()
 
-        if not sendWelcomeEmail(email, new_user.id):
-            return Response("Mail NOT Sent!", status=400)
+       
 
         return user_schema.jsonify(new_user)
 
@@ -96,7 +105,7 @@ class UserAPI(Resource):
 
 # Login API
 @loginR.route('')
-class Login(Resource):
+class LoginAPI(Resource):
     resource_fields = userR.model('Login Information', {
         'email': fields.String,
         'password': fields.String,
@@ -124,7 +133,7 @@ class Login(Resource):
 
 # Mail API
 @mailR.route('')
-class Mail(Resource):
+class MailAPI(Resource):
     # @login_required
     @mailR.doc(description="Sends a welcome email to user with their client ID and default password information (Development Email Only).")
     @mailR.param("userID")
@@ -139,7 +148,7 @@ class Mail(Resource):
 
 # Recipe-preview API
 @recipeR.route('', methods=['GET', 'POST'])
-class recipeTable(Resource):
+class RecipeAPI(Resource):
     resourceFields = recipeR.model('Information to get recipe preview', {
         'Name': fields.String,
         'Ingredients': fields.String,
@@ -148,6 +157,7 @@ class recipeTable(Resource):
         'cost': fields.Float,
         'preview_text' : fields.String,
         'preview_media_url': fields.String,
+        'tags': fields.String
     })
 
     __dataBaseLength=0
@@ -170,12 +180,12 @@ class recipeTable(Resource):
         return merged_list
 
     def __search_in_database_by_keyword_ingredient(self, keywords):
-        recipe_found = db.session.query(recipe).filter(recipe.ingredients.like(keywords)).all()
+        recipe_found = db.session.query(Recipe).filter(Recipe.ingredients.like(keywords)).all()
         return recipe_found
 
 
     def __search_in_database_by_keyword_name(self, keywords):
-        recipe_found = db.session.query(recipe).filter(recipe.name.like(keywords)).all()
+        recipe_found = db.session.query(Recipe).filter(Recipe.name.like(keywords)).all()
         return recipe_found
 
     def __search_keyword_list_for_search_by_name(self, keyword):
@@ -233,7 +243,7 @@ class recipeTable(Resource):
     def __filter_recipe(self, recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredient):
         if len(recipe_list)==0:
             self.random_pick=True
-            recipe_list=db.session.query(recipe).all()
+            recipe_list=db.session.query(Recipe).all()
         if filter_cost!=None:
             recipe_list=self.__filter_by_cost(recipe_list, filter_cost)
         if filter_time_h != None and filter_time_min!=None:
@@ -244,7 +254,7 @@ class recipeTable(Resource):
     Debug
     '''
     def __debug_show_table(self):
-        list=db.session.query(recipe).all()
+        list=db.session.query(Recipe).all()
         print("current list")
         for i in range(len(list)):
             print(list[i].name)
@@ -262,11 +272,11 @@ class recipeTable(Resource):
         data4_json = json.dumps(data4)
         data5 = [{'trappletr': 5}]
         data5_json = json.dumps(data5)
-        new_recipe1 = recipe('us_meal', data_json, 1, 12, 100, data_json, data_json)
-        new_recipe2 = recipe('chinese_meal', data2_json, 2, 12, 200, data2_json, data2_json)
-        new_recipe3 = recipe('uk_meal', data3_json, 3, 23, 300, data3_json, data3_json)
-        new_recipe4 = recipe('french_meal', data4_json, 4, 45, 400,  data4_json, data4_json)
-        new_recipe5 = recipe('russia_meal', data5_json, 5, 50, 500, data5_json, data5_json)
+        new_recipe1 = Recipe('us_meal', data_json, 1, 12, 100, data_json, data_json)
+        new_recipe2 = Recipe('chinese_meal', data2_json, 2, 12, 200, data2_json, data2_json)
+        new_recipe3 = Recipe('uk_meal', data3_json, 3, 23, 300, data3_json, data3_json)
+        new_recipe4 = Recipe('french_meal', data4_json, 4, 45, 400,  data4_json, data4_json)
+        new_recipe5 = Recipe('russia_meal', data5_json, 5, 50, 500, data5_json, data5_json)
         db.session.add(new_recipe1)
         db.session.add(new_recipe2)
         db.session.add(new_recipe3)
@@ -276,7 +286,7 @@ class recipeTable(Resource):
 
     def __debug_clear_table(self):
 
-        db.session.query(recipe).delete()
+        db.session.query(Recipe).delete()
 
     #insert recipe to database
     @recipeR.doc(description="Insert recipe to database")
@@ -289,14 +299,15 @@ class recipeTable(Resource):
         new_recipe_cost = request.json["cost"]
         new_recipe_preview_text = request.json["preview_text"]
         new_recipe_preview_media_url = request.json["preview_media_url"]
+        new_recipe_tags = request.json["tags"]
 
         if new_recipe_time_min>60:
             new_recipe_time_h=new_recipe_time_h+int(new_recipe_time_min/60)
             new_recipe_time_min=new_recipe_time_min%60
 
-        new_recipe=recipe(new_recipe_name, new_recipe_ingredients, new_recipe_time_h,\
+        new_recipe=Recipe(new_recipe_name, new_recipe_ingredients, new_recipe_time_h,\
                           new_recipe_time_min, new_recipe_cost, new_recipe_preview_text,\
-                          new_recipe_preview_media_url)
+                          new_recipe_preview_media_url, new_recipe_tags)
 
         db.session.add(new_recipe)
         db.session.commit()
@@ -307,7 +318,16 @@ class recipeTable(Resource):
 
     #search recipe by Name and Filter (Filter not implement yet)
     #Example: http://127.0.0.1:5000/recipe?Name=%22meal%22&Ingredients=%22meal%22&Filter_time_h=10&Filter_time_min=0&Filter_cost=10000&Page=0&Limit=2
-    @recipeR.doc(description="Get recipe preview json by name and filter")
+    @recipeR.doc(description="Get recipe preview json by name and filter", 
+            params={'Name': {'description': 'search by recipe name', 'type': 'string'},
+                    'Ingredients': {'description': 'search by comma separated ingredidents', 'type': 'string'},
+                    'Filter_time_h': {'description': 'filter by max hours', 'type': 'int'},
+                    'Filter_time_min': {'description': 'filter by max minutes (<60)', 'type': 'int'},
+                    'Filter_cost': {'description': 'filter by max cost', 'type': 'float'},
+                    'Filter_has_ingredients': {'description': 'filter by if user has all the appropriate ingredients', 'type': 'boolean'},
+                    'Limit': {'description': 'number of recipes to return', 'type': 'int'},
+                    'Page': {'description': 'page number (page\*limit -> page\*limit + limit range returned)', 'type': 'int'}
+                    })
     def get(self):
         #get params
         recipe_list = []
@@ -317,13 +337,13 @@ class recipeTable(Resource):
         filter_time_min = request.args.get('Filter_time_min')
         filter_cost = request.args.get('Filter_cost')
         filter_has_ingredients = request.args.get('Filter_has_ingredients')
-        limit=int(request.args.get('Limit'))
-        page=int(request.args.get('Page'))
+        limit=int(request.args.get('Limit')) if request.args.get('Limit') else 20
+        page=int(request.args.get('Page')) if request.args.get('Page') else 0
 
-        if self.__debug==True:
+        #if self.__debug==True:
             #self.__debug_clear_table()
             #self.__debug_add_recipe()
-            self.__debug_show_table()
+            #self.__debug_show_table()
 
         self.random_pick=False
         #get list
@@ -340,8 +360,10 @@ class recipeTable(Resource):
         #random list
         if self.random_pick:
             recipe_list = random.sample(recipe_list, k=min(len(recipe_list),int(limit)))
+            page = 0
 
         recipe_list=recipe_list[page*limit : page*limit+limit]
+        
         return_result=recipes_schema.dump(recipe_list)
         
         return_dict = {"recipes": return_result, "is_random": self.random_pick}
@@ -404,18 +426,106 @@ def sendWelcomeEmail(receipient, userID):
 # -----------------------------------------------------------------------------
 # update stuff as a scheduled job while server is active
 @scheduler.scheduled_job('interval', seconds=3600)
-def updateRecipes():
-    print("updating recipes...")
+def fetchRecipes():
+    print("fetching recipes...")
+    i = 0
+    while os.path.exists("recipes/recipes%s.json" % i):
+        i += 1
+
+    response = sp_api.get_random_recipes(number=100)
+    
+    if not os.path.exists('recipes'):
+        os.makedirs('recipes')
+
+    with open('recipes/recipes%s.json' % i, 'w') as outfile:
+        json.dump(response.json(), outfile, ensure_ascii=False, indent=2)
+        
     # do some process
     time.sleep(10)
+    print("done fetching recipes.")
+
+    # update recipes
+    updateRecipesToDB()
+
+def updateRecipesToDB():
+    print("updating recipes...")
+
+    i = 0
+    while os.path.exists("recipes/recipes%s.json" % i):
+        with open('recipes/recipes%s.json' % i, 'r') as outfile:
+            print("processing recipes %s - %s..."%(i*100, i*100+100))
+            recipes = json.load(outfile)
+            i += 1
+            try: 
+                for recipe in recipes['recipes']:
+                    if Recipe.query.filter_by(name=recipe["title"]).first():
+                        continue 
+
+                    new_recipe_name=recipe["title"]
+
+                    ingredients = {}
+                    for ingredient in recipe["extendedIngredients"]:
+                        ingredients[ingredient["name"]] = str(ingredient["amount"]) + " " + ingredient["unit"]
+
+                    new_recipe_ingredients=json.dumps(ingredients)
+                    new_recipe_time_h = 0
+                    new_recipe_time_min = int(recipe["cookingMinutes"]) if "cookingMinutes" in recipe else 60
+                    new_recipe_time_min =+ int(recipe["preparationMinutes"]) if "preparationMinutes" in recipe else 0
+                    new_recipe_cost = recipe["pricePerServing"]
+                    new_recipe_preview_text = recipe["summary"]
+                    new_recipe_preview_media_url = recipe["image"]
+                    new_recipe_tags = constructRecipeTags(recipe)
+                
+                    if new_recipe_time_min>60:
+                        new_recipe_time_h=new_recipe_time_h+int(new_recipe_time_min/60)
+                        new_recipe_time_min=new_recipe_time_min%60
+
+                    new_recipe=Recipe(new_recipe_name, new_recipe_ingredients, new_recipe_time_h,\
+                                    new_recipe_time_min, new_recipe_cost, new_recipe_preview_text,\
+                                    new_recipe_preview_media_url, new_recipe_tags)
+
+                    updateInstructionsToDB(new_recipe.id, recipe["analyzedInstructions"][0]["steps"])
+                    db.session.add(new_recipe)
+                    db.session.commit()
+
+            except Exception as e:
+                print("recipe not updated due to missing fields or other error: %s \n"%e)
+
     print("done updating recipes.")
+
+def updateInstructionsToDB(recipe_id, instructions):
+    for step in instructions:
+        new_instruction_step_num = step["number"]
+        new_instruction_step_instruction = step["step"]
+        new_instruction_ingredients = ", ".join([ingredient["name"] for ingredient in step["ingredients"]])
+        new_instruction_equipment = ", ".join([equipment["name"] for equipment in step["equipment"]])
+
+        new_instruction=Instruction(recipe_id, new_instruction_step_num, new_instruction_step_instruction, \
+            new_instruction_ingredients, new_instruction_equipment)
+        db.session.add(new_instruction)
+        
+    db.session.commit()
+
+def constructRecipeTags(recipe):
+    new_recipe_tags = ""
+    new_recipe_tags +=  "vegetarian, " if recipe["vegetarian"] else ""
+    new_recipe_tags +=  "vegan, " if recipe["vegan"] else ""
+    new_recipe_tags +=  "glutenFree, " if recipe["glutenFree"] else ""
+    new_recipe_tags +=  "veryHealthy, " if recipe["veryHealthy"] else ""
+    new_recipe_tags +=  "cheap, " if recipe["cheap"] else ""
+    new_recipe_tags +=  "veryPopular, " if recipe["veryPopular"] else ""
+    new_recipe_tags +=  "sustainable, " if recipe["sustainable"] else ""
+    new_recipe_tags = new_recipe_tags.strip(", ")
+
+    return new_recipe_tags
 
 
 # Run Server
 if __name__ == '__main__':
     db.create_all()
     scheduler.start()
-    app.run(host='0.0.0.0', debug=True)
+    updateRecipesToDB()
+    app.run(host='0.0.0.0')
 
     # Terminate background tasks
     scheduler.shutdown()

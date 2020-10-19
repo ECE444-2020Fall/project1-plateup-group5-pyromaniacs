@@ -1,5 +1,6 @@
 import os
 import urllib3
+import spoonacular
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
@@ -34,3 +35,8 @@ login_manager.init_app(app)
 
 # Init Schedular for background updates
 scheduler = BackgroundScheduler()
+
+# Init Spoonacular API service
+sp_api = spoonacular.API("2285bbff227b4b198ef446e6dfb192e3")
+
+
