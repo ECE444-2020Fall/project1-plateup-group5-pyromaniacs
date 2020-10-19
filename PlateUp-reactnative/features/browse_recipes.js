@@ -5,7 +5,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 // Created using Redux Toolkit documentation example
 
 const initialState = {
-    recipes: [],
+    data: {},
     status: "idle",
     error: null
 }
@@ -26,7 +26,7 @@ const browseRecipesSlice = createSlice({
         },
         [fetchBrowseRecipes.fulfilled]: (state, action) => {
             state.status = 'success'
-            state.recipes = action.payload
+            state.data = action.payload
         },
         [fetchBrowseRecipes.rejected]: (state, action) => {
             state.status = 'failed'

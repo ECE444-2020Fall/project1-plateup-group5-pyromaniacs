@@ -31,7 +31,7 @@ class Home extends React.Component {
   }
 
   renderRecipes() {
-    const recipes = this.props.browseRecipes.recipes.recipes;
+    const recipes = this.props.browseRecipes.data.recipes;
     let recipeItems = [];
 
     for (let recipe of recipes) {
@@ -75,7 +75,7 @@ class Home extends React.Component {
               contentContainerStyle={styles.browsingContainer}
             >
               <Block flex>
-                {this.props.browseRecipes.recipes && this.renderRecipes()}
+                {this.renderRecipes()}
               </Block>
             </ScrollView>
           )}
