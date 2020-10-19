@@ -33,7 +33,6 @@ def logout(client):
 
 def test_database(client):
     """initial test. ensure that the database exists"""
-    print(Path(TEST_DB).is_file())
     tester = Path(TEST_DB).is_file()
     assert tester
 
