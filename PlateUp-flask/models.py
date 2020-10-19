@@ -57,14 +57,14 @@ class Instruction(db.Model):
     __tablename__ = "recipe_instruction"
     recipe_id = db.Column(db.String(40), db.ForeignKey('recipe.id'), primary_key=True)
     step_num = db.Column(db.Integer, primary_key=True)
-    step = db.Column(db.String)
+    step_instruction = db.Column(db.String)
     ingredients = db.Column(db.String)
     equipment = db.Column(db.String)
 
     def __init__(self, recipe_id, step_num, step, ingredients, equipment):
         self.recipe_id = recipe_id 
         self.step_num = step_num
-        self.step = step
+        self.step_instruction = step
         self.ingredients = ingredients
         self.equipment = equipment
 

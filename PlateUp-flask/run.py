@@ -82,14 +82,16 @@ class UserAPI(Resource):
         currEmails = flat_list(User.query.with_entities(User.email).all())
         if email in currEmails:
             return Response("Sorry, this user with email " + email + " already exists! Please log in instead.", status=409)
-
+        
         new_user = User(name, email, password)
+
+        if not sendWelcomeEmail(email, new_user.id):
+            return Response("Mail NOT Sent!", status=400)
 
         db.session.add(new_user)
         db.session.commit()
 
-        if not sendWelcomeEmail(email, new_user.id):
-            return Response("Mail NOT Sent!", status=400)
+       
 
         return user_schema.jsonify(new_user)
 
@@ -454,59 +456,68 @@ def updateRecipesToDB():
             print("processing recipes %s - %s..."%(i*100, i*100+100))
             recipes = json.load(outfile)
             i += 1
-            for recipe in recipes['recipes']:
-                try: 
-                    if Recipe.query.filter_by(name=recipe["title"]).first() is None:
-                        new_recipe_name=recipe["title"]
+            try: 
+                for recipe in recipes['recipes']:
+                    if Recipe.query.filter_by(name=recipe["title"]).first():
+                        continue 
 
-                        ingredients = {}
-                        for ingredient in recipe["extendedIngredients"]:
-                            ingredients[ingredient["name"]] = str(ingredient["amount"]) + " " + ingredient["unit"]
-  
-                        new_recipe_ingredients=json.dumps(ingredients)
-                        new_recipe_time_h = 0
-                        new_recipe_time_min = int(recipe["cookingMinutes"]) if "cookingMinutes" in recipe else 60
-                        new_recipe_time_min =+ int(recipe["preparationMinutes"]) if "preparationMinutes" in recipe else 0
-                        new_recipe_cost = recipe["pricePerServing"]
-                        new_recipe_preview_text = recipe["summary"]
-                        new_recipe_preview_media_url = recipe["image"]
+                    new_recipe_name=recipe["title"]
 
-                        new_recipe_tags = ""
-                        new_recipe_tags +=  "vegetarian, " if recipe["vegetarian"] else ""
-                        new_recipe_tags +=  "vegan, " if recipe["vegan"] else ""
-                        new_recipe_tags +=  "glutenFree, " if recipe["glutenFree"] else ""
-                        new_recipe_tags +=  "veryHealthy, " if recipe["veryHealthy"] else ""
-                        new_recipe_tags +=  "cheap, " if recipe["cheap"] else ""
-                        new_recipe_tags +=  "veryPopular, " if recipe["veryPopular"] else ""
-                        new_recipe_tags +=  "sustainable, " if recipe["sustainable"] else ""
-                        new_recipe_tags = new_recipe_tags.strip(", ")
+                    ingredients = {}
+                    for ingredient in recipe["extendedIngredients"]:
+                        ingredients[ingredient["name"]] = str(ingredient["amount"]) + " " + ingredient["unit"]
 
-                        if new_recipe_time_min>60:
-                            new_recipe_time_h=new_recipe_time_h+int(new_recipe_time_min/60)
-                            new_recipe_time_min=new_recipe_time_min%60
+                    new_recipe_ingredients=json.dumps(ingredients)
+                    new_recipe_time_h = 0
+                    new_recipe_time_min = int(recipe["cookingMinutes"]) if "cookingMinutes" in recipe else 60
+                    new_recipe_time_min =+ int(recipe["preparationMinutes"]) if "preparationMinutes" in recipe else 0
+                    new_recipe_cost = recipe["pricePerServing"]
+                    new_recipe_preview_text = recipe["summary"]
+                    new_recipe_preview_media_url = recipe["image"]
+                    new_recipe_tags = constructRecipeTags(recipe)
+                
+                    if new_recipe_time_min>60:
+                        new_recipe_time_h=new_recipe_time_h+int(new_recipe_time_min/60)
+                        new_recipe_time_min=new_recipe_time_min%60
 
-                        new_recipe=Recipe(new_recipe_name, new_recipe_ingredients, new_recipe_time_h,\
-                                        new_recipe_time_min, new_recipe_cost, new_recipe_preview_text,\
-                                        new_recipe_preview_media_url, new_recipe_tags)
+                    new_recipe=Recipe(new_recipe_name, new_recipe_ingredients, new_recipe_time_h,\
+                                    new_recipe_time_min, new_recipe_cost, new_recipe_preview_text,\
+                                    new_recipe_preview_media_url, new_recipe_tags)
 
-                        for step in recipe["analyzedInstructions"][0]["steps"]:
-                            new_instruction_step_num = step["number"]
-                            new_instruction_step = step["step"]
-                            new_instruction_ingredients = ", ".join([ingredient["name"] for ingredient in step["ingredients"]])
-                            new_instruction_equipment = ", ".join([equipment["name"] for equipment in step["equipment"]])
+                    updateInstructionsToDB(new_recipe.id, recipe["analyzedInstructions"][0]["steps"])
+                    db.session.add(new_recipe)
+                    db.session.commit()
 
-                            new_instruction=Instruction(new_recipe.id, new_instruction_step_num, new_instruction_step, \
-                                new_instruction_ingredients, new_instruction_equipment)
-                            db.session.add(new_instruction)
-
-                        db.session.add(new_recipe)
-                        db.session.commit()
-
-                except Exception as e:
-                    print("recipe not updated due to missing fields or other error: %s \n"%e)
+            except Exception as e:
+                print("recipe not updated due to missing fields or other error: %s \n"%e)
 
     print("done updating recipes.")
 
+def updateInstructionsToDB(recipe_id, instructions):
+    for step in instructions:
+        new_instruction_step_num = step["number"]
+        new_instruction_step_instruction = step["step"]
+        new_instruction_ingredients = ", ".join([ingredient["name"] for ingredient in step["ingredients"]])
+        new_instruction_equipment = ", ".join([equipment["name"] for equipment in step["equipment"]])
+
+        new_instruction=Instruction(recipe_id, new_instruction_step_num, new_instruction_step_instruction, \
+            new_instruction_ingredients, new_instruction_equipment)
+        db.session.add(new_instruction)
+        
+    db.session.commit()
+
+def constructRecipeTags(recipe):
+    new_recipe_tags = ""
+    new_recipe_tags +=  "vegetarian, " if recipe["vegetarian"] else ""
+    new_recipe_tags +=  "vegan, " if recipe["vegan"] else ""
+    new_recipe_tags +=  "glutenFree, " if recipe["glutenFree"] else ""
+    new_recipe_tags +=  "veryHealthy, " if recipe["veryHealthy"] else ""
+    new_recipe_tags +=  "cheap, " if recipe["cheap"] else ""
+    new_recipe_tags +=  "veryPopular, " if recipe["veryPopular"] else ""
+    new_recipe_tags +=  "sustainable, " if recipe["sustainable"] else ""
+    new_recipe_tags = new_recipe_tags.strip(", ")
+
+    return new_recipe_tags
 
 
 # Run Server
