@@ -1,8 +1,9 @@
 import React from 'react';
 import { withNavigation } from '@react-navigation/compat';
 import PropTypes from 'prop-types';
-import { StyleSheet, Dimensions, Image, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Image, TouchableWithoutFeedback } from 'react-native';
 import { Block, Text, theme } from 'galio-framework';
+import Icon from './Icon';
 
 import { argonTheme } from '../constants';
 
@@ -31,7 +32,15 @@ class Card extends React.Component {
         <TouchableWithoutFeedback onPress={() => {}}>
           <Block flex space="between" style={styles.cardDescription}>
             <Text size={14} style={styles.cardTitle}>{item.title}</Text>
-            <Text size={12} muted={!ctaColor} color={ctaColor || argonTheme.COLORS.ACTIVE} bold>{item.cta}</Text>
+            <Block row space="between">
+              <Text size={12} muted={!ctaColor} color={ctaColor} bold>{item.cta}</Text>
+              { item.tag &&
+                <Block row style={styles.tagContainer}>
+                  {item.tag.icon && <Icon size={20} style={styles.tagIcon} name={item.tag.icon.name} family={item.tag.icon.family} color={item.tag.icon.color} />}
+                  <Text size={12} style={styles.tagText}>{item.tag.text}</Text>
+                </Block>
+              }
+            </Block>
           </Block>
         </TouchableWithoutFeedback>
       </Block>
@@ -39,12 +48,23 @@ class Card extends React.Component {
   }
 }
 
+Card.defaultProps = {
+  ctaColor: argonTheme.COLORS.SECONDARY,
+  handlePress: null,
+  imageStyle: {},
+}
+
 Card.propTypes = {
-  item: PropTypes.object,
-  horizontal: PropTypes.bool,
-  full: PropTypes.bool,
   ctaColor: PropTypes.string,
+  full: PropTypes.bool,
+  handlePress: PropTypes.func,
+  horizontal: PropTypes.bool,
   imageStyle: PropTypes.any,
+  item: PropTypes.object,
+  tag: PropTypes.shape({
+    icon: PropTypes.string,
+    text: PropTypes.string
+  })
 }
 
 const styles = StyleSheet.create({
@@ -63,13 +83,8 @@ const styles = StyleSheet.create({
   cardDescription: {
     padding: theme.SIZES.BASE / 2
   },
-  imageContainer: {
-    borderRadius: 3,
-    elevation: 1,
-    overflow: 'hidden',
-  },
-  image: {
-    // borderRadius: 3,
+  fullImage: {
+    height: 215
   },
   horizontalImage: {
     height: 122,
@@ -79,12 +94,11 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
   },
-  verticalStyles: {
-    borderBottomRightRadius: 0,
-    borderBottomLeftRadius: 0
-  },
-  fullImage: {
-    height: 215
+  imageContainer: {
+    borderRadius: 3,
+    elevation: 1,
+    overflow: 'hidden',
+    justifyContent: "center"
   },
   shadow: {
     shadowColor: theme.COLORS.BLACK,
@@ -93,6 +107,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     elevation: 2,
   },
+  tagIcon: {
+    paddingRight: 5
+  },
+  tagText: {
+    lineHeight: 20,
+    color: argonTheme.COLORS.TEXT_COLOR
+  },
+  verticalStyles: {
+    borderBottomRightRadius: 0,
+    borderBottomLeftRadius: 0
+  }
 });
 
 export default withNavigation(Card);
