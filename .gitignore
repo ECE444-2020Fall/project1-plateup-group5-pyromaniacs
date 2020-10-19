@@ -21,3 +21,4 @@ PlateUp-flask/db.sqlite
 setup.cfg
 PlateUp-flask/__pycache__
 PlateUp-reactnative/.vscode/
+PlateUp-flask/tests/__pycache__
