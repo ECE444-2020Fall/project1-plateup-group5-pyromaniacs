@@ -8,7 +8,7 @@ from flask_login import current_user, login_user, login_required, logout_user
 from flask_restx import fields, Resource, reqparse
 from initializer import api, app, db, login_manager, ma, scheduler, sp_api
 from models import User, Recipe, Instruction, ShoppingList
-from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.security import check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -77,7 +77,7 @@ class UserAPI(Resource):
     def post(self):
         name = request.json['name']
         email = request.json['email']
-        password = generate_password_hash(request.json['password'], "pbkdf2:sha256")
+        password = request.json['password']
 
         currEmails = flat_list(User.query.with_entities(User.email).all())
         if email in currEmails:
@@ -90,8 +90,6 @@ class UserAPI(Resource):
 
         db.session.add(new_user)
         db.session.commit()
-
-       
 
         return user_schema.jsonify(new_user)
 
@@ -326,7 +324,7 @@ class RecipeAPI(Resource):
                     'Filter_cost': {'description': 'filter by max cost', 'type': 'float'},
                     'Filter_has_ingredients': {'description': 'filter by if user has all the appropriate ingredients', 'type': 'boolean'},
                     'Limit': {'description': 'number of recipes to return', 'type': 'int'},
-                    'Page': {'description': 'page number (page\*limit -> page\*limit + limit range returned)', 'type': 'int'}
+                    'Page': {'description': 'page number determines range of data returned: [page x limit -> page x limit + limit]', 'type': 'int'}
                     })
     def get(self):
         #get params
