@@ -37,7 +37,6 @@ login_manager.init_app(app)
 scheduler = BackgroundScheduler()
 
 # Init Spoonacular API service
-# create an instance of the API class
 sp_api = spoonacular.API("2285bbff227b4b198ef446e6dfb192e3")
 
 

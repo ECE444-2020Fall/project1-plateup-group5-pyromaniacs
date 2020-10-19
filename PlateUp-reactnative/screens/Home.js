@@ -1,47 +1,105 @@
 import React from 'react';
 import { StyleSheet, Dimensions, ScrollView } from 'react-native';
-import { Block, theme } from 'galio-framework';
-
+import { connect } from 'react-redux'
+import { Block, theme, Text } from 'galio-framework';
 import { Card } from '../components';
-import articles from '../constants/articles';
+import { fetchBrowseRecipes } from '../features/browse_recipes';
+import { argonTheme } from '../constants';
 const { width } = Dimensions.get('screen');
 
 class Home extends React.Component {
-  renderArticles = () => {
-    return (
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.articles}>
-        <Block flex>
-          <Card item={articles[0]} horizontal  />
-          <Block flex row>
-            <Card item={articles[1]} style={{ marginRight: theme.SIZES.BASE }} />
-            <Card item={articles[2]} />
-          </Block>
-          <Card item={articles[3]} horizontal />
-          <Card item={articles[4]} full />
-        </Block>
-      </ScrollView>
-    )
+
+  constructor(props) {
+    super(props);
+    this.state = { 
+      loading: true,
+      error: null
+    };
+  }
+
+  componentDidMount() {
+    this.props.fetchBrowseRecipes();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.loading == true && this.props.browseRecipes.status == "failure") {
+      this.setState({ loading: false, error: "Something went wrong." })
+    }
+    else if (prevState.loading == true && this.props.browseRecipes.status == "success") {
+      this.setState({ loading: false })
+    }
+  }
+
+  renderRecipes() {
+    const recipes = this.props.browseRecipes.data.recipes;
+    let recipeItems = [];
+
+    for (let recipe of recipes) {
+      recipeItems.push({
+        id: recipe.recipe_id,
+        title: recipe.name,
+        image: recipe.preview_media_url,
+        cta: "View recipe",
+        tag: {
+          text: `${recipe.time_h}hr${recipe.time_min}m`,
+          icon: {
+            name: "clock",
+            family: "Foundation",
+            color: argonTheme.COLORS.TEXT_COLOR
+          }
+        }
+      })
+    };
+
+    const cardsToRender = recipeItems.map((recipeItem, index) => 
+      <Card key={index} item={recipeItem} horizontal />
+    );
+
+    return cardsToRender;
   }
 
   render() {
+    const loading = this.state.loading;
+    const error = this.state.error;
+
     return (
-      <Block flex center style={styles.home}>
-        {this.renderArticles()}
-      </Block>
+        <Block flex center style={styles.home}>
+          { loading && 
+            <Text center> Loading... </Text>
+          }
+          { !loading && (error ? 
+            <Text center> Something went wrong </Text>
+            :
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.browsingContainer}
+            >
+              <Block flex>
+                {this.renderRecipes()}
+              </Block>
+            </ScrollView>
+          )}
+        </Block>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  home: {
-    width: width,    
+  recipes: {
+    width: width,
   },
-  articles: {
+  browsingContainer: {
     width: width - theme.SIZES.BASE * 2,
     paddingVertical: theme.SIZES.BASE,
   },
 });
 
-export default Home;
+const mapStateToProps = (state) => {
+  return {
+    browseRecipes: state.browseRecipes
+  }
+}
+
+const mapDispatchToProps = { fetchBrowseRecipes };
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
