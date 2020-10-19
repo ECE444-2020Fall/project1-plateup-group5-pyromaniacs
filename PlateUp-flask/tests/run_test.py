@@ -48,11 +48,18 @@ def test_login_logout(client):
     rv = logout(client)
     assert rv.data == ('Logout successful. User %s' %  new_user.id).encode()
 
+def test_invalid_login_logout(client):
+    """Test (failed) login and logout using helper functions"""
+    new_user = User("Test", app.config["EMAIL"], app.config["PASSWORD"])
+    db.session.add(new_user)
+    db.session.commit()
+
     rv = login(client, app.config["EMAIL"] + "x", app.config["PASSWORD"])
     assert rv.status == "403 FORBIDDEN"
 
     rv = login(client, app.config["EMAIL"], app.config["PASSWORD"] + "x")
     assert rv.status == "403 FORBIDDEN"
+    
 
 
 ################################################################################
