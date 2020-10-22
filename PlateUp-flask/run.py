@@ -85,8 +85,8 @@ class UserAPI(Resource):
         
         new_user = User(name, email, password)
 
-        if not sendWelcomeEmail(email, new_user.id):
-            return Response("Mail NOT Sent!", status=400)
+        if not sendWelcomeEmail(email, new_user):
+            return Response("Mail NOT Sent! Invalid email or server issues, user not saved.", status=400)
 
         db.session.add(new_user)
         db.session.commit()
@@ -382,8 +382,7 @@ def load_user(uid):
 
 
 # sends the welcome email
-def sendWelcomeEmail(receipient, userID):
-    user = User.query.get(userID)
+def sendWelcomeEmail(receipient, user):
     name = user.name
     password = user.password
     email = user.email
@@ -414,7 +413,7 @@ def sendWelcomeEmail(receipient, userID):
         </span>
     </font>
     </body>
-    </html>''' % (email, str(userID), password)
+    </html>''' % (email, str(user.id), password)
 
     return send_email_as_plateup(receipient, subject, body)
 
