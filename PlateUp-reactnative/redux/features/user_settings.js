@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from "axios";
-import env from "../env";
+import env from "../../env";
 
 const initialState = {
   user: null,
@@ -8,9 +8,14 @@ const initialState = {
   error: null
 }
 
-export const register = createAsyncThunk('userSettings/register', async (newUser) => {
-  const response = await axios.post(`${env.SERVER_URL}/user`, newUser)
-  return response.data;
+export const register = createAsyncThunk('userSettings/register', async (newUser, { rejectWithValue }) => {
+  try {
+    const response = await axios.post(`${env.SERVER_URL}/user`, newUser)
+    return response.data;
+  }
+  catch (err) {
+    return rejectWithValue(err.response.data);
+  }
 })
 
 export const login = createAsyncThunk('userSettings/login', async (user, { rejectWithValue }) => {
@@ -33,32 +38,41 @@ const userSettingsSlice = createSlice({
   initialState,
   extraReducers: {
     [register.pending]: (state, action) => {
-      state.status = "registering";
+      if (state.status === "idle") {
+        state.status = "registering";
+        state.error = null;
+      }
     },
     [register.fulfilled]: (state, action) => {
-      state.status = "idle";
+      if (state.status === "registering") {
+        state.status = "idle";
+      }
     },
     [register.rejected]: (state, action) => {
-      state.status = "idle";
+      if (state.status === "registering") {
+        state.status = "idle";
+        state.error = action.payload;
+      }
     },
 
     [login.pending]: (state, action) => {
       if (state.status === "idle") {
         state.status = "logging in";
+        state.error = null;
       }
     },
     [login.fulfilled]: (state, action) => {
       if (state.status === "logging in") {
         state.status = "idle";
 
-        delete action.payload.password
+        delete action.payload.password;
         state.user = action.payload;
       }
     },
     [login.rejected]: (state, action) => {
       if (state.status === "logging in") {
         state.status = "idle";
-        state.error = action.payload
+        state.error = action.payload;
       }
     },
 

@@ -1,8 +1,8 @@
-import axios from "axios";
 import { Button, Icon, Input } from "../components";
 import { argonTheme, Images } from "../constants";
-import env from "../env";
+import * as util from "../constants/utils";
 import { LinearGradient } from "expo-linear-gradient";
+import { register } from "../redux/features/user_settings"
 import { Block, Checkbox, Text } from "galio-framework";
 import React from "react";
 import {
@@ -12,9 +12,7 @@ import {
   StatusBar,
   StyleSheet
 } from "react-native";
-import { userLoggedIn } from "../redux/actions";
-import store from "../redux/store";
-import * as util from "../constants/utils";
+import { connect } from "react-redux"
 
 const { width, height } = Dimensions.get("screen");
 
@@ -25,6 +23,17 @@ class Register extends React.Component {
     password: "",
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.userSettings.status === "registering" && this.props.userSettings.status === "idle") {
+      if (this.props.userSettings.error !== null) {
+        util.toast(this.props.userSettings.error);
+      }
+      else {
+        this.props.navigation.navigate("Login");
+      }
+    }
+  }
+
   handleCreateAccount = () => {
     // Don't try to create an account if some information is missing
     if (this.state.name.length === 0 || this.state.email.length === 0 || this.state.password.length === 0) {
@@ -32,53 +41,9 @@ class Register extends React.Component {
       return;
     }
 
-    // Try POSTing to the server to create an account
-    axios.post(`${env.SERVER_URL}/user`, {
-        name: this.state.name,
-        email: this.state.email,
-        password: this.state.password
-      })
-      .then(() => {
-        // If successful, log the user in
-          axios.post(`${env.SERVER_URL}/login`, {
-            email: this.state.email,
-            password: this.state.password
-          })
-          .then(res => {
-            // Set current user and navigate to the main app screen
-            store.dispatch(userLoggedIn(
-              res.data.id,
-              res.data.name,
-              res.data.email,
-              res.data.inventory_id,
-              res.data.shopping_id,
-              res.data.settings_id
-            ));
-            this.props.navigation.navigate("App");
-          })
-          .catch(() => {
-            if (err.response.status === 403) {
-              util.toast("Login failed! Please confirm that the email and password are correct.");
-            }
-            else if (err.response.status === 500) {
-              util.toast("Internal server error.")
-            }
-            else {
-              util.toast("Unknown error occurred.")
-            }
-          });
-      })
-      .catch(err => {
-        if (err.response.status === 409) {
-          util.toast(`The user with email ${this.state.email} already exists. Please log in instead.`);
-        }
-        else if (err.response.status === 500) {
-          util.toast("Internal server error.")
-        }
-        else {
-          util.toast("Unknown error occurred.")
-        }
-      });
+    console.log("In create account")
+
+    this.props.register({ ...this.state });
   }
 
   render() {
@@ -244,4 +209,14 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Register;
+const mapStateToProps = (state) => {
+  return {
+    userSettings: state.userSettings
+  }
+}
+
+const mapDispatchToProps = {
+  register,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);

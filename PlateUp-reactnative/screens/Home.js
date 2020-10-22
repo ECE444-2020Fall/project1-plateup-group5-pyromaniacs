@@ -3,7 +3,7 @@ import { StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { connect } from 'react-redux'
 import { Block, theme, Text } from 'galio-framework';
 import { Card } from '../components';
-import { fetchBrowseRecipes } from '../features/browse_recipes';
+import { fetchBrowseRecipes } from '../redux/features/browse_recipes';
 import { argonTheme } from '../constants';
 const { width } = Dimensions.get('screen');
 

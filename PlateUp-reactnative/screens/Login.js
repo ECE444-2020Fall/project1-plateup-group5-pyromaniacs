@@ -1,6 +1,8 @@
 import { Button, Icon, Input } from "../components";
 import { argonTheme, Images } from "../constants";
+import * as util from "../constants/utils";
 import { LinearGradient } from "expo-linear-gradient";
+import { login } from "../redux/features/user_settings"
 import { Block, Text } from "galio-framework";
 import React from "react";
 import {
@@ -10,8 +12,6 @@ import {
   StatusBar,
   StyleSheet
 } from "react-native";
-import * as util from "../constants/utils";
-import { login } from "../features/user_settings"
 import { connect } from "react-redux"
 
 const { width, height } = Dimensions.get("screen");
