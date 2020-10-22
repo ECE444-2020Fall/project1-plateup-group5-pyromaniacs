@@ -1,7 +1,5 @@
-import axios from "axios";
 import { Button, Icon, Input } from "../components";
 import { argonTheme, Images } from "../constants";
-import env from "../env";
 import { LinearGradient } from "expo-linear-gradient";
 import { Block, Text } from "galio-framework";
 import React from "react";
@@ -12,9 +10,9 @@ import {
   StatusBar,
   StyleSheet
 } from "react-native";
-import { userLoggedIn } from "../redux/actions";
-import store from "../redux/store";
 import * as util from "../constants/utils";
+import { login } from "../features/user_settings"
+import { connect } from "react-redux"
 
 const { width, height } = Dimensions.get("screen");
 
@@ -24,41 +22,24 @@ class Login extends React.Component {
     password: "",
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.userSettings.status === "logging in" && this.props.userSettings.status === "idle") {
+      if (this.props.userSettings.user === null) {
+        util.toast(this.props.userSettings.error);
+      }
+      else {
+        this.props.navigation.navigate("App");
+      }
+    }
+  }
+
   handleLogin = () => {
     // Don't try to log in if some information is missing
     if (this.state.email.length === 0 || this.state.password.length === 0) {
       util.toast("Please fill in all fields.");
       return;
     }
-
-    // Try POSTing to the server to login
-    axios.post(`${env.SERVER_URL}/login`, {
-      email: this.state.email,
-      password: this.state.password
-    })
-    .then(res => {
-      // Set current user and navigate to the main app screen
-      store.dispatch(userLoggedIn(
-        res.data.id,
-        res.data.name,
-        res.data.email,
-        res.data.inventory_id,
-        res.data.shopping_id,
-        res.data.settings_id
-      ));
-      this.props.navigation.navigate("App");
-    })
-    .catch(err => {
-      if (err.response.status === 403) {
-        util.toast("Login failed! Please confirm that the email and password are correct.");
-      }
-      else if (err.response.status === 500) {
-        util.toast("Internal server error.")
-      }
-      else {
-        util.toast("Unknown error occurred.")
-      }
-    });
+    this.props.login({ ...this.state })
   }
 
   render() {
@@ -182,4 +163,14 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+const mapStateToProps = (state) => {
+  return {
+    userSettings: state.userSettings
+  }
+}
+
+const mapDispatchToProps = {
+  login,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import axios from "axios";
 import env from "../env";
 
 const initialState = {
   user: null,
   status: "idle",
-  error: null,
+  error: null
 }
 
 export const register = createAsyncThunk('userSettings/register', async (newUser) => {
@@ -12,23 +13,14 @@ export const register = createAsyncThunk('userSettings/register', async (newUser
   return response.data;
 })
 
-export const login = createAsyncThunk('userSettings/login', async (user) => {
-  console.log("In login")
-
-  const response = await axios.post(`${env.SERVER_URL}/login`, user)
-    .then(res => {
-      // Set current user and navigate to the main app screen
-      console.log("Success")
-    })
-    .catch(err => {
-      console.log("Error")
-    })
-    .then(() => {
-      console.log("Unknown error")
-    });
-
-    console.log("Response: ", response)
+export const login = createAsyncThunk('userSettings/login', async (user, { rejectWithValue }) => {
+  try {
+    const response = await axios.post(`${env.SERVER_URL}/login`, user)
     return response.data;
+  }
+  catch (err) {
+    return rejectWithValue(err.response.data);
+  }
 })
 
 export const logout = createAsyncThunk('userSettings/logout', async () => {
@@ -40,43 +32,39 @@ const userSettingsSlice = createSlice({
   name: 'userSettings',
   initialState,
   extraReducers: {
-    [register.pending]: (state) => {
-        state.status = "registering";
-        state.error = null
+    [register.pending]: (state, action) => {
+      state.status = "registering";
     },
     [register.fulfilled]: (state, action) => {
-        state.status = "idle";
+      state.status = "idle";
     },
-    [register.rejected]: (state) => {
-        state.status = "idle"
-        state.error = "Could not create new user."
+    [register.rejected]: (state, action) => {
+      state.status = "idle";
     },
-    [login.pending]: (state) => {
-      console.log("pending")
+
+    [login.pending]: (state, action) => {
+      if (state.status === "idle") {
         state.status = "logging in";
-        state.error = null
+      }
     },
     [login.fulfilled]: (state, action) => {
-        console.log("fulfilled")
+      if (state.status === "logging in") {
         state.status = "idle";
+
+        delete action.payload.password
         state.user = action.payload;
+      }
     },
-    [login.rejected]: (state) => {
-      console.log("rejected")
-        state.status = "idle"
-        state.error = "Could not log in."
-    },
-    [logout.pending]: (state) => {
-        state.status = "logging out";
-        state.error = null
-    },
-    [logout.fulfilled]: (state) => {
+    [login.rejected]: (state, action) => {
+      if (state.status === "logging in") {
         state.status = "idle";
-        state.user = null;
+        state.error = action.payload
+      }
     },
-    [logout.rejected]: (state) => {
-        state.status = "idle"
-        state.error = "Could not log out."
+
+    [logout.fulfilled]: (state) => {
+      state.status = "idle";
+      state.user = null;
     },
   }
 })
