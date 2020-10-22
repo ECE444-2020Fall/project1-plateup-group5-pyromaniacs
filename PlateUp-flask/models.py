@@ -1,6 +1,7 @@
 from flask_login import UserMixin
 from initializer import db
 from uuid import uuid1
+from werkzeug.security import generate_password_hash
 
 # -----------------------------------------------------------------------------
 # DB Models
@@ -21,7 +22,7 @@ class User(db.Model, UserMixin):
         self.id = str(uuid1())
         self.name = name
         self.email = email
-        self.password = password
+        self.password = generate_password_hash(password, "pbkdf2:sha256")
         self.settings_id = str(uuid1())
         self.shopping_id = str(uuid1())
         self.inventory_id = str(uuid1())
