@@ -1,37 +1,63 @@
 import React from 'react';
-import { StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { ActivityIndicator, Dimensions, ScrollView, StyleSheet } from 'react-native';
 import { connect } from 'react-redux'
 import { Block, theme, Text } from 'galio-framework';
 import { Card } from '../components';
 import { fetchBrowseRecipes } from '../features/browse_recipes';
 import { argonTheme } from '../constants';
+import deepEqual from 'deep-equal';
+
 const { width } = Dimensions.get('screen');
 
 class Home extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = { 
-      loading: true,
-      error: null
-    };
-  }
-
   componentDidMount() {
-    this.props.fetchBrowseRecipes();
+    this.props.fetchBrowseRecipes({
+      filterSettings: this.props.filterSettings,
+      searchQuery: this.props.searchQuery
+    });
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.loading == true && this.props.browseRecipes.status == "failure") {
-      this.setState({ loading: false, error: "Something went wrong." })
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.browseRecipes.status === "success" && 
+      (!deepEqual(prevProps.filterSettings, this.props.filterSettings) || prevProps.searchQuery !== this.props.searchQuery)
+    ) {
+      this.props.fetchBrowseRecipes({
+        filterSettings: this.props.filterSettings,
+        searchQuery: this.props.searchQuery
+      });
     }
-    else if (prevState.loading == true && this.props.browseRecipes.status == "success") {
-      this.setState({ loading: false })
+  }
+
+  renderContent(status) {
+    switch (status) {
+      case 'idle':
+      case 'fetching':
+        return <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />;
+      case 'failed':
+        return <Text center> Something went wrong. </Text>;
+      case 'success':
+        return (
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.browsingContainer}
+            >
+              <Block flex>
+                { this.renderRecipes() }
+              </Block>
+            </ScrollView>
+        );
     }
   }
 
   renderRecipes() {
     const recipes = this.props.browseRecipes.data.recipes;
+
+    if (!recipes || recipes.length == 0) {
+      return <Text> No recipes found with given filters and search query. </Text>;
+    }
+
     let recipeItems = [];
 
     for (let recipe of recipes) {
@@ -59,27 +85,12 @@ class Home extends React.Component {
   }
 
   render() {
-    const loading = this.state.loading;
-    const error = this.state.error;
+    const status = this.props.browseRecipes.status;
 
     return (
-        <Block flex center style={styles.home}>
-          { loading && 
-            <Text center> Loading... </Text>
-          }
-          { !loading && (error ? 
-            <Text center> Something went wrong </Text>
-            :
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.browsingContainer}
-            >
-              <Block flex>
-                {this.renderRecipes()}
-              </Block>
-            </ScrollView>
-          )}
-        </Block>
+      <Block flex center style={styles.browsingContainer}>
+        {this.renderContent(status)}
+      </Block>
     );
   }
 }
@@ -96,7 +107,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    browseRecipes: state.browseRecipes
+    browseRecipes: state.browseRecipes,
+    filterSettings: state.filterSettings,
+    searchQuery: state.searchQuery
   }
 }
 
