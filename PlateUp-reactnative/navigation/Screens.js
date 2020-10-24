@@ -10,7 +10,6 @@ import Login from "../screens/Login";
 import Onboarding from "../screens/Onboarding";
 import Register from "../screens/Register";
 import Filters from "../screens/Filters"
-import Profile from "../screens/Profile";
 
 // drawer
 import CustomDrawerContent from "./Menu";
@@ -96,7 +95,6 @@ function AppStack(props) {
       initialRouteName="Home"
     >
       <Drawer.Screen name="Home" component={HomeStack} />
-      <Drawer.Screen name="Profile" component={Profile} />
     </Drawer.Navigator>
   );
 }

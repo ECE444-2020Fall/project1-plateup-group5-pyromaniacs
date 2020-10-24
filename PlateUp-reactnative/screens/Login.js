@@ -34,7 +34,6 @@ class Login extends React.Component {
   }
 
   handleLogin = () => {
-    console.log("User before login: ", this.props.userSettings.user);
     // Don't try to log in if some information is missing
     if (this.state.email.length === 0 || this.state.password.length === 0) {
       util.toast("Please fill in all fields.");
