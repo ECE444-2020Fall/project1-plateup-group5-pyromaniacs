@@ -9,6 +9,7 @@ PlateUp-reactnative/*.p12
 PlateUp-reactnative/*.key
 PlateUp-reactnative/*.mobileprovision
 PlateUp-reactnative/*.log
+PlateUp-reactnative/ic/.expo/*
 
 # Each developer should have a local version of this file
 PlateUp-reactnative/env.js
