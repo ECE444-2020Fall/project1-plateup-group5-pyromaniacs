@@ -1,7 +1,7 @@
 import axios from "axios";
 import env from "../../env";
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { constructQueryParams } from '../constants/utils';
+import { constructQueryParams } from "../../constants/utils";
 
 // Created using Redux Toolkit documentation example
 
@@ -17,7 +17,7 @@ const filterQueryParamMapping = {
     maxCookTimeMinutes: "Filter_time_min" 
 }
 
-export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRecipes', async ( settings ) => {
+export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRecipes', async ( settings, { rejectWithValue } ) => {
     
     let queryParams = "";
     let filters = { ...settings.filterSettings };
@@ -40,15 +40,20 @@ export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRe
     
     queryParams = constructQueryParams(queryParams, `Name=${searchQuery}`)
 
-    const response = await axios({
-        method: 'get',
-        timeout: 1000,
-        url: `${env.SERVER_URL}/recipe${queryParams}`,
-        responseType: 'json'
-    });
+    try {
+        const response = await axios({
+            method: 'get',
+            timeout: 1000,
+            url: `${env.SERVER_URL}/recipe${queryParams}`,
+            responseType: 'json'
+        });
 
-    return response.data;
-})
+        return response.data;
+      }
+      catch (err) {
+        return rejectWithValue(err.response.data);
+      };
+});
   
 const browseRecipesSlice = createSlice({
     name: 'browseRecipes',
@@ -68,6 +73,6 @@ const browseRecipesSlice = createSlice({
             state.error = action.error.message
         }
     }
-})
+});
 
-export default browseRecipesSlice.reducer
+export default browseRecipesSlice.reducer;
