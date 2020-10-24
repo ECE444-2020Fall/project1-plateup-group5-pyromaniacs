@@ -3,7 +3,7 @@ import { ActivityIndicator, Dimensions, ScrollView, StyleSheet } from 'react-nat
 import { connect } from 'react-redux'
 import { Block, theme, Text } from 'galio-framework';
 import { Card } from '../components';
-import { fetchBrowseRecipes } from '../features/browse_recipes';
+import { fetchBrowseRecipes } from '../redux/features/browse_recipes';
 import { argonTheme } from '../constants';
 import deepEqual from 'deep-equal';
 

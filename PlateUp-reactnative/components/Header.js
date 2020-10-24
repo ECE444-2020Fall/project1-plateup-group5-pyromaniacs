@@ -9,17 +9,6 @@ import { TouchableOpacity, StyleSheet, Platform, Dimensions } from 'react-native
 const { height, width } = Dimensions.get('window');
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 
-const BasketButton = ({style, navigation}) => (
-  <TouchableOpacity style={[styles.button, style]} onPress={() => {}}>
-    <Icon
-      family="ArgonExtra"
-      size={16}
-      name="basket"
-      color={argonTheme.COLORS.ICON}
-    />
-  </TouchableOpacity>
-);
-
 class Header extends React.Component {
   handleLeftPress = () => {
     const { back, navigation } = this.props;
@@ -32,10 +21,16 @@ class Header extends React.Component {
     switch (title) {
       case "Home":
         return (
-          <Button shadowless style={styles.tab} onPress={() => {}}>
+          <Button shadowless style={styles.tab} onPress={() => navigation.navigate("Filters")}>
             <Block row>
-              <Text style={styles.inventoryTitle}>Inventory</Text>
-              <BasketButton style={styles.icon} navigation={navigation} />
+              <Text style={styles.filterTitle}>Filters</Text>
+              <Icon
+                family="Foundation"
+                size={16}
+                name="filter"
+                color={argonTheme.COLORS.ICON}
+                style={[styles.button, styles.icon]}
+              />
             </Block>
           </Button>
         );
@@ -48,18 +43,8 @@ class Header extends React.Component {
     const { navigation } = this.props;
 
     return (
-      <Block>
-        <Block center>
-          {this.props.search ? <SearchBar /> : null}
-        </Block>
-        <Block style={styles.options}>
-          <Button shadowless style={[styles.tab]} onPress={() => {navigation.navigate("Filters")}}>
-            <Block row>
-              <Icon size={18} style={styles.icon} name="filter" family="Foundation" color={argonTheme.COLORS.ICON} />
-              <Text size={16} style={styles.tabTitle}>Filters</Text>
-            </Block>
-          </Button>
-        </Block>
+      <Block center style={{ paddingBottom: 15 }}>
+        {this.props.search ? <SearchBar /> : null}
       </Block>
     );
   }
@@ -163,7 +148,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
     flex: 0.6,
   },
-  inventoryTitle: {
+  filterTitle: {
     fontSize: 14,
     marginTop: 11,
     lineHeight: 19,

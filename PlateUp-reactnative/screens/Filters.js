@@ -1,6 +1,6 @@
 import { Switch, Input } from '../components/';
 import { argonTheme } from "../constants";
-import { saveFilters } from "../features/filter_settings";
+import { saveFilters } from "../redux/features/filter_settings";
 import { Block, Button, Text, theme } from 'galio-framework';
 import React from 'react';
 import { StyleSheet, Dimensions, ScrollView } from 'react-native';

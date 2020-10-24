@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 
 import argonTheme from "../constants/Theme";
-import { saveSearch } from "../features/search_query";
+import { saveSearch } from "../redux/features/search_query";
 import Icon from './Icon';
 import Input from './Input';
 

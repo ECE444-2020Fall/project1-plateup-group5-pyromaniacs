@@ -1,5 +1,5 @@
 import axios from "axios";
-import env from "../env";
+import env from "../../env";
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { constructQueryParams } from '../constants/utils';
 

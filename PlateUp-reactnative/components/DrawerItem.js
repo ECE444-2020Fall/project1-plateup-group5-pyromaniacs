@@ -19,7 +19,7 @@ class DrawerItem extends React.Component {
             color={focused ? "white" : argonTheme.COLORS.PRIMARY}
           />
         );
-      case "Account":
+      case "Meal Planning":
         return (
           <Icon
             name="calendar-date"
@@ -28,16 +28,9 @@ class DrawerItem extends React.Component {
             color={focused ? "white" : argonTheme.COLORS.TEXT_COLOR}
           />
         );
-      case "Getting Started":
+      case "Inventory":
         return (<Icon
-          name="spaceship"
-          family="ArgonExtra"
-          size={14}
-          color={focused ? "white" : argonTheme.COLORS.TEXT_COLOR}
-        />);
-      case "Logout":
-        return (<Icon
-          name="palette"
+          name="basket"
           family="ArgonExtra"
           size={14}
           color={focused ? "white" : argonTheme.COLORS.TEXT_COLOR}
