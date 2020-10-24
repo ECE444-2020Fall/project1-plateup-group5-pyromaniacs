@@ -317,8 +317,7 @@ class RecipeAPI(Resource):
     #search recipe by Name and Filter (Filter not implement yet)
     #Example: http://127.0.0.1:5000/recipe?Name=%22meal%22&Ingredients=%22meal%22&Filter_time_h=10&Filter_time_min=0&Filter_cost=10000&Page=0&Limit=2
     @recipeR.doc(description="Get recipe preview json by name and filter", 
-            params={'Name': {'description': 'search by recipe name', 'type': 'string'},
-                    'Search': {'description': 'search by comma separated ingredidents, recipe names, or tags', 'type': 'string'},
+            params={'Search': {'description': 'search by comma separated ingredidents, recipe names, or tags', 'type': 'string'},
                     'Filter_time_h': {'description': 'filter by max hours', 'type': 'int'},
                     'Filter_time_min': {'description': 'filter by max minutes (<60)', 'type': 'int'},
                     'Filter_cost': {'description': 'filter by max cost', 'type': 'float'},
