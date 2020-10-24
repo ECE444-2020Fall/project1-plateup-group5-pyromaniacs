@@ -2,10 +2,8 @@
   "expo": {
     "name": "Plate Up",
     "slug": "plate-up",
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "sdkVersion": "37.0.0",
+    "platforms": ["ios", "android"],
     "version": "1.5.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

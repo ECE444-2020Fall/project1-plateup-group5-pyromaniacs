@@ -1,5 +1,5 @@
 import axios from "axios";
-import env from "../env";
+import env from "../../env";
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 // Created using Redux Toolkit documentation example

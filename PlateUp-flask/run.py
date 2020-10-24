@@ -81,12 +81,12 @@ class UserAPI(Resource):
 
         currEmails = flat_list(User.query.with_entities(User.email).all())
         if email in currEmails:
-            return Response("Sorry, this user with email " + email + " already exists! Please log in instead.", status=409)
-        
+            return Response("The user with email " + email + " already exists! Please log in instead.", status=409)
+
         new_user = User(name, email, password)
 
         if not sendWelcomeEmail(email, new_user):
-            return Response("Mail NOT Sent! Invalid email or server issues, user not saved.", status=400)
+            return Response("Mail not sent! Invalid email or server issues, user not saved.", status=400)
 
         db.session.add(new_user)
         db.session.commit()
@@ -120,7 +120,7 @@ class LoginAPI(Resource):
             login_user(user)
             return user_schema.jsonify(user)
 
-        return Response("403 Forbidden", status=403)
+        return Response("Login failed! Please confirm that the email and password are correct.", status=403)
 
     @loginR.doc(description="Logging current user out.")
     def delete(self):
