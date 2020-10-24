@@ -15,7 +15,7 @@ const initialState = {
 
 export const register = createAsyncThunk('userSettings/register', async (newUser, { rejectWithValue }) => {
   try {
-    const response = await axios.post(`${env.SERVER_URL}/user`, newUser)
+    const response = await axios.post(`${env.SERVER_URL}/user`, newUser, { timeout: 1000 });
     return response.data;
   }
   catch (err) {
@@ -25,7 +25,7 @@ export const register = createAsyncThunk('userSettings/register', async (newUser
 
 export const login = createAsyncThunk('userSettings/login', async (user, { rejectWithValue }) => {
   try {
-    const response = await axios.post(`${env.SERVER_URL}/login`, user)
+    const response = await axios.post(`${env.SERVER_URL}/login`, user, { timeout: 1000 })
     return response.data;
   }
   catch (err) {
@@ -35,7 +35,7 @@ export const login = createAsyncThunk('userSettings/login', async (user, { rejec
 
 export const logout = createAsyncThunk('userSettings/logout', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.delete(`${env.SERVER_URL}/login`)
+    const response = await axios.delete(`${env.SERVER_URL}/login`, { timeout: 1000 })
     return response.data;
   }
   catch (err) {
