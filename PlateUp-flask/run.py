@@ -317,8 +317,7 @@ class RecipeAPI(Resource):
     #search recipe by Name and Filter (Filter not implement yet)
     #Example: http://127.0.0.1:5000/recipe?Name=%22meal%22&Ingredients=%22meal%22&Filter_time_h=10&Filter_time_min=0&Filter_cost=10000&Page=0&Limit=2
     @recipeR.doc(description="Get recipe preview json by name and filter", 
-            params={'Name': {'description': 'search by recipe name', 'type': 'string'},
-                    'Ingredients': {'description': 'search by comma separated ingredidents', 'type': 'string'},
+            params={'Search': {'description': 'search by an ingredient, recipe name, or tag', 'type': 'string'},
                     'Filter_time_h': {'description': 'filter by max hours', 'type': 'int'},
                     'Filter_time_min': {'description': 'filter by max minutes (<60)', 'type': 'int'},
                     'Filter_cost': {'description': 'filter by max cost', 'type': 'float'},
@@ -329,8 +328,7 @@ class RecipeAPI(Resource):
     def get(self):
         #get params
         recipe_list = []
-        recipe_name=request.args.get('Name')
-        ingredients=request.args.get('Ingredients')
+        search_query=request.args.get('Search')
         filter_time_h= request.args.get('Filter_time_h')
         filter_time_min = request.args.get('Filter_time_min')
         filter_cost = request.args.get('Filter_cost')
@@ -347,10 +345,11 @@ class RecipeAPI(Resource):
         #get list
         recipe_list_name=[]
         recipe_list_ingredient=[]
-        if recipe_name!=None:
-            recipe_list_name=self.__search_for_recipes_by_name(recipe_name)
-        if ingredients!=None:
-            recipe_list_ingredient=self.__search_for_recipes_by_ingredient(ingredients)
+        recipe_list_tags=[] #add this into merge (consider hashing for speed)
+
+        if search_query!=None:
+            recipe_list_name=self.__search_for_recipes_by_name(search_query)
+            recipe_list_ingredient=self.__search_for_recipes_by_ingredient(search_query)
 
         recipe_list=self.__merge_list(recipe_list_name, recipe_list_ingredient)
         recipe_list = self.__filter_recipe(recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredients)
@@ -422,7 +421,7 @@ def sendWelcomeEmail(receipient, user):
 # Background tasks
 # -----------------------------------------------------------------------------
 # update stuff as a scheduled job while server is active
-@scheduler.scheduled_job('interval', seconds=3600)
+@scheduler.scheduled_job('interval', seconds=60)
 def fetchRecipes():
     print("fetching recipes...")
     i = 0
@@ -466,8 +465,7 @@ def updateRecipesToDB():
 
                     new_recipe_ingredients=json.dumps(ingredients)
                     new_recipe_time_h = 0
-                    new_recipe_time_min = int(recipe["cookingMinutes"]) if "cookingMinutes" in recipe else 60
-                    new_recipe_time_min =+ int(recipe["preparationMinutes"]) if "preparationMinutes" in recipe else 0
+                    new_recipe_time_min = int(recipe["readyInMinutes"]) if "readyInMinutes" in recipe else 60
                     new_recipe_cost = recipe["pricePerServing"]
                     new_recipe_preview_text = recipe["summary"]
                     new_recipe_preview_media_url = recipe["image"]
@@ -515,6 +513,7 @@ def constructRecipeTags(recipe):
     new_recipe_tags = new_recipe_tags.strip(", ")
 
     return new_recipe_tags
+
 
 
 # Run Server
