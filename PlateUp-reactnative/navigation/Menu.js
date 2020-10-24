@@ -2,7 +2,7 @@ import { Block, Text, theme } from "galio-framework";
 import { DrawerItem as DrawerCustomItem, Icon } from '../components';
 import Images from "../constants/Images";
 import argonTheme from "../constants/Theme";
-import * as util from "../constants/utils";
+import { toast } from "../constants/utils";
 import React from "react";
 import {
   Dimensions,
@@ -21,11 +21,11 @@ class CustomDrawerContent extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.userSettings.status === LOGOUT_IPR && this.props.userSettings.status === IDLE) {
-      if (this.props.userSettings.user !== null) {
-        util.toast(this.props.userSettings.error);
+      if (this.props.userSettings.error) {
+        toast(this.props.userSettings.error);
       }
       else {
-        util.toast("Logged out successfully!");
+        toast("Logged out successfully!");
         this.props.navigation.dispatch(StackActions.popToTop())
       }
     }

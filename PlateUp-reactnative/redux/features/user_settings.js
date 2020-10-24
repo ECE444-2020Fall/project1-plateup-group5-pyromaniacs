@@ -2,10 +2,10 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import axios from "axios";
 import env from "../../env";
 
-export const REGISTER_IPR = "registering";
-export const LOGIN_IPR = "logging in";
-export const LOGOUT_IPR = "logging out";
-export const IDLE = "idle";
+export const REGISTER_IPR = "REGISTERING";
+export const LOGIN_IPR = "LOGGING_IN";
+export const LOGOUT_IPR = "LOGGING_OUT";
+export const IDLE = "IDLE";
 
 const initialState = {
   user: null,

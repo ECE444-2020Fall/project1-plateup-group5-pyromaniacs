@@ -1,6 +1,6 @@
 import { Button, Icon, Input } from "../components";
 import { argonTheme, Images } from "../constants";
-import * as util from "../constants/utils";
+import { toast } from "../constants/utils";
 import { LinearGradient } from "expo-linear-gradient";
 import { Block, Checkbox, Text } from "galio-framework";
 import React from "react";
@@ -25,8 +25,8 @@ class Register extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.userSettings.status === REGISTER_IPR && this.props.userSettings.status === IDLE) {
-      if (this.props.userSettings.error !== null) {
-        util.toast(this.props.userSettings.error);
+      if (this.props.userSettings.error) {
+        toast(this.props.userSettings.error);
       }
       else {
         this.props.navigation.navigate("Login");
@@ -37,7 +37,7 @@ class Register extends React.Component {
   handleCreateAccount = () => {
     // Don't try to create an account if some information is missing
     if (this.state.name.length === 0 || this.state.email.length === 0 || this.state.password.length === 0) {
-      util.toast("Please fill in all fields.");
+      toast("Please fill in all fields.");
       return;
     }
 

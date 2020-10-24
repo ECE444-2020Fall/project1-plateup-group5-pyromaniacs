@@ -1,6 +1,6 @@
 import { Button, Icon, Input } from "../components";
 import { argonTheme, Images } from "../constants";
-import * as util from "../constants/utils";
+import { toast } from "../constants/utils";
 import { LinearGradient } from "expo-linear-gradient";
 import { Block, Text } from "galio-framework";
 import React from "react";
@@ -24,8 +24,8 @@ class Login extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.userSettings.status === LOGIN_IPR && this.props.userSettings.status === IDLE) {
-      if (this.props.userSettings.user === null) {
-        util.toast(this.props.userSettings.error);
+      if (this.props.userSettings.error) {
+        toast(this.props.userSettings.error);
       }
       else {
         this.props.navigation.navigate("App");
@@ -36,7 +36,7 @@ class Login extends React.Component {
   handleLogin = () => {
     // Don't try to log in if some information is missing
     if (this.state.email.length === 0 || this.state.password.length === 0) {
-      util.toast("Please fill in all fields.");
+      toast("Please fill in all fields.");
       return;
     }
     this.props.login({ ...this.state })
