@@ -14,7 +14,6 @@ import { DrawerItem as DrawerCustomItem } from '../components';
 const { width, height } = Dimensions.get("screen");
 
 function CustomDrawerContent({ drawerPosition, navigation, profile, focused, state, ...rest }) {
-  const insets = useSafeArea();
   return (
     <Block
       style={styles.container}
@@ -33,9 +32,10 @@ function CustomDrawerContent({ drawerPosition, navigation, profile, focused, sta
               focused={state.index === 0 ? true : false}
             />
             <DrawerCustomItem
-              title="Account"
+              title="Profile"
               key={1}
               navigation={navigation}
+              navigationScreenName={"Profile"}
               focused={state.index === 1 ? true : false}
             />
             <Block flex style={{ marginTop: 24, marginVertical: 8, paddingHorizontal: 8 }}>

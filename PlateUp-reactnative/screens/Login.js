@@ -2,7 +2,6 @@ import { Button, Icon, Input } from "../components";
 import { argonTheme, Images } from "../constants";
 import * as util from "../constants/utils";
 import { LinearGradient } from "expo-linear-gradient";
-import { login } from "../redux/features/user_settings"
 import { Block, Text } from "galio-framework";
 import React from "react";
 import {
@@ -13,6 +12,7 @@ import {
   StyleSheet
 } from "react-native";
 import { connect } from "react-redux"
+import { login, LOGIN_IPR, IDLE } from "../redux/features/user_settings"
 
 const { width, height } = Dimensions.get("screen");
 
@@ -23,7 +23,7 @@ class Login extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.userSettings.status === "logging in" && this.props.userSettings.status === "idle") {
+    if (prevProps.userSettings.status === LOGIN_IPR && this.props.userSettings.status === IDLE) {
       if (this.props.userSettings.user === null) {
         util.toast(this.props.userSettings.error);
       }
@@ -34,6 +34,7 @@ class Login extends React.Component {
   }
 
   handleLogin = () => {
+    console.log("User before login: ", this.props.userSettings.user);
     // Don't try to log in if some information is missing
     if (this.state.email.length === 0 || this.state.password.length === 0) {
       util.toast("Please fill in all fields.");

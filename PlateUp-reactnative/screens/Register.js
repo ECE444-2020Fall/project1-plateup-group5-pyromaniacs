@@ -2,7 +2,6 @@ import { Button, Icon, Input } from "../components";
 import { argonTheme, Images } from "../constants";
 import * as util from "../constants/utils";
 import { LinearGradient } from "expo-linear-gradient";
-import { register } from "../redux/features/user_settings"
 import { Block, Checkbox, Text } from "galio-framework";
 import React from "react";
 import {
@@ -13,6 +12,7 @@ import {
   StyleSheet
 } from "react-native";
 import { connect } from "react-redux"
+import { register, REGISTER_IPR, IDLE } from "../redux/features/user_settings"
 
 const { width, height } = Dimensions.get("screen");
 
@@ -24,7 +24,7 @@ class Register extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.userSettings.status === "registering" && this.props.userSettings.status === "idle") {
+    if (prevProps.userSettings.status === REGISTER_IPR && this.props.userSettings.status === IDLE) {
       if (this.props.userSettings.error !== null) {
         util.toast(this.props.userSettings.error);
       }
@@ -40,8 +40,6 @@ class Register extends React.Component {
       util.toast("Please fill in all fields.");
       return;
     }
-
-    console.log("In create account")
 
     this.props.register({ ...this.state });
   }

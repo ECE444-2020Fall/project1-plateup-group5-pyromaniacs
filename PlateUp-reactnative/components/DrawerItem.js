@@ -19,7 +19,7 @@ class DrawerItem extends React.Component {
             color={focused ? "white" : argonTheme.COLORS.PRIMARY}
           />
         );
-      case "Account":
+      case "Profile":
         return (
           <Icon
             name="calendar-date"
