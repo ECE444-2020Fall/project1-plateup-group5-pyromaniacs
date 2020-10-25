@@ -1,16 +1,17 @@
 import React from 'react';
-import { ActivityIndicator, Dimensions, ScrollView, StyleSheet } from 'react-native';
-import { connect } from 'react-redux'
+import {
+  ActivityIndicator, Dimensions, ScrollView, StyleSheet
+} from 'react-native';
+import { connect } from 'react-redux';
 import { Block, theme, Text } from 'galio-framework';
+import deepEqual from 'deep-equal';
 import { Card } from '../components';
 import { fetchBrowseRecipes } from '../redux/features/browse_recipes';
 import { argonTheme } from '../constants';
-import deepEqual from 'deep-equal';
 
 const { width } = Dimensions.get('screen');
 
 class Home extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = { loading: true };
@@ -22,7 +23,7 @@ class Home extends React.Component {
       searchQuery: this.props.searchQuery
     });
 
-    this.setState({ loading: false })
+    this.setState({ loading: false });
   }
 
   async componentDidUpdate(prevProps, prevState) {
@@ -31,8 +32,8 @@ class Home extends React.Component {
     // Set state to loading = true and since React setState isn't synchronous, pass a callback function to it
     // The callback function fetches the data, once the data is fetched, set loading to false
     if (
-      !prevState.loading && 
-      (!deepEqual(prevProps.filterSettings, this.props.filterSettings) || prevProps.searchQuery !== this.props.searchQuery)
+      !prevState.loading
+      && (!deepEqual(prevProps.filterSettings, this.props.filterSettings) || prevProps.searchQuery !== this.props.searchQuery)
     ) {
       this.setState({ loading: true }, async () => {
         await this.props.fetchBrowseRecipes({
@@ -40,74 +41,69 @@ class Home extends React.Component {
           searchQuery: this.props.searchQuery
         });
 
-        this.setState({ loading: false })
-      })
+        this.setState({ loading: false });
+      });
     }
   }
 
   renderContent() {
-    const error = this.props.browseRecipes.error;
+    const { error } = this.props.browseRecipes;
 
     if (error) {
       return <Text center> Something went wrong. </Text>;
     }
-    else {
-      return (
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.browsingContainer}
-        >
-          <Block flex>
-            { this.renderRecipes() }
-          </Block>
-        </ScrollView>
-         );
-      }
+
+    return (
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.browsingContainer}
+      >
+        <Block flex>
+          { this.renderRecipes() }
+        </Block>
+      </ScrollView>
+    );
   }
 
   renderRecipes() {
-    const recipes = this.props.browseRecipes.data.recipes;
+    const { recipes } = this.props.browseRecipes.data;
 
     if (!recipes || recipes.length == 0) {
       return <Text center> No recipes found with given filters and search query. </Text>;
     }
 
-    let recipeItems = [];
+    const recipeItems = [];
 
-    for (let recipe of recipes) {
+    for (const recipe of recipes) {
       recipeItems.push({
         id: recipe.recipe_id,
         title: recipe.name,
         image: recipe.preview_media_url,
-        cta: "View recipe",
+        cta: 'View recipe',
         tag: {
           text: `${recipe.time_h}hr${recipe.time_min}m`,
           icon: {
-            name: "clock",
-            family: "Foundation",
+            name: 'clock',
+            family: 'Foundation',
             color: argonTheme.COLORS.TEXT_COLOR
           }
         }
-      })
-    };
+      });
+    }
 
-    const cardsToRender = recipeItems.map((recipeItem, index) => 
-      <Card key={index} item={recipeItem} horizontal />
-    );
+    const cardsToRender = recipeItems.map((recipeItem, index) => <Card key={index} item={recipeItem} horizontal />);
 
     return cardsToRender;
   }
 
   render() {
-    const loading = this.state.loading;
+    const { loading } = this.state;
 
     return (
       <Block flex center style={styles.browsingContainer}>
-        { loading ? 
-        <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
-        :
-        this.renderContent()
-        }
+        { loading
+          ? <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
+          : this.renderContent()}
       </Block>
     );
   }
@@ -115,7 +111,7 @@ class Home extends React.Component {
 
 const styles = StyleSheet.create({
   recipes: {
-    width: width,
+    width,
   },
   browsingContainer: {
     width: width - theme.SIZES.BASE * 2,
@@ -123,13 +119,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (state) => {
-  return {
-    browseRecipes: state.browseRecipes,
-    filterSettings: state.filterSettings,
-    searchQuery: state.searchQuery
-  }
-}
+const mapStateToProps = (state) => ({
+  browseRecipes: state.browseRecipes,
+  filterSettings: state.filterSettings,
+  searchQuery: state.searchQuery
+});
 
 const mapDispatchToProps = { fetchBrowseRecipes };
 

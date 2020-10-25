@@ -1,34 +1,33 @@
-import { Button, Icon, Input } from "../components";
-import { argonTheme, Images } from "../constants";
-import { toast } from "../constants/utils";
-import { LinearGradient } from "expo-linear-gradient";
-import { Block, Text } from "galio-framework";
-import React from "react";
+import { LinearGradient } from 'expo-linear-gradient';
+import { Block, Text } from 'galio-framework';
+import React from 'react';
 import {
   Dimensions,
   Image,
   KeyboardAvoidingView,
   StatusBar,
   StyleSheet
-} from "react-native";
-import { connect } from "react-redux"
-import { login, LOGIN_IPR, IDLE } from "../redux/features/user_settings"
+} from 'react-native';
+import { connect } from 'react-redux';
+import { toast } from '../constants/utils';
+import { argonTheme, Images } from '../constants';
+import { Button, Icon, Input } from '../components';
+import { login, LOGIN_IPR, IDLE } from '../redux/features/user_settings';
 
-const { width, height } = Dimensions.get("screen");
+const { width, height } = Dimensions.get('screen');
 
 class Login extends React.Component {
   state = {
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.userSettings.status === LOGIN_IPR && this.props.userSettings.status === IDLE) {
       if (this.props.userSettings.error) {
         toast(this.props.userSettings.error);
-      }
-      else {
-        this.props.navigation.navigate("App");
+      } else {
+        this.props.navigation.navigate('App');
       }
     }
   }
@@ -36,10 +35,10 @@ class Login extends React.Component {
   handleLogin = () => {
     // Don't try to log in if some information is missing
     if (this.state.email.length === 0 || this.state.password.length === 0) {
-      toast("Please fill in all fields.");
+      toast('Please fill in all fields.');
       return;
     }
-    this.props.login({ ...this.state })
+    this.props.login({ ...this.state });
   }
 
   render() {
@@ -73,7 +72,7 @@ class Login extends React.Component {
                     <Input
                       borderless
                       placeholder="Email"
-                      iconContent={
+                      iconContent={(
                         <Icon
                           size={16}
                           color={argonTheme.COLORS.ICON}
@@ -81,8 +80,8 @@ class Login extends React.Component {
                           family="ArgonExtra"
                           style={styles.inputIcons}
                         />
-                      }
-                      onChangeText={(email) => this.setState({email})}
+                      )}
+                      onChangeText={(email) => this.setState({ email })}
                     />
                   </Block>
                   <Block width={width * 0.8}>
@@ -90,7 +89,7 @@ class Login extends React.Component {
                       password
                       borderless
                       placeholder="Password"
-                      iconContent={
+                      iconContent={(
                         <Icon
                           size={16}
                           color={argonTheme.COLORS.ICON}
@@ -98,8 +97,8 @@ class Login extends React.Component {
                           family="ArgonExtra"
                           style={styles.inputIcons}
                         />
-                      }
-                      onChangeText={(password) => this.setState({password})}
+                      )}
+                      onChangeText={(password) => this.setState({ password })}
                     />
                   </Block>
                   <Block middle>
@@ -135,13 +134,13 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: argonTheme.COLORS.WHITE,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: "#8898AA",
+    borderColor: '#8898AA',
   },
   inputIcons: {
     marginRight: 12,
   },
   nameImage: {
-    position: "absolute",
+    position: 'absolute',
     bottom: height * 0.0677,
     width: width * 0.725,
     height: width * 0.725 * (43 / 272),
@@ -159,18 +158,16 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     shadowOpacity: 0.1,
     elevation: 1,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
 });
 
-const mapStateToProps = (state) => {
-  return {
-    userSettings: state.userSettings
-  }
-}
+const mapStateToProps = (state) => ({
+  userSettings: state.userSettings
+});
 
 const mapDispatchToProps = {
   login,
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

@@ -1,24 +1,24 @@
-import React from "react";
-import { Dimensions } from "react-native";
+import React from 'react';
+import { Dimensions } from 'react-native';
 
-import { createStackNavigator } from "@react-navigation/stack";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createStackNavigator } from '@react-navigation/stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
 // screens
-import Home from "../screens/Home";
-import Login from "../screens/Login";
-import Onboarding from "../screens/Onboarding";
-import Register from "../screens/Register";
-import Filters from "../screens/Filters"
+import Home from '../screens/Home';
+import Login from '../screens/Login';
+import Onboarding from '../screens/Onboarding';
+import Register from '../screens/Register';
+import Filters from '../screens/Filters';
 
 // drawer
-import CustomDrawerContent from "./Menu";
+import CustomDrawerContent from './Menu';
 
 // header for screens
-import { Header } from "../components";
-import { argonTheme } from "../constants";
+import { Header } from '../components';
+import { argonTheme } from '../constants';
 
-const { width } = Dimensions.get("screen");
+const { width } = Dimensions.get('screen');
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -69,27 +69,27 @@ function AppStack(props) {
       style={{ flex: 1 }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       drawerStyle={{
-        backgroundColor: "white",
+        backgroundColor: 'white',
         width: width * 0.8,
       }}
       drawerContentOptions={{
-        activeTintcolor: "white",
-        inactiveTintColor: "#000",
-        activeBackgroundColor: "transparent",
+        activeTintcolor: 'white',
+        inactiveTintColor: '#000',
+        activeBackgroundColor: 'transparent',
         itemStyle: {
           width: width * 0.75,
-          backgroundColor: "transparent",
+          backgroundColor: 'transparent',
           paddingVertical: 16,
           paddingHorizonal: 12,
-          justifyContent: "center",
-          alignContent: "center",
-          alignItems: "center",
-          overflow: "hidden",
+          justifyContent: 'center',
+          alignContent: 'center',
+          alignItems: 'center',
+          overflow: 'hidden',
         },
         labelStyle: {
           fontSize: 18,
           marginLeft: 12,
-          fontWeight: "normal",
+          fontWeight: 'normal',
         },
       }}
       initialRouteName="Home"

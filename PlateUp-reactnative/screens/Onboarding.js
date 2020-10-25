@@ -1,12 +1,16 @@
-import React from "react";
-import { Image, StyleSheet, StatusBar, Dimensions } from "react-native";
-import { Block, Button, Text, theme } from "galio-framework";
-import { LinearGradient } from "expo-linear-gradient";
+import React from 'react';
+import {
+  Image, StyleSheet, StatusBar, Dimensions
+} from 'react-native';
+import {
+  Block, Button, Text, theme
+} from 'galio-framework';
+import { LinearGradient } from 'expo-linear-gradient';
 
-const { width, height } = Dimensions.get("screen");
+import argonTheme from '../constants/Theme';
+import Images from '../constants/Images';
 
-import argonTheme from "../constants/Theme";
-import Images from "../constants/Images";
+const { width, height } = Dimensions.get('screen');
 
 class Onboarding extends React.Component {
   render() {
@@ -29,16 +33,17 @@ class Onboarding extends React.Component {
           <Button
             style={styles.button}
             color={argonTheme.COLORS.BUTTON_COLOR}
-            onPress={() => navigation.navigate("Registration")}
+            onPress={() => navigation.navigate('Registration')}
             textStyle={{ color: argonTheme.COLORS.BLACK }}
           >
             Get Started
           </Button>
           <Text style={styles.text} color={argonTheme.COLORS.TEXT_COLOR}>
-            Already have an account?{" "}
+            Already have an account?
+            {' '}
             <Text
               style={styles.bold}
-              onPress={() => navigation.navigate("Login")}
+              onPress={() => navigation.navigate('Login')}
             >
               Login
             </Text>
@@ -63,11 +68,11 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
   },
   inputContainer: {
     paddingHorizontal: theme.SIZES.BASE * 2,
-    position: "relative",
+    position: 'relative',
     bottom: height * 0.06,
   },
   logoImage: {
@@ -75,8 +80,8 @@ const styles = StyleSheet.create({
     height: width * 0.725 * (201 / 279),
   },
   logoContainer: {
-    position: "absolute",
-    width: "100%",
+    position: 'absolute',
+    width: '100%',
     top: height * 0.2648,
     left: 0,
   },

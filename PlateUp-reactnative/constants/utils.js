@@ -1,5 +1,7 @@
 import { theme } from 'galio-framework';
-import { AlertIOS, Platform, StatusBar, ToastAndroid } from "react-native";
+import {
+  AlertIOS, Platform, StatusBar, ToastAndroid
+} from 'react-native';
 
 export const StatusHeight = StatusBar.currentHeight;
 export const HeaderHeight = (theme.SIZES.BASE * 3.5 + (StatusHeight || 0));
@@ -15,10 +17,9 @@ export function toast(msg) {
 
 export function constructQueryParams(queryParams, newParam) {
   if (queryParams) {
-    queryParams += ("&" + newParam)
-  }
-  else {
-    queryParams = ("?" + newParam)
+    queryParams += (`&${newParam}`);
+  } else {
+    queryParams = (`?${newParam}`);
   }
 
   return queryParams;

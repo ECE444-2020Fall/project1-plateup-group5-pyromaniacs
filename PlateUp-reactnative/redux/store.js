@@ -5,12 +5,12 @@ import filterSettingsReducer from './features/filter_settings';
 import searchQueryReducer from './features/search_query';
 
 const store = configureStore({
-    reducer: {
-        browseRecipes: browseRecipesReducer,
-        filterSettings: filterSettingsReducer,
-        searchQuery: searchQueryReducer,
-        userSettings: userSettingsReducer
-    }
+  reducer: {
+    browseRecipes: browseRecipesReducer,
+    filterSettings: filterSettingsReducer,
+    searchQuery: searchQueryReducer,
+    userSettings: userSettingsReducer
+  }
 });
 
 export default store;

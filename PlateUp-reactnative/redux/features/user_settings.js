@@ -1,47 +1,44 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import axios from "axios";
-import env from "../../env";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
+import env from '../../env';
 
-export const REGISTER_IPR = "REGISTERING";
-export const LOGIN_IPR = "LOGGING_IN";
-export const LOGOUT_IPR = "LOGGING_OUT";
-export const IDLE = "IDLE";
+export const REGISTER_IPR = 'REGISTERING';
+export const LOGIN_IPR = 'LOGGING_IN';
+export const LOGOUT_IPR = 'LOGGING_OUT';
+export const IDLE = 'IDLE';
 
 const initialState = {
   user: null,
   status: IDLE,
   error: null
-}
+};
 
 export const register = createAsyncThunk('userSettings/register', async (newUser, { rejectWithValue }) => {
   try {
     const response = await axios.post(`${env.SERVER_URL}/user`, newUser, { timeout: 1000 });
     return response.data;
-  }
-  catch (err) {
+  } catch (err) {
     return rejectWithValue(err.response.data);
   }
-})
+});
 
 export const login = createAsyncThunk('userSettings/login', async (user, { rejectWithValue }) => {
   try {
-    const response = await axios.post(`${env.SERVER_URL}/login`, user, { timeout: 1000 })
+    const response = await axios.post(`${env.SERVER_URL}/login`, user, { timeout: 1000 });
     return response.data;
-  }
-  catch (err) {
+  } catch (err) {
     return rejectWithValue(err.response.data);
   }
-})
+});
 
 export const logout = createAsyncThunk('userSettings/logout', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.delete(`${env.SERVER_URL}/login`, { timeout: 1000 })
+    const response = await axios.delete(`${env.SERVER_URL}/login`, { timeout: 1000 });
     return response.data;
+  } catch (err) {
+    return rejectWithValue('Logout failed!');
   }
-  catch (err) {
-    return rejectWithValue("Logout failed!");
-  }
-})
+});
 
 const userSettingsSlice = createSlice({
   name: 'userSettings',
@@ -106,6 +103,6 @@ const userSettingsSlice = createSlice({
       }
     },
   }
-})
+});
 
-export default userSettingsSlice.reducer
+export default userSettingsSlice.reducer;
