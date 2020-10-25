@@ -363,7 +363,9 @@ class RecipeAPI(Resource):
 
         recipe_list = self.__filter_recipe(recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredients)
 
-        recipe_list=recipe_list[page*limit : page*limit+limit]
+        if self.random_pick:
+            recipe_list = random.sample(recipe_list, k=min(len(recipe_list), int(limit)))
+            page = 0
         
         return_result=recipes_schema.dump(recipe_list)
         
