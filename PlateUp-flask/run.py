@@ -177,17 +177,17 @@ class RecipeAPI(Resource):
         merged_list=oldList+list(in_new_not_old)
         return merged_list
 
-    def __search_in_database_by_keyword_ingredient(self, keywords):
-        recipe_found = db.session.query(Recipe).filter(Recipe.ingredients.like(keywords)).all()
+    def __search_in_database_by_keyword_ingredient(self, keyword):
+        recipe_found = db.session.query(Recipe).filter(Recipe.ingredients.like(keyword)).all()
         return recipe_found
 
 
-    def __search_in_database_by_keyword_name(self, keywords):
-        recipe_found = db.session.query(Recipe).filter(Recipe.name.like(keywords)).all()
+    def __search_in_database_by_keyword_name(self, keyword):
+        recipe_found = db.session.query(Recipe).filter(Recipe.name.like(keyword)).all()
         return recipe_found
 
-    def __search_in_database_by_keyword_tag(self, keywords):
-        recipe_found = db.session.query(Recipe).filter(Recipe.tags.like(keywords)).all()
+    def __search_in_database_by_keyword_tag(self, keyword):
+        recipe_found = db.session.query(Recipe).filter(Recipe.tags.like(keyword)).all()
         return recipe_found
 
     def __search_keyword_list_for_search_by_name(self, keyword):
@@ -309,6 +309,10 @@ class RecipeAPI(Resource):
             new_recipe_time_h=new_recipe_time_h+int(new_recipe_time_min/60)
             new_recipe_time_min=new_recipe_time_min%60
 
+        new_recipe_name=new_recipe_name.lower()
+        new_recipe_ingredients = new_recipe_ingredients.lower()
+        new_recipe_tags = new_recipe_tags.lower()
+
         new_recipe=Recipe(new_recipe_name, new_recipe_ingredients, new_recipe_time_h,\
                           new_recipe_time_min, new_recipe_cost, new_recipe_preview_text,\
                           new_recipe_preview_media_url, new_recipe_tags)
@@ -341,19 +345,20 @@ class RecipeAPI(Resource):
         filter_has_ingredients = request.args.get('Filter_has_ingredients')
         limit=int(request.args.get('Limit')) if request.args.get('Limit') else 20
         page=int(request.args.get('Page')) if request.args.get('Page') else 0
-
+        '''
         if self.__debug==True:
             self.__debug_clear_table()
             self.__debug_add_recipe()
             self.__debug_show_table()
-
+        '''
         self.random_pick=False
         #get list
         recipe_list_name=[]
         recipe_list_ingredient=[]
-        recipe_list_tags=[] #add this into merge (consider hashing for speed)
+        recipe_list_tags=[]
 
         if search_query!=None:
+            search_query=search_query.lower()
             recipe_list_name=self.__search_for_recipes_by_name(search_query)
             recipe_list_ingredient=self.__search_for_recipes_by_ingredient(search_query)
             recipe_list_tags=self.__search_for_recipes_by_tags(search_query)
@@ -366,6 +371,8 @@ class RecipeAPI(Resource):
         if self.random_pick:
             recipe_list = random.sample(recipe_list, k=min(len(recipe_list), int(limit)))
             page = 0
+
+        recipe_list=recipe_list[limit*page, limit*page+limit]
         
         return_result=recipes_schema.dump(recipe_list)
         
