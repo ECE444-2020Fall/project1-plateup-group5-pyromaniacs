@@ -56,7 +56,7 @@ class Filters extends React.Component {
               !this.state.activateFilters && { opacity: 0.5 },
             ]}
           >
-            Show recipes below a maximum cost
+            Show recipes below a maximum cost (in dollars)
           </Text>
           <Input
             style={[
@@ -64,7 +64,7 @@ class Filters extends React.Component {
               !this.state.activateFilters && { borderColor: argonTheme.COLORS.MUTED }
             ]}
             value={this.state.maxCost}
-            placeholder="e.g $100"
+            placeholder="e.g 100"
             onChangeText={maxCost => this.setState({ maxCost })}
             editable={this.state.activateFilters ? true : false}
           />

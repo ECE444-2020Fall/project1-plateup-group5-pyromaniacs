@@ -1,37 +1,77 @@
 import React from 'react';
-import { StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { ActivityIndicator, Dimensions, ScrollView, StyleSheet } from 'react-native';
 import { connect } from 'react-redux'
 import { Block, theme, Text } from 'galio-framework';
 import { Card } from '../components';
 import { fetchBrowseRecipes } from '../redux/features/browse_recipes';
 import { argonTheme } from '../constants';
+import deepEqual from 'deep-equal';
+
 const { width } = Dimensions.get('screen');
 
 class Home extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { 
-      loading: true,
-      error: null
-    };
+    this.state = { loading: true };
   }
 
-  componentDidMount() {
-    this.props.fetchBrowseRecipes();
+  async componentDidMount() {
+    await this.props.fetchBrowseRecipes({
+      filterSettings: this.props.filterSettings,
+      searchQuery: this.props.searchQuery
+    });
+
+    this.setState({ loading: false })
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.loading == true && this.props.browseRecipes.status == "failure") {
-      this.setState({ loading: false, error: "Something went wrong." })
+  async componentDidUpdate(prevProps, prevState) {
+    // If the previous state was not loading, this flow was triggered because of filter / search query updates
+    // This means that the data is stale and we need to fetch it again
+    // Set state to loading = true and since React setState isn't synchronous, pass a callback function to it
+    // The callback function fetches the data, once the data is fetched, set loading to false
+    if (
+      !prevState.loading && 
+      (!deepEqual(prevProps.filterSettings, this.props.filterSettings) || prevProps.searchQuery !== this.props.searchQuery)
+    ) {
+      this.setState({ loading: true }, async () => {
+        await this.props.fetchBrowseRecipes({
+          filterSettings: this.props.filterSettings,
+          searchQuery: this.props.searchQuery
+        });
+
+        this.setState({ loading: false })
+      })
     }
-    else if (prevState.loading == true && this.props.browseRecipes.status == "success") {
-      this.setState({ loading: false })
+  }
+
+  renderContent() {
+    const error = this.props.browseRecipes.error;
+
+    if (error) {
+      return <Text center> Something went wrong. </Text>;
     }
+    else {
+      return (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.browsingContainer}
+        >
+          <Block flex>
+            { this.renderRecipes() }
+          </Block>
+        </ScrollView>
+         );
+      }
   }
 
   renderRecipes() {
     const recipes = this.props.browseRecipes.data.recipes;
+
+    if (!recipes || recipes.length == 0) {
+      return <Text center> No recipes found with given filters and search query. </Text>;
+    }
+
     let recipeItems = [];
 
     for (let recipe of recipes) {
@@ -60,26 +100,15 @@ class Home extends React.Component {
 
   render() {
     const loading = this.state.loading;
-    const error = this.state.error;
 
     return (
-        <Block flex center style={styles.home}>
-          { loading && 
-            <Text center> Loading... </Text>
-          }
-          { !loading && (error ? 
-            <Text center> Something went wrong </Text>
-            :
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.browsingContainer}
-            >
-              <Block flex>
-                {this.renderRecipes()}
-              </Block>
-            </ScrollView>
-          )}
-        </Block>
+      <Block flex center style={styles.browsingContainer}>
+        { loading ? 
+        <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
+        :
+        this.renderContent()
+        }
+      </Block>
     );
   }
 }
@@ -96,7 +125,9 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return {
-    browseRecipes: state.browseRecipes
+    browseRecipes: state.browseRecipes,
+    filterSettings: state.filterSettings,
+    searchQuery: state.searchQuery
   }
 }
 

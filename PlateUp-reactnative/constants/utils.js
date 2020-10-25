@@ -12,3 +12,14 @@ export function toast(msg) {
     AlertIOS.alert(msg);
   }
 }
+
+export function constructQueryParams(queryParams, newParam) {
+  if (queryParams) {
+    queryParams += ("&" + newParam)
+  }
+  else {
+    queryParams = ("?" + newParam)
+  }
+
+  return queryParams;
+}
