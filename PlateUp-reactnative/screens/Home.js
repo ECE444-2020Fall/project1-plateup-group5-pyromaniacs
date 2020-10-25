@@ -26,6 +26,10 @@ class Home extends React.Component {
   }
 
   async componentDidUpdate(prevProps, prevState) {
+    // If the previous state was not loading, this flow was triggered because of filter / search query updates
+    // This means that the data is stale and we need to fetch it again
+    // Set state to loading = true and since React setState isn't synchronous, pass a callback function to it
+    // The callback function fetches the data, once the data is fetched, set loading to false
     if (
       !prevState.loading && 
       (!deepEqual(prevProps.filterSettings, this.props.filterSettings) || prevProps.searchQuery !== this.props.searchQuery)
