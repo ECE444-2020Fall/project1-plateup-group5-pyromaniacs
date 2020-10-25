@@ -11,51 +11,61 @@ const { width } = Dimensions.get('screen');
 
 class Home extends React.Component {
 
-  componentDidMount() {
-    this.props.fetchBrowseRecipes({
+  constructor(props) {
+    super(props);
+    this.state = { loading: true };
+  }
+
+  async componentDidMount() {
+    await this.props.fetchBrowseRecipes({
       filterSettings: this.props.filterSettings,
       searchQuery: this.props.searchQuery
     });
+
+    this.setState( { loading: false })
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps, prevState) {
     if (
-      prevProps.browseRecipes.status === "success" && 
+      !prevState.loading && 
       (!deepEqual(prevProps.filterSettings, this.props.filterSettings) || prevProps.searchQuery !== this.props.searchQuery)
     ) {
-      this.props.fetchBrowseRecipes({
-        filterSettings: this.props.filterSettings,
-        searchQuery: this.props.searchQuery
-      });
+      this.setState({ loading: true }, async () => {
+        await this.props.fetchBrowseRecipes({
+          filterSettings: this.props.filterSettings,
+          searchQuery: this.props.searchQuery
+        });
+
+        this.setState({ loading: false })
+      })
     }
   }
 
-  renderContent(status) {
-    switch (status) {
-      case 'idle':
-      case 'fetching':
-        return <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />;
-      case 'failed':
-        return <Text center> Something went wrong. </Text>;
-      case 'success':
-        return (
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.browsingContainer}
-            >
-              <Block flex>
-                { this.renderRecipes() }
-              </Block>
-            </ScrollView>
-        );
+  renderContent() {
+    const error = this.props.browseRecipes.error;
+
+    if (error) {
+      return <Text center> Something went wrong. </Text>;
     }
+    else {
+      return (
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.browsingContainer}
+        >
+          <Block flex>
+            { this.renderRecipes() }
+          </Block>
+        </ScrollView>
+         );
+      }
   }
 
   renderRecipes() {
     const recipes = this.props.browseRecipes.data.recipes;
 
     if (!recipes || recipes.length == 0) {
-      return <Text> No recipes found with given filters and search query. </Text>;
+      return <Text center> No recipes found with given filters and search query. </Text>;
     }
 
     let recipeItems = [];
@@ -85,11 +95,15 @@ class Home extends React.Component {
   }
 
   render() {
-    const status = this.props.browseRecipes.status;
+    const loading = this.state.loading;
 
     return (
       <Block flex center style={styles.browsingContainer}>
-        {this.renderContent(status)}
+        { loading ? 
+        <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
+        :
+        this.renderContent()
+        }
       </Block>
     );
   }

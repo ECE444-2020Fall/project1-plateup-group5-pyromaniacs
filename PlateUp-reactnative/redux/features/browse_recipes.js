@@ -18,7 +18,6 @@ const filterQueryParamMapping = {
 }
 
 export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRecipes', async ( settings, { rejectWithValue } ) => {
-    
     let queryParams = "";
     let filters = { ...settings.filterSettings };
     let searchQuery = settings.searchQuery;
@@ -65,11 +64,11 @@ const browseRecipesSlice = createSlice({
             state.error = null
         },
         [fetchBrowseRecipes.fulfilled]: (state, action) => {
-            state.status = 'success'
+            state.status = 'idle'
             state.data = action.payload
         },
         [fetchBrowseRecipes.rejected]: (state, action) => {
-            state.status = 'failed'
+            state.status = 'idle'
             state.error = action.error.message
         }
     }
