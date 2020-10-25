@@ -160,7 +160,7 @@ class RecipeAPI(Resource):
 
     __dataBaseLength=0
     __parser=''
-    __debug=True
+    __debug=False
     random_pick=False
 
     #Retrive JSON stuff
@@ -186,6 +186,10 @@ class RecipeAPI(Resource):
         recipe_found = db.session.query(Recipe).filter(Recipe.name.like(keywords)).all()
         return recipe_found
 
+    def __search_in_database_by_keyword_tag(self, keywords):
+        recipe_found = db.session.query(Recipe).filter(Recipe.tags.like(keywords)).all()
+        return recipe_found
+
     def __search_keyword_list_for_search_by_name(self, keyword):
         keyword_list=[]
         keyword_list.append("% "+keyword+" %")
@@ -204,7 +208,9 @@ class RecipeAPI(Resource):
         keyword_list.append("% " + keyword + "%")
         keyword_list.append("%" + keyword + "%")
         return keyword_list
-
+    def __search_for_recipes_by_tags(self, keyword):
+        recipe_list = self.__search_in_database_by_keyword_tag(keyword)
+        return recipe_list
 
     def __search_for_recipes_by_name(self, keyword):
         recipe_list = []
@@ -270,11 +276,11 @@ class RecipeAPI(Resource):
         data4_json = json.dumps(data4)
         data5 = [{'trappletr': 5}]
         data5_json = json.dumps(data5)
-        new_recipe1 = Recipe('us_meal', data_json, 1, 12, 100, data_json, data_json)
-        new_recipe2 = Recipe('chinese_meal', data2_json, 2, 12, 200, data2_json, data2_json)
-        new_recipe3 = Recipe('uk_meal', data3_json, 3, 23, 300, data3_json, data3_json)
-        new_recipe4 = Recipe('french_meal', data4_json, 4, 45, 400,  data4_json, data4_json)
-        new_recipe5 = Recipe('russia_meal', data5_json, 5, 50, 500, data5_json, data5_json)
+        new_recipe1 = Recipe('us_meal', data_json, 1, 12, 100, data_json, data_json, "normal")
+        new_recipe2 = Recipe('chinese_meal', data2_json, 2, 12, 200, data2_json, data2_json, "healthy")
+        new_recipe3 = Recipe('uk_meal', data3_json, 3, 23, 300, data3_json, data3_json, "horrify")
+        new_recipe4 = Recipe('french_meal', data4_json, 4, 45, 400,  data4_json, data4_json, "wow")
+        new_recipe5 = Recipe('russia_meal', data5_json, 5, 50, 500, data5_json, data5_json, "unhealthy")
         db.session.add(new_recipe1)
         db.session.add(new_recipe2)
         db.session.add(new_recipe3)
@@ -336,10 +342,10 @@ class RecipeAPI(Resource):
         limit=int(request.args.get('Limit')) if request.args.get('Limit') else 20
         page=int(request.args.get('Page')) if request.args.get('Page') else 0
 
-        #if self.__debug==True:
-            #self.__debug_clear_table()
-            #self.__debug_add_recipe()
-            #self.__debug_show_table()
+        if self.__debug==True:
+            self.__debug_clear_table()
+            self.__debug_add_recipe()
+            self.__debug_show_table()
 
         self.random_pick=False
         #get list
@@ -350,8 +356,11 @@ class RecipeAPI(Resource):
         if search_query!=None:
             recipe_list_name=self.__search_for_recipes_by_name(search_query)
             recipe_list_ingredient=self.__search_for_recipes_by_ingredient(search_query)
+            recipe_list_tags=self.__search_for_recipes_by_tags(search_query)
 
         recipe_list=self.__merge_list(recipe_list_name, recipe_list_ingredient)
+        recipe_list=self.__merge_list(recipe_list, recipe_list_tags)
+
         recipe_list = self.__filter_recipe(recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredients)
 
         #random list
