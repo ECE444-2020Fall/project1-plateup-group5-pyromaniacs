@@ -65,6 +65,7 @@ class UserAPI(Resource):
 
     # @login_required
     @userR.doc(description="Get information for all users.")
+    @login_required
     def get(self):
         all_users = User.query.all()
         result = users_schema.dump(all_users)
@@ -95,6 +96,7 @@ class UserAPI(Resource):
 
     # @login_required
     @userR.doc(description="WARNING: Delete all user information stored in the database.")
+    @login_required
     def delete(self):
         num_rows_deleted = db.session.query(User).delete()
         db.session.commit()
@@ -123,6 +125,7 @@ class LoginAPI(Resource):
         return Response("Login failed! Please confirm that the email and password are correct.", status=403)
 
     @loginR.doc(description="Logging current user out.")
+    @login_required
     def delete(self):
         userId = current_user.id
         logout_user()
@@ -135,6 +138,7 @@ class MailAPI(Resource):
     # @login_required
     @mailR.doc(description="Sends a welcome email to user with their client ID and default password information (Development Email Only).")
     @mailR.param("userID")
+    @login_required
     def get(self):
         userID = request.args.get("userID")
         receipient = User.query.get(userID).email
@@ -251,7 +255,7 @@ class RecipeAPI(Resource):
     def __filter_recipe(self, recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredient):
         if len(recipe_list)==0:
             self.random_pick=True
-            recipe_list=self.__search_for_recipes_by_tags("popular") # return popular recipes
+            recipe_list=db.session.query(Recipe).all() # return all BUG
         if filter_cost!=None:
             recipe_list=self.__filter_by_cost(recipe_list, filter_cost)
         if filter_time_h != None and filter_time_min!=None:
@@ -299,6 +303,7 @@ class RecipeAPI(Resource):
     #insert recipe to database
     @recipeR.doc(description="Insert recipe to database")
     @recipeR.expect(resourceFields, validate=True)
+    @login_required
     def post(self):
         new_recipe_name=request.json["Name"]
         new_recipe_ingredients=request.json["Ingredients"]
@@ -335,6 +340,7 @@ class RecipeAPI(Resource):
                     'Limit': {'description': 'number of recipes to return', 'type': 'int'},
                     'Page': {'description': 'page number determines range of data returned: [page x limit -> page x limit + limit]', 'type': 'int'}
                     })
+    @login_required
     def get(self):
         #get params
         recipe_list = []
@@ -345,6 +351,7 @@ class RecipeAPI(Resource):
         filter_has_ingredients = request.args.get('Filter_has_ingredients')
         limit=int(request.args.get('Limit')) if request.args.get('Limit') else 20
         page=int(request.args.get('Page')) if request.args.get('Page') else 0
+
         '''
         if self.__debug==True:
             self.__debug_clear_table()
@@ -370,9 +377,8 @@ class RecipeAPI(Resource):
         if self.random_pick:
             recipe_list = random.sample(recipe_list, k=min(len(recipe_list), int(limit)))
             page = 0
-
-        recipe_list=recipe_list[limit*page, limit*page+limit]
         
+        recipe_list=recipe_list[limit*page:limit*page+limit]
         return_result=recipes_schema.dump(recipe_list)
         
         return_dict = {"recipes": return_result, "is_random": self.random_pick}
@@ -433,7 +439,7 @@ def sendWelcomeEmail(receipient, user):
 # Background tasks
 # -----------------------------------------------------------------------------
 # update stuff as a scheduled job while server is active
-@scheduler.scheduled_job('interval', seconds=60)
+@scheduler.scheduled_job('interval', seconds=3600)
 def fetchRecipes():
     print("fetching recipes...")
     i = 0
@@ -497,6 +503,7 @@ def updateRecipesToDB():
 
             except Exception as e:
                 print("recipe not updated due to missing fields or other error: %s \n"%e)
+                print("skipping...")
 
     print("done updating recipes.")
 
