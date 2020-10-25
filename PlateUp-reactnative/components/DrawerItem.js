@@ -1,47 +1,51 @@
-import React from "react";
-import { StyleSheet, TouchableOpacity, Linking } from "react-native";
-import { Block, Text, theme } from "galio-framework";
+import React from 'react';
+import { StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import { Block, Text, theme } from 'galio-framework';
 
-import Icon from "./Icon";
-import argonTheme from "../constants/Theme";
+import Icon from './Icon';
+import argonTheme from '../constants/Theme';
 
 class DrawerItem extends React.Component {
   renderIcon = () => {
     const { title, focused } = this.props;
 
     switch (title) {
-      case "Home":
+      case 'Home':
         return (
           <Icon
             name="shop"
             family="ArgonExtra"
             size={14}
-            color={focused ? "white" : argonTheme.COLORS.PRIMARY}
+            color={focused ? 'white' : argonTheme.COLORS.PRIMARY}
           />
         );
-      case "Meal Planning":
+      case 'Meal Planning':
         return (
           <Icon
             name="calendar-date"
             family="ArgonExtra"
             size={14}
-            color={focused ? "white" : argonTheme.COLORS.TEXT_COLOR}
+            color={focused ? 'white' : argonTheme.COLORS.TEXT_COLOR}
           />
         );
-      case "Inventory":
-        return (<Icon
-          name="basket"
-          family="ArgonExtra"
-          size={14}
-          color={focused ? "white" : argonTheme.COLORS.TEXT_COLOR}
-        />);
+      case 'Inventory':
+        return (
+          <Icon
+            name="basket"
+            family="ArgonExtra"
+            size={14}
+            color={focused ? 'white' : argonTheme.COLORS.TEXT_COLOR}
+          />
+        );
       default:
         return null;
     }
   };
 
   render() {
-    const { focused, title, navigation, navigationScreenName } = this.props;
+    const {
+      focused, title, navigation, navigationScreenName
+    } = this.props;
 
     const containerStyles = [
       styles.defaultStyle,
@@ -51,7 +55,7 @@ class DrawerItem extends React.Component {
     return (
       <TouchableOpacity
         style={{ height: 60 }}
-        onPress={() => navigationScreenName ? navigation.navigate(navigationScreenName) : {}}
+        onPress={() => (navigationScreenName ? navigation.navigate(navigationScreenName) : {})}
       >
         <Block flex row style={containerStyles}>
           <Block middle flex={0.1} style={{ marginRight: 5 }}>
@@ -60,8 +64,8 @@ class DrawerItem extends React.Component {
           <Block row center flex={0.9}>
             <Text
               size={15}
-              bold={focused ? true : false}
-              color={focused ? "white" : argonTheme.COLORS.TEXT_COLOR}
+              bold={!!focused}
+              color={focused ? 'white' : argonTheme.COLORS.TEXT_COLOR}
             >
               {title}
             </Text>

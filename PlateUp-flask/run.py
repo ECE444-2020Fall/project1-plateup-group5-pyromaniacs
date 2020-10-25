@@ -160,7 +160,7 @@ class RecipeAPI(Resource):
 
     __dataBaseLength=0
     __parser=''
-    __debug=True
+    __debug=False
     random_pick=False
 
     #Retrive JSON stuff
@@ -177,13 +177,17 @@ class RecipeAPI(Resource):
         merged_list=oldList+list(in_new_not_old)
         return merged_list
 
-    def __search_in_database_by_keyword_ingredient(self, keywords):
-        recipe_found = db.session.query(Recipe).filter(Recipe.ingredients.like(keywords)).all()
+    def __search_in_database_by_keyword_ingredient(self, keyword):
+        recipe_found = db.session.query(Recipe).filter(Recipe.ingredients.like(keyword)).all()
         return recipe_found
 
 
-    def __search_in_database_by_keyword_name(self, keywords):
-        recipe_found = db.session.query(Recipe).filter(Recipe.name.like(keywords)).all()
+    def __search_in_database_by_keyword_name(self, keyword):
+        recipe_found = db.session.query(Recipe).filter(Recipe.name.like(keyword)).all()
+        return recipe_found
+
+    def __search_in_database_by_keyword_tag(self, keyword):
+        recipe_found = db.session.query(Recipe).filter(Recipe.tags.like(keyword)).all()
         return recipe_found
 
     def __search_keyword_list_for_search_by_name(self, keyword):
@@ -204,11 +208,16 @@ class RecipeAPI(Resource):
         keyword_list.append("% " + keyword + "%")
         keyword_list.append("%" + keyword + "%")
         return keyword_list
-
+    def __search_for_recipes_by_tags(self, keyword):
+        recipe_list = self.__search_in_database_by_keyword_tag(keyword)
+        new_recipe_list = self.__search_in_database_by_keyword_tag(keyword.lower())
+        recipe_list = self.__merge_list(recipe_list, new_recipe_list)
+        return recipe_list
 
     def __search_for_recipes_by_name(self, keyword):
         recipe_list = []
         keywordList = self.__search_keyword_list_for_search_by_name(keyword)
+        keywordList = keywordList+self.__search_keyword_list_for_search_by_name(keyword.lower())
         for i in range(len(keywordList)):
             new_recipe_list = self.__search_in_database_by_keyword_name(keywordList[i])
             recipe_list = self.__merge_list(recipe_list, new_recipe_list)
@@ -217,6 +226,7 @@ class RecipeAPI(Resource):
     def __search_for_recipes_by_ingredient(self, keyword):
         recipe_list=[]
         keywordList=self.__search_keyword_list_for_search_by_ingredient(keyword)
+        keywordList = keywordList + self.__search_keyword_list_for_search_by_ingredient(keyword.lower())
         for i in range(len(keywordList)):
             new_recipe_list = self.__search_in_database_by_keyword_ingredient(keywordList[i])
             recipe_list=self.__merge_list(recipe_list, new_recipe_list)
@@ -241,7 +251,7 @@ class RecipeAPI(Resource):
     def __filter_recipe(self, recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredient):
         if len(recipe_list)==0:
             self.random_pick=True
-            recipe_list=db.session.query(Recipe).all()
+            recipe_list=self.__search_for_recipes_by_tags("popular") # return popular recipes
         if filter_cost!=None:
             recipe_list=self.__filter_by_cost(recipe_list, filter_cost)
         if filter_time_h != None and filter_time_min!=None:
@@ -270,11 +280,11 @@ class RecipeAPI(Resource):
         data4_json = json.dumps(data4)
         data5 = [{'trappletr': 5}]
         data5_json = json.dumps(data5)
-        new_recipe1 = Recipe('us_meal', data_json, 1, 12, 100, data_json, data_json)
-        new_recipe2 = Recipe('chinese_meal', data2_json, 2, 12, 200, data2_json, data2_json)
-        new_recipe3 = Recipe('uk_meal', data3_json, 3, 23, 300, data3_json, data3_json)
-        new_recipe4 = Recipe('french_meal', data4_json, 4, 45, 400,  data4_json, data4_json)
-        new_recipe5 = Recipe('russia_meal', data5_json, 5, 50, 500, data5_json, data5_json)
+        new_recipe1 = Recipe('us_meal', data_json, 1, 12, 100, data_json, data_json, "normal")
+        new_recipe2 = Recipe('chinese_meal', data2_json, 2, 12, 200, data2_json, data2_json, "healthy")
+        new_recipe3 = Recipe('uk_meal', data3_json, 3, 23, 300, data3_json, data3_json, "horrify")
+        new_recipe4 = Recipe('french_meal', data4_json, 4, 45, 400,  data4_json, data4_json, "wow")
+        new_recipe5 = Recipe('russia_meal', data5_json, 5, 50, 500, data5_json, data5_json, "unhealthy")
         db.session.add(new_recipe1)
         db.session.add(new_recipe2)
         db.session.add(new_recipe3)
@@ -317,8 +327,7 @@ class RecipeAPI(Resource):
     #search recipe by Name and Filter (Filter not implement yet)
     #Example: http://127.0.0.1:5000/recipe?Name=%22meal%22&Ingredients=%22meal%22&Filter_time_h=10&Filter_time_min=0&Filter_cost=10000&Page=0&Limit=2
     @recipeR.doc(description="Get recipe preview json by name and filter", 
-            params={'Name': {'description': 'search by recipe name', 'type': 'string'},
-                    'Ingredients': {'description': 'search by comma separated ingredidents', 'type': 'string'},
+            params={'Search': {'description': 'search by an ingredient, recipe name, or tag', 'type': 'string'},
                     'Filter_time_h': {'description': 'filter by max hours', 'type': 'int'},
                     'Filter_time_min': {'description': 'filter by max minutes (<60)', 'type': 'int'},
                     'Filter_cost': {'description': 'filter by max cost', 'type': 'float'},
@@ -329,38 +338,40 @@ class RecipeAPI(Resource):
     def get(self):
         #get params
         recipe_list = []
-        recipe_name=request.args.get('Name')
-        ingredients=request.args.get('Ingredients')
+        search_query=request.args.get('Search')
         filter_time_h= request.args.get('Filter_time_h')
         filter_time_min = request.args.get('Filter_time_min')
         filter_cost = request.args.get('Filter_cost')
         filter_has_ingredients = request.args.get('Filter_has_ingredients')
         limit=int(request.args.get('Limit')) if request.args.get('Limit') else 20
         page=int(request.args.get('Page')) if request.args.get('Page') else 0
-
-        #if self.__debug==True:
-            #self.__debug_clear_table()
-            #self.__debug_add_recipe()
-            #self.__debug_show_table()
-
+        '''
+        if self.__debug==True:
+            self.__debug_clear_table()
+            self.__debug_add_recipe()
+            self.__debug_show_table()
+        '''
         self.random_pick=False
         #get list
         recipe_list_name=[]
         recipe_list_ingredient=[]
-        if recipe_name!=None:
-            recipe_list_name=self.__search_for_recipes_by_name(recipe_name)
-        if ingredients!=None:
-            recipe_list_ingredient=self.__search_for_recipes_by_ingredient(ingredients)
+        recipe_list_tags=[]
+
+        if search_query!=None:
+            recipe_list_name=self.__search_for_recipes_by_name(search_query)
+            recipe_list_ingredient=self.__search_for_recipes_by_ingredient(search_query)
+            recipe_list_tags=self.__search_for_recipes_by_tags(search_query)
 
         recipe_list=self.__merge_list(recipe_list_name, recipe_list_ingredient)
+        recipe_list=self.__merge_list(recipe_list, recipe_list_tags)
+
         recipe_list = self.__filter_recipe(recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredients)
 
-        #random list
         if self.random_pick:
-            recipe_list = random.sample(recipe_list, k=min(len(recipe_list),int(limit)))
+            recipe_list = random.sample(recipe_list, k=min(len(recipe_list), int(limit)))
             page = 0
 
-        recipe_list=recipe_list[page*limit : page*limit+limit]
+        recipe_list=recipe_list[limit*page, limit*page+limit]
         
         return_result=recipes_schema.dump(recipe_list)
         
@@ -422,7 +433,7 @@ def sendWelcomeEmail(receipient, user):
 # Background tasks
 # -----------------------------------------------------------------------------
 # update stuff as a scheduled job while server is active
-@scheduler.scheduled_job('interval', seconds=3600)
+@scheduler.scheduled_job('interval', seconds=60)
 def fetchRecipes():
     print("fetching recipes...")
     i = 0
@@ -466,8 +477,7 @@ def updateRecipesToDB():
 
                     new_recipe_ingredients=json.dumps(ingredients)
                     new_recipe_time_h = 0
-                    new_recipe_time_min = int(recipe["cookingMinutes"]) if "cookingMinutes" in recipe else 60
-                    new_recipe_time_min =+ int(recipe["preparationMinutes"]) if "preparationMinutes" in recipe else 0
+                    new_recipe_time_min = int(recipe["readyInMinutes"]) if "readyInMinutes" in recipe else 60
                     new_recipe_cost = recipe["pricePerServing"]
                     new_recipe_preview_text = recipe["summary"]
                     new_recipe_preview_media_url = recipe["image"]
