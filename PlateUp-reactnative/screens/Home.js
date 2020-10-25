@@ -22,7 +22,7 @@ class Home extends React.Component {
       searchQuery: this.props.searchQuery
     });
 
-    this.setState( { loading: false })
+    this.setState({ loading: false })
   }
 
   async componentDidUpdate(prevProps, prevState) {
