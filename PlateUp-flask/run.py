@@ -210,11 +210,14 @@ class RecipeAPI(Resource):
         return keyword_list
     def __search_for_recipes_by_tags(self, keyword):
         recipe_list = self.__search_in_database_by_keyword_tag(keyword)
+        new_recipe_list = self.__search_in_database_by_keyword_tag(keyword.lower())
+        recipe_list = self.__merge_list(recipe_list, new_recipe_list)
         return recipe_list
 
     def __search_for_recipes_by_name(self, keyword):
         recipe_list = []
         keywordList = self.__search_keyword_list_for_search_by_name(keyword)
+        keywordList = keywordList+self.__search_keyword_list_for_search_by_name(keyword.lower())
         for i in range(len(keywordList)):
             new_recipe_list = self.__search_in_database_by_keyword_name(keywordList[i])
             recipe_list = self.__merge_list(recipe_list, new_recipe_list)
@@ -223,6 +226,7 @@ class RecipeAPI(Resource):
     def __search_for_recipes_by_ingredient(self, keyword):
         recipe_list=[]
         keywordList=self.__search_keyword_list_for_search_by_ingredient(keyword)
+        keywordList = keywordList + self.__search_keyword_list_for_search_by_ingredient(keyword.lower())
         for i in range(len(keywordList)):
             new_recipe_list = self.__search_in_database_by_keyword_ingredient(keywordList[i])
             recipe_list=self.__merge_list(recipe_list, new_recipe_list)
@@ -309,10 +313,6 @@ class RecipeAPI(Resource):
             new_recipe_time_h=new_recipe_time_h+int(new_recipe_time_min/60)
             new_recipe_time_min=new_recipe_time_min%60
 
-        new_recipe_name=new_recipe_name.lower()
-        new_recipe_ingredients = new_recipe_ingredients.lower()
-        new_recipe_tags = new_recipe_tags.lower()
-
         new_recipe=Recipe(new_recipe_name, new_recipe_ingredients, new_recipe_time_h,\
                           new_recipe_time_min, new_recipe_cost, new_recipe_preview_text,\
                           new_recipe_preview_media_url, new_recipe_tags)
@@ -358,7 +358,6 @@ class RecipeAPI(Resource):
         recipe_list_tags=[]
 
         if search_query!=None:
-            search_query=search_query.lower()
             recipe_list_name=self.__search_for_recipes_by_name(search_query)
             recipe_list_ingredient=self.__search_for_recipes_by_ingredient(search_query)
             recipe_list_tags=self.__search_for_recipes_by_tags(search_query)
