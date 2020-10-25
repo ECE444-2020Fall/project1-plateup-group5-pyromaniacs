@@ -247,7 +247,7 @@ class RecipeAPI(Resource):
     def __filter_recipe(self, recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredient):
         if len(recipe_list)==0:
             self.random_pick=True
-            recipe_list=db.session.query(Recipe).all()
+            recipe_list=self.__search_for_recipes_by_tags("popular") # return popular recipes
         if filter_cost!=None:
             recipe_list=self.__filter_by_cost(recipe_list, filter_cost)
         if filter_time_h != None and filter_time_min!=None:
@@ -362,11 +362,6 @@ class RecipeAPI(Resource):
         recipe_list=self.__merge_list(recipe_list, recipe_list_tags)
 
         recipe_list = self.__filter_recipe(recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredients)
-
-        #random list
-        if self.random_pick:
-            recipe_list = random.sample(recipe_list, k=min(len(recipe_list),int(limit)))
-            page = 0
 
         recipe_list=recipe_list[page*limit : page*limit+limit]
         
