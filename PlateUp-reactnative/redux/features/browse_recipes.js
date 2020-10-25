@@ -37,7 +37,7 @@ export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRe
     }
   }
 
-  queryParams = constructQueryParams(queryParams, `Name=${searchQuery}`);
+  queryParams = constructQueryParams(queryParams, `Search=${searchQuery}`);
 
   try {
     const response = await axios({
