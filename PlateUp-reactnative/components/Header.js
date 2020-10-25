@@ -2,7 +2,7 @@ import { withNavigation } from '@react-navigation/compat';
 import argonTheme from '../constants/Theme';
 import { Button, Block, NavBar, Text, theme } from 'galio-framework';
 import Icon from './Icon';
-import Input from './Input';
+import SearchBar from './SearchBar';
 import React from 'react';
 import { TouchableOpacity, StyleSheet, Platform, Dimensions } from 'react-native';
 
@@ -39,26 +39,12 @@ class Header extends React.Component {
     }
   }
 
-  renderSearch = () => {
-    return (
-      <Input
-        right
-        color="black"
-        style={styles.search}
-        placeholder="What ingredients do you have?"
-        iconContent={
-          <Icon size={16} color={theme.COLORS.MUTED} name="search-zoom-in" family="ArgonExtra" />
-        }
-      />
-    );
-  }
-
   renderHeader = () => {
     const { navigation } = this.props;
 
     return (
       <Block center style={{ paddingBottom: 15 }}>
-        {this.props.search ? this.renderSearch() : null}
+        {this.props.search ? <SearchBar /> : null}
       </Block>
     );
   }
@@ -152,14 +138,6 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOpacity: 0.2,
     elevation: 3,
-  },
-  search: {
-    height: 48,
-    width: width - 32,
-    marginHorizontal: 16,
-    borderWidth: 1,
-    borderRadius: 3,
-    borderColor: argonTheme.COLORS.BORDER
   },
   icon: {
     marginTop: 0,
