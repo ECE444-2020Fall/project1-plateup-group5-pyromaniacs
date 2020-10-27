@@ -326,7 +326,7 @@ class RecipeAPI(Resource):
         db.session.commit()
         if self.__debug:
             self.__debug_show_table()
-        return Resource("recipe inserted!", status=200)
+        return Response("recipe inserted!", status=200)
 
 
     #search recipe by Name and Filter (Filter not implement yet)
