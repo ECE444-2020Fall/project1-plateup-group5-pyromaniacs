@@ -1,10 +1,14 @@
 import { withNavigation } from '@react-navigation/compat';
-import argonTheme from '../constants/Theme';
-import { Button, Block, NavBar, Text, theme } from 'galio-framework';
-import Icon from './Icon';
-import Input from './Input';
+import {
+  Button, Block, NavBar, Text, theme
+} from 'galio-framework';
 import React from 'react';
-import { TouchableOpacity, StyleSheet, Platform, Dimensions } from 'react-native';
+import {
+  TouchableOpacity, StyleSheet, Platform, Dimensions
+} from 'react-native';
+import argonTheme from '../constants/Theme';
+import Icon from './Icon';
+import SearchBar from './SearchBar';
 
 const { height, width } = Dimensions.get('window');
 const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
@@ -19,9 +23,9 @@ class Header extends React.Component {
     const { title, navigation } = this.props;
 
     switch (title) {
-      case "Home":
+      case 'Home':
         return (
-          <Button shadowless style={styles.tab} onPress={() => navigation.navigate("Filters")}>
+          <Button shadowless style={styles.tab} onPress={() => navigation.navigate('Filters')}>
             <Block row>
               <Text style={styles.filterTitle}>Filters</Text>
               <Icon
@@ -39,32 +43,20 @@ class Header extends React.Component {
     }
   }
 
-  renderSearch = () => {
-    return (
-      <Input
-        right
-        color="black"
-        style={styles.search}
-        placeholder="What ingredients do you have?"
-        iconContent={
-          <Icon size={16} color={theme.COLORS.MUTED} name="search-zoom-in" family="ArgonExtra" />
-        }
-      />
-    );
-  }
-
   renderHeader = () => {
     const { navigation } = this.props;
 
     return (
       <Block center style={{ paddingBottom: 15 }}>
-        {this.props.search ? this.renderSearch() : null}
+        {this.props.search ? <SearchBar /> : null}
       </Block>
     );
   }
 
   render() {
-    const { back, title, transparent, bgColor, iconColor, titleColor, ...props } = this.props;
+    const {
+      back, title, transparent, bgColor, iconColor, titleColor, ...props
+    } = this.props;
 
     const noShadow = ['Search', 'Profile'].includes(title);
     const headerStyles = [
@@ -86,14 +78,16 @@ class Header extends React.Component {
           transparent={transparent}
           right={this.renderRight()}
           rightStyle={styles.rightStyle}
-          left={
+          left={(
             <Icon
-              name={back ? 'chevron-left' : "menu"} family="entypo"
-              size={20} onPress={this.handleLeftPress}
+              name={back ? 'chevron-left' : 'menu'}
+              family="entypo"
+              size={20}
+              onPress={this.handleLeftPress}
               color={iconColor || argonTheme.COLORS.ICON}
               style={{ marginTop: 2 }}
             />
-          }
+          )}
           leftStyle={{ paddingVertical: 12, flex: 0.2 }}
           titleStyle={[
             styles.title,
@@ -122,8 +116,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     marginTop: 10,
     marginEnd: 28,
-    flexDirection: "column",
-    alignItems: "flex-end"
+    flexDirection: 'column',
+    alignItems: 'flex-end'
   },
   tab: {
     backgroundColor: theme.COLORS.TRANSPARENT,
@@ -132,7 +126,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     height: 24,
     elevation: 0,
-    alignItems: "flex-end"
+    alignItems: 'flex-end'
   },
   tabTitle: {
     lineHeight: 19,
@@ -153,21 +147,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     elevation: 3,
   },
-  search: {
-    height: 48,
-    width: width - 32,
-    marginHorizontal: 16,
-    borderWidth: 1,
-    borderRadius: 3,
-    borderColor: argonTheme.COLORS.BORDER
-  },
   icon: {
     marginTop: 0,
     paddingRight: 8,
   },
   rightStyle: {
     alignItems: 'flex-end',
-    alignContent: "center",
+    alignContent: 'center',
     flex: 0.6,
   },
   filterTitle: {

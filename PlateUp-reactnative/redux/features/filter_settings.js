@@ -1,11 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    maxCost: "",
-    maxCookTime: "",
-    recipesWithOwnedIngredients: false,
-    activateFilters: true,
-}
+  maxCost: '',
+  maxCookTime: '',
+  recipesWithOwnedIngredients: false,
+  activateFilters: true,
+};
 
 const filterSettingsSlice = createSlice({
   name: 'filterSettings',
@@ -15,7 +15,7 @@ const filterSettingsSlice = createSlice({
       return action.payload;
     },
   },
-})
+});
 
-export const { saveFilters } = filterSettingsSlice.actions
-export default filterSettingsSlice.reducer
+export const { saveFilters } = filterSettingsSlice.actions;
+export default filterSettingsSlice.reducer;

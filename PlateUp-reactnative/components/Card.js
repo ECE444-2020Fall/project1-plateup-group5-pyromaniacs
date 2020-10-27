@@ -7,11 +7,12 @@ import Icon from './Icon';
 
 import { argonTheme } from '../constants';
 
-
 class Card extends React.Component {
   render() {
-    const { navigation, item, horizontal, full, style, ctaColor, imageStyle } = this.props;
-    
+    const {
+      navigation, item, horizontal, full, style, ctaColor, imageStyle
+    } = this.props;
+
     const imageStyles = [
       full ? styles.fullImage : styles.horizontalImage,
       imageStyle
@@ -26,7 +27,7 @@ class Card extends React.Component {
       <Block row={horizontal} card flex style={cardContainer}>
         <TouchableWithoutFeedback onPress={() => {}}>
           <Block flex style={imgContainer}>
-            <Image source={{uri: item.image}} style={imageStyles} />
+            <Image source={{ uri: item.image }} style={imageStyles} />
           </Block>
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback onPress={() => {}}>
@@ -34,12 +35,13 @@ class Card extends React.Component {
             <Text size={14} style={styles.cardTitle}>{item.title}</Text>
             <Block row space="between">
               <Text size={12} muted={!ctaColor} color={ctaColor} bold>{item.cta}</Text>
-              { item.tag &&
+              { item.tag
+                && (
                 <Block row style={styles.tagContainer}>
                   {item.tag.icon && <Icon size={20} style={styles.tagIcon} name={item.tag.icon.name} family={item.tag.icon.family} color={item.tag.icon.color} />}
                   <Text size={12} style={styles.tagText}>{item.tag.text}</Text>
                 </Block>
-              }
+                )}
             </Block>
           </Block>
         </TouchableWithoutFeedback>
@@ -52,7 +54,7 @@ Card.defaultProps = {
   ctaColor: argonTheme.COLORS.SECONDARY,
   handlePress: null,
   imageStyle: {},
-}
+};
 
 Card.propTypes = {
   ctaColor: PropTypes.string,
@@ -65,7 +67,7 @@ Card.propTypes = {
     icon: PropTypes.string,
     text: PropTypes.string
   })
-}
+};
 
 const styles = StyleSheet.create({
   card: {
@@ -98,7 +100,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     elevation: 1,
     overflow: 'hidden',
-    justifyContent: "center"
+    justifyContent: 'center'
   },
   shadow: {
     shadowColor: theme.COLORS.BLACK,
