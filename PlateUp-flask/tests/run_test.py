@@ -84,7 +84,7 @@ def test_failure_login_logout(client):
 
 
 ################################################################################
-# Implemented by Eliano Anile for Lab 6 - 2020/10/XX
+# Implemented by Eliano Anile for Lab 6 - 2020/10/26
 ################################################################################
 def test_add_recipe(client):
     """ Test adding a recipe to the database. """
