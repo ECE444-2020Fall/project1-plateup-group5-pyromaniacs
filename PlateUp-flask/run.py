@@ -255,7 +255,8 @@ class RecipeAPI(Resource):
     def __filter_recipe(self, recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredient):
         if len(recipe_list)==0:
             self.random_pick=True
-            recipe_list=self.__search_for_recipes_by_tags("popular") # return popular recipes
+            #recipe_list=self.__search_for_recipes_by_tags("popular") # return popular recipes
+            recipe_list=db.session.query(Recipe).all()
 
         if filter_cost!=None:
             recipe_list=self.__filter_by_cost(recipe_list, filter_cost)
@@ -327,9 +328,7 @@ class RecipeAPI(Resource):
         db.session.commit()
         if self.__debug:
             self.__debug_show_table()
-        response=jsonify("recipe inserted")
-        response.status_code=200
-        return response
+        return Response("recipe inserted!", status=200)
 
 
     #search recipe by Name and Filter (Filter not implement yet)
@@ -382,7 +381,7 @@ class RecipeAPI(Resource):
             page = 0
 
 
-        recipe_list=recipe_list[limit*page, limit*page+limit]
+        recipe_list=recipe_list[limit*page:limit*page+limit]
 
         return_result=recipes_schema.dump(recipe_list)
         
