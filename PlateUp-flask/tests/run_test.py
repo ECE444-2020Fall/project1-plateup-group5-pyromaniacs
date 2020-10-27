@@ -104,6 +104,10 @@ def test_add_recipe(client):
 
     assert rv.status == "200 OK"
 
+    rv = get_recipes(client)
+    assert rv.status == "200 OK"
+    assert len(rv.json["recipes"]) == 1
+
 
 def test_get_random_recipes(client):
     """ Test getting random recipes from the database (i.e. no search keywords
