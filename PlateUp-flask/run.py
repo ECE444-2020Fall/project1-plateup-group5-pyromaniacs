@@ -321,7 +321,9 @@ class RecipeAPI(Resource):
         db.session.commit()
         if self.__debug:
             self.__debug_show_table()
-        return Resource("recipe inserted!", status=200)
+        response=jsonify("recipe inserted")
+        response.status_code=200
+        return response
 
 
     #search recipe by Name and Filter (Filter not implement yet)
