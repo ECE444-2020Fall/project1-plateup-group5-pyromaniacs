@@ -1,23 +1,20 @@
-import React from 'react';
+import { argonTheme } from './constants';
 import { Block, GalioProvider } from 'galio-framework';
-import { NavigationContainer } from '@react-navigation/native';
+import mockHTTP from './mock-http';
+import Screens from './navigation/Screens';
+import React from 'react';
 import { Provider } from 'react-redux';
 import { enableScreens } from 'react-native-screens';
-import mockHTTP from './mock-http';
 import store from './redux/store';
+import { NavigationContainer } from '@react-navigation/native';
 
 // Before rendering any navigation stack
-
-import Screens from './navigation/Screens';
-import { argonTheme } from './constants';
-
 enableScreens();
 
-export default () =>
-
+export default () => {
   // Uncomment below line if you want to use stub data when running the application
-  // mockHTTP();
-  (
+  mockHTTP();
+  return (
     <Provider store={store}>
       <NavigationContainer>
         <GalioProvider theme={argonTheme}>
@@ -28,3 +25,4 @@ export default () =>
       </NavigationContainer>
     </Provider>
   );
+}
