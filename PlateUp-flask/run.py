@@ -239,7 +239,7 @@ class RecipeAPI(Resource):
     filterRecipe
     '''
     def __filter_by_cost(self, recipe_list, filter_cost):
-        recipe_list = [recipe for recipe in recipe_list if recipe.cost <= int(filter_cost)]
+        recipe_list = [recipe for recipe in recipe_list if recipe.cost <= float(filter_cost)]
         return recipe_list
 
 
