@@ -191,8 +191,7 @@ class RecipeDetailAPI(Resource):
             print(list[i].name)
         print("end")
 
-    @recipeR.doc(description="Get recipe preview json by name and filter",
-                 params={'recipe_id': {'description': 'search recipe id', 'type': 'string'}})
+    @login_required
     def get(self, id):
         recipe_id = id
 
@@ -215,6 +214,7 @@ class RecipeDetailAPI(Resource):
 
     @recipeR.doc(description="Insert recipe instruction to database")
     @recipeR.expect(resourceFields, validate=True)
+    @login_required
     def post(self, id):
         #self.__debug_delete_table()
         new_instruction_recipe_id = request.json["recipe_id"]
@@ -389,7 +389,7 @@ class RecipeAPI(Resource):
     #insert recipe to database
     @recipeR.doc(description="Insert recipe to database")
     @recipeR.expect(resourceFields, validate=True)
-    #@login_required
+    @login_required
     def post(self):
         new_recipe_name=request.json["Name"]
         new_recipe_ingredients=request.json["Ingredients"]
@@ -426,7 +426,7 @@ class RecipeAPI(Resource):
                     'Limit': {'description': 'number of recipes to return', 'type': 'int'},
                     'Page': {'description': 'page number determines range of data returned: [page x limit -> page x limit + limit]', 'type': 'int'}
                     })
-    #@login_required
+    @login_required
     def get(self):
         #get params
         recipe_list = []
@@ -626,8 +626,8 @@ def constructRecipeTags(recipe):
 if __name__ == '__main__':
     db.create_all()
     scheduler.start()
-    #updateRecipesToDB()
-    app.run(host='0.0.0.0', debug=True)
+    updateRecipesToDB()
+    app.run(host='0.0.0.0')
 
     # Terminate background tasks
     scheduler.shutdown()
