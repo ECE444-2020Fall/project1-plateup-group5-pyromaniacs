@@ -57,7 +57,6 @@ const userSettingsSlice = createSlice({
     },
     [register.rejected]: (state, action) => {
       if (state.status === REGISTER_IPR) {
-        console.log(action.payload)
         state.status = IDLE;
         state.error = action.payload;
       }
