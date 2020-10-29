@@ -25,13 +25,13 @@ describe('processSettingsIntoParams', () => {
             filterSettings: {
                 activateFilters: true,
                 maxCookTime: "",
-                maxCost: "10", // In dollars
+                maxCost: "10.50", // In dollars
             },
             searchQuery: "test"
         }
 
         expect(processSettingsIntoParams(settings)).toEqual({
-            maxCost: "1000", // In cents
+            maxCost: "1050", // In cents
             search: "test"
         })
     });
