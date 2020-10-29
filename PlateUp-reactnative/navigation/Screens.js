@@ -65,6 +65,10 @@ function HomeStack(props) {
             <Header
               title="Browse"
               back
+              noShadow
+              titleColor={argonTheme.COLORS.WHITE}
+              iconColor={argonTheme.COLORS.WHITE}
+              bgColor={argonTheme.COLORS.PRIMARY}
               navigation={navigation}
               scene={scene}
             />
