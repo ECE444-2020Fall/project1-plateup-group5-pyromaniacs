@@ -13,7 +13,7 @@ enableScreens();
 
 export default () => {
   // Uncomment below line if you want to use stub data when running the application
-  // mockHTTP();
+  mockHTTP();
   return (
     <Provider store={store}>
       <NavigationContainer>

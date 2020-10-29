@@ -48,7 +48,7 @@ function HomeStack(props) {
         options={{
           header: ({ navigation, scene }) => (
             <Header
-              title="Filters"
+              title="Browse"
               back
               navigation={navigation}
               scene={scene}
@@ -57,7 +57,20 @@ function HomeStack(props) {
           cardStyle: { backgroundColor: argonTheme.COLORS.GREY },
         }}
       />
-      <Stack.Screen name="Recipe" component={Recipe} />
+      <Stack.Screen
+        name="Recipe"
+        component={Recipe}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title="Browse"
+              back
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+        }}
+      />
     </Stack.Navigator>
   );
 }
