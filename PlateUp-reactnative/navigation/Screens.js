@@ -10,6 +10,7 @@ import Login from '../screens/Login';
 import Onboarding from '../screens/Onboarding';
 import Register from '../screens/Register';
 import Filters from '../screens/Filters';
+import Recipe from '../screens/Recipe';
 
 // drawer
 import CustomDrawerContent from './Menu';
@@ -56,6 +57,7 @@ function HomeStack(props) {
           cardStyle: { backgroundColor: argonTheme.COLORS.GREY },
         }}
       />
+      <Stack.Screen name="Recipe" component={Recipe} />
     </Stack.Navigator>
   );
 }

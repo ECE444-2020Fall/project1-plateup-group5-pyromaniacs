@@ -76,7 +76,7 @@ class Home extends React.Component {
 
     for (const recipe of recipes) {
       recipeItems.push({
-        id: recipe.recipe_id,
+        id: recipe.id,
         title: recipe.name,
         image: recipe.preview_media_url,
         cta: 'View recipe',
@@ -98,7 +98,15 @@ class Home extends React.Component {
             No recipes found for search query. Showing random results with given filters.
           </Text> 
         }
-        { recipeItems.map((recipeItem, index) => <Card key={index} item={recipeItem} horizontal />) }
+        { recipeItems.map((recipeItem, index) => (
+            <Card
+              key={index}
+              item={recipeItem}
+              horizontal
+              onPress={() => this.props.navigation.navigate("Recipe", { id: recipeItem.id })}
+            />
+          ))
+        }
       </Block>
     );
   }
