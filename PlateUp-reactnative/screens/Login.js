@@ -2,6 +2,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Block, Text } from 'galio-framework';
 import React from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   KeyboardAvoidingView,
@@ -101,17 +102,24 @@ class Login extends React.Component {
                       onChangeText={(password) => this.setState({ password })}
                     />
                   </Block>
-                  <Block middle>
-                    <Button
-                      color="primary"
-                      style={styles.createButton}
-                      onPress={this.handleLogin}
-                    >
-                      <Text bold size={14} color={argonTheme.COLORS.WHITE}>
-                        Login
-                      </Text>
-                    </Button>
-                  </Block>
+                  { this.props.userSettings.status == LOGIN_IPR
+                    ?
+                    <Block style={styles.loading}>
+                      <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
+                    </Block>
+                    :
+                    <Block middle>
+                      <Button
+                        color="primary"
+                        style={styles.createButton}
+                        onPress={this.handleLogin}
+                      >
+                        <Text bold size={14} color={argonTheme.COLORS.WHITE}>
+                          Login
+                        </Text>
+                      </Button>
+                    </Block>
+                  }
                 </KeyboardAvoidingView>
               </Block>
             </Block>
@@ -160,6 +168,11 @@ const styles = StyleSheet.create({
     elevation: 1,
     overflow: 'hidden',
   },
+  loading: {
+    alignContent: "center",
+    justifyContent: "center",
+    flex: 1
+  }
 });
 
 const mapStateToProps = (state) => ({

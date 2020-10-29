@@ -2,6 +2,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Block, Checkbox, Text } from 'galio-framework';
 import React from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   KeyboardAvoidingView,
@@ -140,17 +141,24 @@ class Register extends React.Component {
                       Privacy Policy
                     </Text>
                   </Block>
-                  <Block middle>
-                    <Button
-                      color="primary"
-                      style={styles.createButton}
-                      onPress={this.handleCreateAccount}
-                    >
-                      <Text bold size={14} color={argonTheme.COLORS.WHITE}>
-                        CREATE ACCOUNT
-                      </Text>
-                    </Button>
-                  </Block>
+                  { this.props.userSettings.status == REGISTER_IPR
+                    ?
+                    <Block style={styles.loading}>
+                      <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
+                    </Block>
+                    :
+                    <Block middle>
+                      <Button
+                        color="primary"
+                        style={styles.createButton}
+                        onPress={this.handleCreateAccount}
+                      >
+                        <Text bold size={14} color={argonTheme.COLORS.WHITE}>
+                          Create Account
+                        </Text>
+                      </Button>
+                    </Block>
+                  }
                 </KeyboardAvoidingView>
               </Block>
             </Block>
@@ -204,6 +212,11 @@ const styles = StyleSheet.create({
     elevation: 1,
     overflow: 'hidden',
   },
+  loading: {
+    alignContent: "center",
+    justifyContent: "center",
+    flex: 1
+  }
 });
 
 const mapStateToProps = (state) => ({
