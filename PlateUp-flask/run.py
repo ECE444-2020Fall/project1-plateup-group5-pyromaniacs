@@ -239,7 +239,7 @@ class RecipeAPI(Resource):
     filterRecipe
     '''
     def __filter_by_cost(self, recipe_list, filter_cost):
-        recipe_list = [recipe for recipe in recipe_list if recipe.cost <= int(filter_cost)]
+        recipe_list = [recipe for recipe in recipe_list if recipe.cost <= float(filter_cost)]
         return recipe_list
 
 
@@ -255,7 +255,8 @@ class RecipeAPI(Resource):
     def __filter_recipe(self, recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredient):
         if len(recipe_list)==0:
             self.random_pick=True
-            recipe_list=db.session.query(Recipe).all() # return all BUG
+            recipe_list=db.session.query(Recipe).all()
+
         if filter_cost!=None:
             recipe_list=self.__filter_by_cost(recipe_list, filter_cost)
         if filter_time_h != None and filter_time_min!=None:
@@ -284,11 +285,11 @@ class RecipeAPI(Resource):
         data4_json = json.dumps(data4)
         data5 = [{'trappletr': 5}]
         data5_json = json.dumps(data5)
-        new_recipe1 = Recipe('us_meal', data_json, 1, 12, 100, data_json, data_json, "normal")
-        new_recipe2 = Recipe('chinese_meal', data2_json, 2, 12, 200, data2_json, data2_json, "healthy")
-        new_recipe3 = Recipe('uk_meal', data3_json, 3, 23, 300, data3_json, data3_json, "horrify")
-        new_recipe4 = Recipe('french_meal', data4_json, 4, 45, 400,  data4_json, data4_json, "wow")
-        new_recipe5 = Recipe('russia_meal', data5_json, 5, 50, 500, data5_json, data5_json, "unhealthy")
+        new_recipe1 = Recipe('us_meal', data_json, 1, 12, 30, data_json, data_json, "normal")
+        new_recipe2 = Recipe('chinese_meal', data2_json, 2, 12, 30.5, data2_json, data2_json, "healthy")
+        new_recipe3 = Recipe('uk_meal', data3_json, 3, 23, 40, data3_json, data3_json, "horrify")
+        new_recipe4 = Recipe('french_meal', data4_json, 4, 45, 40.6,  data4_json, data4_json, "wow")
+        new_recipe5 = Recipe('russia_meal', data5_json, 5, 50, 40.8, data5_json, data5_json, "unhealthy")
         db.session.add(new_recipe1)
         db.session.add(new_recipe2)
         db.session.add(new_recipe3)
@@ -377,8 +378,9 @@ class RecipeAPI(Resource):
         if self.random_pick:
             recipe_list = random.sample(recipe_list, k=min(len(recipe_list), int(limit)))
             page = 0
-        
+
         recipe_list=recipe_list[limit*page:limit*page+limit]
+
         return_result=recipes_schema.dump(recipe_list)
         
         return_dict = {"recipes": return_result, "is_random": self.random_pick}
