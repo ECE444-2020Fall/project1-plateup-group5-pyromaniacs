@@ -35,10 +35,8 @@ class Recipe extends React.Component {
             argonTheme.COLORS.GRADIENT_START,
             argonTheme.COLORS.GRADIENT_END,
           ]}
-          // start={{ x: 0, y: 0 }}
-          // end={{ x: 1, y: 0 }}
         >
-          <Block style={{flex: 1}}>
+          <Block flex>
             <Block flex style={styles.recipeCard}>
               <Block middle style={styles.recipeContainer}>
                 <Image
@@ -109,6 +107,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
     backgroundColor: theme.COLORS.WHITE,
+    elevation: 10,
   },
   info: {
     paddingHorizontal: 40
