@@ -39,8 +39,6 @@ export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRe
 
   const queryParams = constructQueryParams(params, queryParamMapping);
 
-  console.log(queryParams);
-
   try {
     const response = await axios({
       method: 'get',
