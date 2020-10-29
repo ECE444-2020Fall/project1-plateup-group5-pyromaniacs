@@ -9,7 +9,7 @@ import {
   StyleSheet
 } from 'react-native';
 import { connect } from 'react-redux';
-import { toast } from '../constants/utils';
+import { toast } from '../constants/toast';
 import { argonTheme, Images } from '../constants';
 import { Button, Icon, Input } from '../components';
 import { login, LOGIN_IPR, IDLE } from '../redux/features/user_settings';

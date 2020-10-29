@@ -11,33 +11,35 @@ const initialState = {
   error: null
 };
 
-const filterQueryParamMapping = {
+const queryParamMapping = {
   maxCost: 'Filter_cost',
   maxCookTimeHour: 'Filter_time_h',
-  maxCookTimeMinutes: 'Filter_time_min'
+  maxCookTimeMinutes: 'Filter_time_min',
+  search: 'Search'
 };
 
 export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRecipes', async (settings, { rejectWithValue }) => {
-  let queryParams = '';
   const filters = { ...settings.filterSettings };
-  const { searchQuery } = settings;
+  const searchQuery = settings.searchQuery;
+  let params = {}
 
   if (filters.activateFilters) {
-    delete filters.activateFilters;
+    params = { ...filters, search: searchQuery }
 
-    filters.maxCookTimeHour = filters.maxCookTime ? Math.floor(Number(filters.maxCookTime) / 60).toString() : '';
-    filters.maxCookTimeMinutes = filters.maxCookTime ? (Number(filters.maxCookTime) % 60).toString() : '';
+    delete params.activateFilters;
 
-    delete filters.maxCookTime;
+    params.maxCookTimeHour = params.maxCookTime ? Math.floor(Number(params.maxCookTime) / 60).toString() : '';
+    params.maxCookTimeMinutes = params.maxCookTime ? (Number(params.maxCookTime) % 60).toString() : '';
 
-    for (const filter in filters) {
-      if (filters[filter] && filterQueryParamMapping[filter]) {
-        queryParams = constructQueryParams(queryParams, `${filterQueryParamMapping[filter]}=${filters[filter]}`);
-      }
-    }
+    delete params.maxCookTime;
+  }
+  else {
+    params = { search: searchQuery }
   }
 
-  queryParams = constructQueryParams(queryParams, `Search=${searchQuery}`);
+  const queryParams = constructQueryParams(params, queryParamMapping);
+
+  console.log(queryParams);
 
   try {
     const response = await axios({

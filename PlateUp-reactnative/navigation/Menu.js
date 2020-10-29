@@ -12,7 +12,7 @@ import { StackActions } from '@react-navigation/native';
 import { DrawerItem as DrawerCustomItem, Icon } from '../components';
 import Images from '../constants/Images';
 import argonTheme from '../constants/Theme';
-import { toast } from '../constants/utils';
+import { toast } from '../constants/toast';
 import { logout, LOGOUT_IPR, IDLE } from '../redux/features/user_settings';
 
 const { width, height } = Dimensions.get('screen');
