@@ -2,8 +2,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Block, Text } from 'galio-framework';
 import React from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   StatusBar,
   StyleSheet
@@ -20,6 +22,23 @@ class Login extends React.Component {
   state = {
     email: '',
     password: '',
+    keyboardIsOpen: false,
+  }
+
+  componentDidMount () {
+    this.keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => this.setState({ keyboardIsOpen: true })
+    );
+    this.keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => this.setState({ keyboardIsOpen: false })
+    );
+  }
+
+  componentWillUnmount () {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
   }
 
   componentDidUpdate(prevProps) {
@@ -58,49 +77,54 @@ class Login extends React.Component {
                 Welcome back to Plate Up! Please log in.
               </Text>
             </Block>
-            <Block flex>
-              <Block flex center>
-                <KeyboardAvoidingView
-                  style={{ flex: 1 }}
-                  behavior="padding"
-                  enabled
+            <Block flex center>
+              <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior="padding"
+                enabled
+              >
+                <Block
+                  width={width * 0.8}
+                  style={{ marginBottom: 5, marginTop: 5 }}
                 >
-                  <Block
-                    width={width * 0.8}
-                    style={{ marginBottom: 5, marginTop: 5 }}
-                  >
-                    <Input
-                      borderless
-                      placeholder="Email"
-                      iconContent={(
-                        <Icon
-                          size={16}
-                          color={argonTheme.COLORS.ICON}
-                          name="ic_mail_24px"
-                          family="ArgonExtra"
-                          style={styles.inputIcons}
-                        />
-                      )}
-                      onChangeText={(email) => this.setState({ email })}
-                    />
+                  <Input
+                    borderless
+                    placeholder="Email"
+                    iconContent={(
+                      <Icon
+                        size={16}
+                        color={argonTheme.COLORS.ICON}
+                        name="ic_mail_24px"
+                        family="ArgonExtra"
+                        style={styles.inputIcons}
+                      />
+                    )}
+                    onChangeText={(email) => this.setState({ email })}
+                  />
+                </Block>
+                <Block width={width * 0.8}>
+                  <Input
+                    password
+                    borderless
+                    placeholder="Password"
+                    iconContent={(
+                      <Icon
+                        size={16}
+                        color={argonTheme.COLORS.ICON}
+                        name="padlock-unlocked"
+                        family="ArgonExtra"
+                        style={styles.inputIcons}
+                      />
+                    )}
+                    onChangeText={(password) => this.setState({ password })}
+                  />
+                </Block>
+                { this.props.userSettings.status == LOGIN_IPR
+                  ?
+                  <Block style={styles.loading}>
+                    <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
                   </Block>
-                  <Block width={width * 0.8}>
-                    <Input
-                      password
-                      borderless
-                      placeholder="Password"
-                      iconContent={(
-                        <Icon
-                          size={16}
-                          color={argonTheme.COLORS.ICON}
-                          name="padlock-unlocked"
-                          family="ArgonExtra"
-                          style={styles.inputIcons}
-                        />
-                      )}
-                      onChangeText={(password) => this.setState({ password })}
-                    />
-                  </Block>
+                  :
                   <Block middle>
                     <Button
                       color="primary"
@@ -112,12 +136,16 @@ class Login extends React.Component {
                       </Text>
                     </Button>
                   </Block>
-                </KeyboardAvoidingView>
-              </Block>
+                }
+              </KeyboardAvoidingView>
             </Block>
           </Block>
-          <Image source={Images.PlateUpName} style={styles.nameImage} />
         </Block>
+        { !this.state.keyboardIsOpen &&
+          <Block style={styles.imageContainer}>
+            <Image source={Images.PlateUpName} style={styles.nameImage} />
+          </Block>
+        }
       </LinearGradient>
     );
   }
@@ -140,10 +168,8 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   nameImage: {
-    position: 'absolute',
-    bottom: height * 0.0677,
-    width: width * 0.725,
-    height: width * 0.725 * (43 / 272),
+    resizeMode: "contain",
+    width: width * 0.725
   },
   loginContainer: {
     width: width * 0.9,
@@ -160,6 +186,18 @@ const styles = StyleSheet.create({
     elevation: 1,
     overflow: 'hidden',
   },
+  loading: {
+    alignContent: "center",
+    justifyContent: "center",
+    flex: 1
+  },
+  imageContainer: {
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    flex: 0.1,
+    paddingBottom: 15
+  }
 });
 
 const mapStateToProps = (state) => ({

@@ -3,8 +3,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import env from '../../env';
 import { constructQueryParams } from '../../constants/utils';
 
-// Created using Redux Toolkit documentation example
-
 const initialState = {
   data: {},
   status: 'idle',
@@ -26,11 +24,18 @@ export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRe
   if (filters.activateFilters) {
     params = { ...filters, search: searchQuery }
 
+    // Convert max cook time to integer before splitting into hours and minutes as the
+    // server expects these values to be integers.
+    if (params.maxCookTime) {
+      const maxCookTime = Math.floor(Number(params.maxCookTime));
+      params.maxCookTimeHour = Math.floor(maxCookTime / 60).toString();
+      params.maxCookTimeMinutes = (maxCookTime % 60).toString();
+    }
+
+    // Server expects cost in cents
+    params.maxCost = Number(params.maxCost) * 100;
+
     delete params.activateFilters;
-
-    params.maxCookTimeHour = params.maxCookTime ? Math.floor(Number(params.maxCookTime) / 60).toString() : '';
-    params.maxCookTimeMinutes = params.maxCookTime ? (Number(params.maxCookTime) % 60).toString() : '';
-
     delete params.maxCookTime;
   }
   else {
