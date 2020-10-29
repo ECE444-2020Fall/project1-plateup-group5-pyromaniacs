@@ -23,11 +23,13 @@ export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRe
   const { searchQuery } = settings;
 
   if (filters.activateFilters) {
-    delete filters.activateFilters;
+    // Server expects cost in cents
+    filters.maxCost *= 100;
 
     filters.maxCookTimeHour = filters.maxCookTime ? Math.floor(Number(filters.maxCookTime) / 60).toString() : '';
     filters.maxCookTimeMinutes = filters.maxCookTime ? (Number(filters.maxCookTime) % 60).toString() : '';
 
+    delete filters.activateFilters;
     delete filters.maxCookTime;
 
     for (const filter in filters) {

@@ -57,7 +57,7 @@ class Filters extends React.Component {
             !this.state.activateFilters && { opacity: 0.5 },
           ]}
         >
-          Show recipes below a maximum cost (in dollars)
+          Show recipes below a maximum cost per serving (in dollars)
         </Text>
         <Input
           style={[
