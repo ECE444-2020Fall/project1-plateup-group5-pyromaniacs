@@ -27,7 +27,7 @@ export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRe
     // Convert max cook time to integer before splitting into hours and minutes as the
     // server expects these values to be integers.
     if (params.maxCookTime) {
-      const maxCookTime = Number(Math.floor(params.maxCookTime));
+      const maxCookTime = Math.floor(Number(params.maxCookTime));
       params.maxCookTimeHour = Math.floor(maxCookTime / 60).toString();
       params.maxCookTimeMinutes = (maxCookTime % 60).toString();
     }
