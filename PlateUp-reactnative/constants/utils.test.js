@@ -20,12 +20,10 @@ describe('constructQueryParams', () => {
         expect(queryParams).toEqual("?key1=val1&key2=val2&param3=val3")
     });
 
-    test('properly ignores any params with empty values', () => {
+    test('ignores params with empty values', () => {
         const params = {
             param1: "",
-            param2: "",
-            param3: "",
-            param4: ""
+            param2: ""
         }
 
         const keyTransforms = {
@@ -36,6 +34,22 @@ describe('constructQueryParams', () => {
         const queryParams = constructQueryParams(params, keyTransforms);
 
         expect(queryParams).toEqual("")
+    });
+
+    test('only includes non-empty params when there is a mix of empty and non-empty', () => {
+        const params = {
+            param1: "val1",
+            param2: ""
+        }
+
+        const keyTransforms = {
+            param1: "key1",
+            param2: "key2"
+        }
+
+        const queryParams = constructQueryParams(params, keyTransforms);
+
+        expect(queryParams).toEqual("?key1=val1")
     });
     
     test('returns an empty string when no parameters provided', () => {
