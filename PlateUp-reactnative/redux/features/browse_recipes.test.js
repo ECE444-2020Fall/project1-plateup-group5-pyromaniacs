@@ -89,7 +89,7 @@ describe('browseRecipesReducer', () => {
         const expectedState = {
             status: "idle",
             error: action.error.message,
-            data: "stale"
+            data: previousState.data
         }
 
         expect(browseRecipesReducer(previousState, action)).toEqual(expectedState)
@@ -110,7 +110,7 @@ describe('browseRecipesReducer', () => {
         const expectedState = {
             status: "idle",
             error: null,
-            data: { recipes: [], isRandom: false }
+            data: action.payload
         }
 
         expect(browseRecipesReducer(previousState, action)).toEqual(expectedState)
