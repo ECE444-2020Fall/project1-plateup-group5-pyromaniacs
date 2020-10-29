@@ -120,3 +120,107 @@ def test_get_random_recipes(client):
     rv = get_recipes(client)
     assert rv.status == "200 OK"
     assert rv.json["is_random"]
+
+################################################################################
+# Implemented by Jingxuan Su for Lab 6 - 2020/10/29
+################################################################################
+
+def post_instructions(client, instructions):
+    return client.post("/recipe/1", json=instructions)
+def get_instructions(client, recipeId):
+    return client.get("/recipe/"+str(recipeId))
+
+def add_instructions(client, id):
+    new_instruction={
+        'recipe_id': "random",
+        'step_num': 1,
+        'step_instruction': "instruction_step1_id1",
+        'ingredients': "ingredient_step1_id1",
+        'equipment': "ingredient_step1_id1",
+    }
+    post_instructions(client, instructions=new_instruction)
+    new_instruction = {
+        'recipe_id': "random",
+        'step_num': 2,
+        'step_instruction': "instruction_step2_id1",
+        'ingredients': "ingredient_step2_id1",
+        'equipment': "ingredient_step2_id1",
+    }
+    post_instructions(client, instructions=new_instruction)
+    new_instruction = {
+        'recipe_id': str(id),
+        'step_num': 1,
+        'step_instruction': "instruction_id2_step1",
+        'ingredients': "ingredient_step1_id2",
+        'equipment': "ingredient_step1_id2",
+    }
+    post_instructions(client, instructions=new_instruction)
+    new_instruction = {
+        'recipe_id': str(id),
+        'step_num': 2,
+        'step_instruction': "instruction_id2_step2",
+        'ingredients': "ingredient_id2_step2",
+        'equipment': "ingredient_id2_step2",
+    }
+    post_instructions(client, instructions=new_instruction)
+    new_instruction = {
+        'recipe_id': str(id),
+        'step_num': 3,
+        'step_instruction': "instruction_id2_step3",
+        'ingredients': "ingredient_id2_step3",
+        'equipment': "ingredient_id2_step3",
+    }
+    post_instructions(client, instructions=new_instruction)
+
+def add_recipe(client):
+    rv = post_recipe(client, {
+        "Name": "Test recipe name",
+        "Ingredients": json.dumps([{"Test ingr 1": 6, "Test ingr 2": "1.5 Tbs"}]),
+        "time_h": 0,
+        "time_min": 5,
+        "cost": 1.0,
+        "preview_text": "Test preview string",
+        "preview_media_url": "https://testurl.com/img/test.jpg",
+        "tags": "vegetarian, vegan"
+    })
+
+def get_id(client):
+    rv = get_recipes(client)
+    return rv.json["recipes"][0]["id"]
+
+def drop_table(client):
+    db.session.query(Recipe).delete()
+    db.session.query(Instruction).delete()
+
+def debug_show_table():
+    list = db.session.query(Instruction).all()
+    print("current table")
+    for i in range(len(list)):
+        print(list[i].recipe_id)
+        print(list[i].step_num)
+        print(list[i].step_instruction)
+        print(list[i].ingredients)
+        print(list[i].equipment)
+    print("end")
+    list = db.session.query(Recipe).all()
+    print("current table")
+    for i in range(len(list)):
+        print(list[i].id)
+        print(list[i].name)
+    print("end")
+
+def test_get_instructions(client):
+    rv = login(client, app.config["EMAIL"], app.config["PASSWORD"])
+    assert rv.json["email"] == app.config["EMAIL"]
+    drop_table(client)
+    add_recipe(client)
+    recipe_id=get_id(client)
+    add_instructions(client, recipe_id)
+    rv=get_instructions(client, recipe_id)
+    if rv.status != "200 OK":
+        debug_show_table()
+
+    assert rv.json["recipe_instruction"][0]["step_instruction"]=="instruction_id2_step1"
+    assert rv.json["recipe_instruction"][1]["step_instruction"] == "instruction_id2_step2"
+    assert rv.json["recipe_instruction"][2]["step_instruction"] == "instruction_id2_step3"
+

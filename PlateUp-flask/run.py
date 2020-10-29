@@ -204,7 +204,7 @@ class RecipeDetailAPI(Resource):
         if(len(recipe_instruction_list_sorted)==0):
             return Response("recipe instruction not found!", status=500)
 
-        if (len(recipe_preview) == 0):
+        if(len(recipe_preview)==0):
             return Response("recipe preview not found!", status=500)
 
         return_instruction = instructions_schema.dump(recipe_instruction_list_sorted)
@@ -249,7 +249,7 @@ class RecipeAPI(Resource):
 
     __dataBaseLength=0
     __parser=''
-    __debug=True
+    __debug=False
     random_pick=False
 
     #Retrive JSON stuff
