@@ -9,40 +9,40 @@ const initialState = {
   error: null
 };
 
-const filterQueryParamMapping = {
+const queryParamMapping = {
   maxCost: 'Filter_cost',
   maxCookTimeHour: 'Filter_time_h',
-  maxCookTimeMinutes: 'Filter_time_min'
+  maxCookTimeMinutes: 'Filter_time_min',
+  search: 'Search'
 };
 
 export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRecipes', async (settings, { rejectWithValue }) => {
-  let queryParams = '';
   const filters = { ...settings.filterSettings };
-  const { searchQuery } = settings;
+  const searchQuery = settings.searchQuery;
+  let params = {}
 
   if (filters.activateFilters) {
+    params = { ...filters, search: searchQuery }
+
     // Convert max cook time to integer before splitting into hours and minutes as the
     // server expects these values to be integers.
-    if (filters.maxCookTime) {
-      const maxCookTime = Number(Math.floor(filters.maxCookTime));
-      filters.maxCookTimeHour = Math.floor(maxCookTime / 60).toString();
-      filters.maxCookTimeMinutes = (maxCookTime % 60).toString();
+    if (params.maxCookTime) {
+      const maxCookTime = Number(Math.floor(params.maxCookTime));
+      params.maxCookTimeHour = Math.floor(maxCookTime / 60).toString();
+      params.maxCookTimeMinutes = (maxCookTime % 60).toString();
     }
 
     // Server expects cost in cents
-    filters.maxCost *= 100;
+    params.maxCost *= 100;
 
-    delete filters.activateFilters;
-    delete filters.maxCookTime;
-
-    for (const filter in filters) {
-      if (filters[filter] && filterQueryParamMapping[filter]) {
-        queryParams = constructQueryParams(queryParams, `${filterQueryParamMapping[filter]}=${filters[filter]}`);
-      }
-    }
+    delete params.activateFilters;
+    delete params.maxCookTime;
+  }
+  else {
+    params = { search: searchQuery }
   }
 
-  queryParams = constructQueryParams(queryParams, `Search=${searchQuery}`);
+  const queryParams = constructQueryParams(params, queryParamMapping);
 
   try {
     const response = await axios({
