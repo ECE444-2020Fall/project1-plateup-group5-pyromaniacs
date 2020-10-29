@@ -42,7 +42,8 @@ class Onboarding extends React.Component {
             Already have an account?
             {' '}
             <Text
-              style={styles.bold}
+              bold
+              color={argonTheme.COLORS.BLUE}
               onPress={() => navigation.navigate('Login')}
             >
               Login
@@ -55,10 +56,6 @@ class Onboarding extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  bold: {
-    color: argonTheme.COLORS.BLUE,
-    fontWeight: argonTheme.COLORS.LIGHT_BOLD,
-  },
   button: {
     width: width - theme.SIZES.BASE * 4,
     height: theme.SIZES.BASE * 3,
