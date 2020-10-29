@@ -346,6 +346,10 @@ class RecipeAPI(Resource):
             recipe_list=self.__filter_by_cost(recipe_list, filter_cost)
         if filter_time_h != None and filter_time_min!=None:
             recipe_list=self.__filter_by_time(recipe_list, filter_time_h, filter_time_min)
+
+        if len(recipe_list) ==0:
+            self.random_pick = True
+            recipe_list = db.session.query(Recipe).all()
         return recipe_list
 
     '''
