@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   },
   nameImage: {
     resizeMode: "contain",
-    width: "70%"
+    width: width * 0.725
   },
   passwordCheck: {
     paddingLeft: 15,
