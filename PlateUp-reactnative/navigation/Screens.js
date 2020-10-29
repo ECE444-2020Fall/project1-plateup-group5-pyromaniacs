@@ -41,7 +41,21 @@ function HomeStack(props) {
           cardStyle: { backgroundColor: argonTheme.COLORS.GREY },
         }}
       />
-      <Stack.Screen name="Filters" component={Filters} />
+      <Stack.Screen
+        name="Filters"
+        component={Filters}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title="Filters"
+              back
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          cardStyle: { backgroundColor: argonTheme.COLORS.GREY },
+        }}
+      />
     </Stack.Navigator>
   );
 }
