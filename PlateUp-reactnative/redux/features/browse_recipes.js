@@ -3,41 +3,22 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import env from '../../env';
 import { constructQueryParams } from '../../constants/utils';
 
-// Created using Redux Toolkit documentation example
-
 const initialState = {
   data: {},
   status: 'idle',
   error: null
 };
 
-const filterQueryParamMapping = {
+const queryParamMapping = {
   maxCost: 'Filter_cost',
   maxCookTimeHour: 'Filter_time_h',
-  maxCookTimeMinutes: 'Filter_time_min'
+  maxCookTimeMinutes: 'Filter_time_min',
+  search: 'Search'
 };
 
 export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRecipes', async (settings, { rejectWithValue }) => {
-  let queryParams = '';
-  const filters = { ...settings.filterSettings };
-  const { searchQuery } = settings;
-
-  if (filters.activateFilters) {
-    delete filters.activateFilters;
-
-    filters.maxCookTimeHour = filters.maxCookTime ? Math.floor(Number(filters.maxCookTime) / 60).toString() : '';
-    filters.maxCookTimeMinutes = filters.maxCookTime ? (Number(filters.maxCookTime) % 60).toString() : '';
-
-    delete filters.maxCookTime;
-
-    for (const filter in filters) {
-      if (filters[filter] && filterQueryParamMapping[filter]) {
-        queryParams = constructQueryParams(queryParams, `${filterQueryParamMapping[filter]}=${filters[filter]}`);
-      }
-    }
-  }
-
-  queryParams = constructQueryParams(queryParams, `Search=${searchQuery}`);
+  const params = processSettingsIntoParams(settings);
+  const queryParams = constructQueryParams(params, queryParamMapping);
 
   try {
     const response = await axios({
@@ -46,7 +27,6 @@ export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRe
       url: `${env.SERVER_URL}/recipe${queryParams}`,
       responseType: 'json'
     });
-
     return response.data;
   } catch (err) {
     return rejectWithValue(err.response.data);
@@ -72,5 +52,40 @@ const browseRecipesSlice = createSlice({
     }
   }
 });
+
+export const processSettingsIntoParams = (settings) => {
+  const filters = { ...settings.filterSettings };
+  const searchQuery = settings.searchQuery;
+  let params = {}
+
+  if (filters.activateFilters) {
+    params = { ...filters, search: searchQuery }
+
+    // Convert max cook time to integer before splitting into hours and minutes as the
+    // server expects these values to be integers.
+    if (params.maxCookTime) {
+      const maxCookTime = Math.floor(Number(params.maxCookTime));
+
+      params.maxCookTimeHour = Math.floor(maxCookTime / 60).toString();
+      params.maxCookTimeMinutes = (maxCookTime % 60).toString();
+    }
+
+    // Server expects cost in cents
+    if (params.maxCost) {
+      params.maxCost = (Number(params.maxCost) * 100).toString();
+    }
+    else {
+      delete params.maxCost;
+    }
+
+    delete params.activateFilters;
+    delete params.maxCookTime;
+  }
+  else {
+    params = { search: searchQuery }
+  }
+
+  return params;
+}
 
 export default browseRecipesSlice.reducer;
