@@ -5,6 +5,7 @@ import {
   ActivityIndicator,
   Dimensions,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   StatusBar,
   StyleSheet
@@ -22,6 +23,23 @@ class Register extends React.Component {
     name: '',
     email: '',
     password: '',
+    keyboardIsOpen: false,
+  }
+
+  componentDidMount () {
+    this.keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => this.setState({ keyboardIsOpen: true })
+    );
+    this.keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => this.setState({ keyboardIsOpen: false })
+    );
+  }
+
+  componentWillUnmount () {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
   }
 
   componentDidUpdate(prevProps) {
@@ -61,110 +79,112 @@ class Register extends React.Component {
                 Welcome to Plate Up! Please create an account.
               </Text>
             </Block>
-            <Block flex>
-              <Block flex center>
-                <KeyboardAvoidingView
-                  style={{ flex: 1 }}
-                  behavior="padding"
-                  enabled
+            <Block flex center>
+              <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior="padding"
+                enabled
+              >
+                <Block
+                  width={width * 0.8}
+                  style={{ marginBottom: 5, marginTop: 5 }}
                 >
-                  <Block
-                    width={width * 0.8}
-                    style={{ marginBottom: 5, marginTop: 5 }}
-                  >
-                    <Input
-                      borderless
-                      placeholder="Name"
-                      iconContent={(
-                        <Icon
-                          size={16}
-                          color={argonTheme.COLORS.ICON}
-                          name="hat-3"
-                          family="ArgonExtra"
-                          style={styles.inputIcons}
-                        />
-                      )}
-                      onChangeText={(name) => this.setState({ name })}
-                    />
-                  </Block>
-                  <Block width={width * 0.8} style={{ marginBottom: 5 }}>
-                    <Input
-                      borderless
-                      placeholder="Email"
-                      iconContent={(
-                        <Icon
-                          size={16}
-                          color={argonTheme.COLORS.ICON}
-                          name="ic_mail_24px"
-                          family="ArgonExtra"
-                          style={styles.inputIcons}
-                        />
-                      )}
-                      onChangeText={(email) => this.setState({ email })}
-                    />
-                  </Block>
-                  <Block width={width * 0.8} style={{ marginBottom: 10 }}>
-                    <Input
-                      password
-                      borderless
-                      placeholder="Password"
-                      iconContent={(
-                        <Icon
-                          size={16}
-                          color={argonTheme.COLORS.ICON}
-                          name="padlock-unlocked"
-                          family="ArgonExtra"
-                          style={styles.inputIcons}
-                        />
-                      )}
-                      onChangeText={(password) => this.setState({ password })}
-                    />
-                    <Block row style={styles.passwordCheck}>
-                      <Text size={12} color={argonTheme.COLORS.MUTED}>
-                        password strength:
-                      </Text>
-                      <Text bold size={12} color={argonTheme.COLORS.SUCCESS}>
-                        {' '}
-                        strong
-                      </Text>
-                    </Block>
-                  </Block>
-                  <Block row width={width * 0.75}>
-                    <Checkbox
-                      checkboxStyle={{
-                        borderWidth: 3
-                      }}
-                      color={argonTheme.COLORS.PRIMARY}
-                      label="I agree with the "
-                    />
-                    <Text color={argonTheme.COLORS.PRIMARY} style={{ fontWeight: argonTheme.COLORS.LIGHT_BOLD }} size={14}>
-                      Privacy Policy
+                  <Input
+                    borderless
+                    placeholder="Name"
+                    iconContent={(
+                      <Icon
+                        size={16}
+                        color={argonTheme.COLORS.ICON}
+                        name="hat-3"
+                        family="ArgonExtra"
+                        style={styles.inputIcons}
+                      />
+                    )}
+                    onChangeText={(name) => this.setState({ name })}
+                  />
+                </Block>
+                <Block width={width * 0.8} style={{ marginBottom: 5 }}>
+                  <Input
+                    borderless
+                    placeholder="Email"
+                    iconContent={(
+                      <Icon
+                        size={16}
+                        color={argonTheme.COLORS.ICON}
+                        name="ic_mail_24px"
+                        family="ArgonExtra"
+                        style={styles.inputIcons}
+                      />
+                    )}
+                    onChangeText={(email) => this.setState({ email })}
+                  />
+                </Block>
+                <Block width={width * 0.8} style={{ marginBottom: 10 }}>
+                  <Input
+                    password
+                    borderless
+                    placeholder="Password"
+                    iconContent={(
+                      <Icon
+                        size={16}
+                        color={argonTheme.COLORS.ICON}
+                        name="padlock-unlocked"
+                        family="ArgonExtra"
+                        style={styles.inputIcons}
+                      />
+                    )}
+                    onChangeText={(password) => this.setState({ password })}
+                  />
+                  <Block row style={styles.passwordCheck}>
+                    <Text size={12} color={argonTheme.COLORS.MUTED}>
+                      password strength:
+                    </Text>
+                    <Text bold size={12} color={argonTheme.COLORS.SUCCESS}>
+                      {' '}
+                      strong
                     </Text>
                   </Block>
-                  { this.props.userSettings.status == REGISTER_IPR
-                    ?
-                    <Block style={styles.loading}>
-                      <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
-                    </Block>
-                    :
-                    <Block middle>
-                      <Button
-                        color="primary"
-                        style={styles.createButton}
-                        onPress={this.handleCreateAccount}
-                      >
-                        <Text bold size={14} color={argonTheme.COLORS.WHITE}>
-                          Create Account
-                        </Text>
-                      </Button>
-                    </Block>
-                  }
-                </KeyboardAvoidingView>
-              </Block>
+                </Block>
+                <Block row width={width * 0.75}>
+                  <Checkbox
+                    checkboxStyle={{
+                      borderWidth: 3
+                    }}
+                    color={argonTheme.COLORS.PRIMARY}
+                    label="I agree with the "
+                  />
+                  <Text color={argonTheme.COLORS.PRIMARY} style={{ fontWeight: argonTheme.COLORS.LIGHT_BOLD }} size={14}>
+                    Privacy Policy
+                  </Text>
+                </Block>
+                { this.props.userSettings.status == REGISTER_IPR
+                  ?
+                  <Block style={styles.loading}>
+                    <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
+                  </Block>
+                  :
+                  <Block middle>
+                    <Button
+                      color="primary"
+                      style={styles.createButton}
+                      onPress={this.handleCreateAccount}
+                    >
+                      <Text bold size={14} color={argonTheme.COLORS.WHITE}>
+                        Create Account
+                      </Text>
+                    </Button>
+                  </Block>
+                }
+              </KeyboardAvoidingView>
             </Block>
           </Block>
-          <Image source={Images.PlateUpName} style={styles.nameImage} />
         </Block>
+        { !this.state.keyboardIsOpen &&
+          <Block style={styles.imageContainer}>
+            <Image source={Images.PlateUpName} style={styles.nameImage} />
+          </Block>
+        }
       </LinearGradient>
     );
   }
@@ -187,10 +207,8 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   nameImage: {
-    position: 'absolute',
-    bottom: height * 0.0677,
-    width: width * 0.725,
-    height: width * 0.725 * (43 / 272),
+    resizeMode: "contain",
+    aspectRatio: 2.2,
   },
   passwordCheck: {
     paddingLeft: 15,
@@ -216,6 +234,13 @@ const styles = StyleSheet.create({
     alignContent: "center",
     justifyContent: "center",
     flex: 1
+  },
+  imageContainer: {
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    flex: 0.1,
+    paddingBottom: 15
   }
 });
 
