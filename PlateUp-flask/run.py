@@ -2,6 +2,7 @@ import time
 import random
 import json
 import os
+import operator
 from emailservice import send_email_as_plateup
 from flask import jsonify, request, Response
 from flask_login import current_user, login_user, login_required, logout_user
@@ -20,7 +21,7 @@ userR = api.namespace('user', description='User operations')
 loginR = api.namespace('login', description='Login/logout operations')
 mailR = api.namespace('mail', description='Mailing operations')
 recipeR = api.namespace('recipe', description='Preview of recipe')
-
+recipeInstructionR = api.namespace('recipeInstruction', description='Insturction of recipe')
 
 # -----------------------------------------------------------------------------
 # DB Schemas (Marshmallow)
@@ -148,6 +149,68 @@ class MailAPI(Resource):
 
         return Response("NOT OK - Mail NOT Sent!", status=400)
 
+@recipeInstructionR.route('', methods=['GET', 'POST'])
+class RecipeInstructionAPI(Resource):
+    resourceFields = recipeR.model('Information to get recipe instruction', {
+        'recipe_id': fields.String,
+        'step_num': fields.Integer,
+        'step_instruction': fields.String,
+        'ingredients': fields.String,
+        'equipment': fields.String,
+    })
+
+
+    def __get_recipe_instructions_by_id(self, recipe_id):
+        recipe_found = db.session.query(Instruction).filter(Instruction.recipe_id.like(recipe_id)).all()
+        return recipe_found
+
+    def __sort_recipe_instructions_by_step(self, recipe_instruction_list_unsorted):
+        sorted_list = sorted(recipe_instruction_list_unsorted, key=operator.attrgetter("step_num"), reverse=False)
+        return sorted_list
+
+    def __debug_delete_table(self):
+        db.session.query(Instruction).delete()
+
+    def __debug_show_table(self):
+        list = db.session.query(Instruction).all()
+        print("current table")
+        for i in range(len(list)):
+            print(list[i].recipe_id)
+            print(list[i].step_num)
+            print(list[i].step_instruction)
+            print(list[i].ingredients)
+            print(list[i].equipment)
+        print("end")
+
+    @recipeR.doc(description="Get recipe preview json by name and filter",
+                 params={'recipe_id': {'description': 'search recipe id', 'type': 'string'}})
+    def get(self):
+        recipe_id = request.args.get('recipe_id')
+        recipe_instruction_list_unsorted=self.__get_recipe_instructions_by_id(recipe_id)
+        recipe_instruction_list_sorted=self.__sort_recipe_instructions_by_step(recipe_instruction_list_unsorted)
+        return_result = instructions_schema.dump(recipe_instruction_list_sorted)
+        return jsonify(return_result)
+
+    @recipeInstructionR.doc(description="Insert recipe instruction to database")
+    @recipeInstructionR.expect(resourceFields, validate=True)
+    def post(self):
+        #self.__debug_delete_table()
+        new_instruction_recipe_id = request.json["recipe_id"]
+        new_instruction_step_num = request.json["step_num"]
+        new_instruction_step_instruction = request.json["step_instruction"]
+        new_instruction_ingredients = request.json["ingredients"]
+        new_instruction_equipment = request.json["equipment"]
+
+        new_instruction=Instruction(new_instruction_recipe_id, new_instruction_step_num,
+                                    new_instruction_step_instruction, new_instruction_ingredients,
+                                    new_instruction_equipment)
+        db.session.add(new_instruction)
+        db.session.commit()
+
+        #self.__debug_show_table()
+        return Response("recipe instruction inserted!", status=200)
+
+
 # Recipe-preview API
 @recipeR.route('', methods=['GET', 'POST'])
 class RecipeAPI(Resource):
@@ -164,7 +227,7 @@ class RecipeAPI(Resource):
 
     __dataBaseLength=0
     __parser=''
-    __debug=False
+    __debug=True
     random_pick=False
 
     #Retrive JSON stuff
@@ -304,7 +367,7 @@ class RecipeAPI(Resource):
     #insert recipe to database
     @recipeR.doc(description="Insert recipe to database")
     @recipeR.expect(resourceFields, validate=True)
-    @login_required
+    #@login_required
     def post(self):
         new_recipe_name=request.json["Name"]
         new_recipe_ingredients=request.json["Ingredients"]
@@ -331,7 +394,7 @@ class RecipeAPI(Resource):
 
 
     #search recipe by Name and Filter (Filter not implement yet)
-    #Example: http://127.0.0.1:5000/recipe?Name=%22meal%22&Ingredients=%22meal%22&Filter_time_h=10&Filter_time_min=0&Filter_cost=10000&Page=0&Limit=2
+    #Example: http://127.0.0.1:5000/recipe?Search=juice&Filter_time_h=10&Filter_time_min=0&Filter_cost=10000&Page=0&Limit=2
     @recipeR.doc(description="Get recipe preview json by name and filter", 
             params={'Search': {'description': 'search by an ingredient, recipe name, or tag', 'type': 'string'},
                     'Filter_time_h': {'description': 'filter by max hours', 'type': 'int'},
@@ -341,7 +404,7 @@ class RecipeAPI(Resource):
                     'Limit': {'description': 'number of recipes to return', 'type': 'int'},
                     'Page': {'description': 'page number determines range of data returned: [page x limit -> page x limit + limit]', 'type': 'int'}
                     })
-    @login_required
+    #@login_required
     def get(self):
         #get params
         recipe_list = []
@@ -353,12 +416,12 @@ class RecipeAPI(Resource):
         limit=int(request.args.get('Limit')) if request.args.get('Limit') else 20
         page=int(request.args.get('Page')) if request.args.get('Page') else 0
 
-        '''
+
         if self.__debug==True:
             self.__debug_clear_table()
             self.__debug_add_recipe()
             self.__debug_show_table()
-        '''
+
         self.random_pick=False
         #get list
         recipe_list_name=[]
@@ -541,8 +604,8 @@ def constructRecipeTags(recipe):
 if __name__ == '__main__':
     db.create_all()
     scheduler.start()
-    updateRecipesToDB()
-    app.run(host='0.0.0.0')
+    #updateRecipesToDB()
+    app.run(host='0.0.0.0', debug=True)
 
     # Terminate background tasks
     scheduler.shutdown()
