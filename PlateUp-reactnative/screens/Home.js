@@ -66,10 +66,10 @@ class Home extends React.Component {
   }
 
   renderRecipes() {
-    const { recipes } = this.props.browseRecipes.data;
+    const { recipes, is_random } = this.props.browseRecipes.data;
 
     if (!recipes || recipes.length == 0) {
-      return <Text center> No recipes found with given filters and search query. </Text>;
+      return <Text center> No recipes found with given filters. </Text>;
     }
 
     const recipeItems = [];
@@ -91,9 +91,16 @@ class Home extends React.Component {
       });
     }
 
-    const cardsToRender = recipeItems.map((recipeItem, index) => <Card key={index} item={recipeItem} horizontal />);
-
-    return cardsToRender;
+    return (
+      <Block>
+        { is_random && !!this.props.searchQuery.trim() &&
+          <Text style={{ paddingBottom: theme.SIZES.BASE }} center>
+            No recipes found for search query. Showing random results with given filters.
+          </Text> 
+        }
+        { recipeItems.map((recipeItem, index) => <Card key={index} item={recipeItem} horizontal />) }
+      </Block>
+    );
   }
 
   render() {

@@ -3,8 +3,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import env from '../../env';
 import { constructQueryParams } from '../../constants/utils';
 
-// Created using Redux Toolkit documentation example
-
 const initialState = {
   data: {},
   status: 'idle',
@@ -21,7 +19,7 @@ const queryParamMapping = {
 export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRecipes', async (settings, { rejectWithValue }) => {
   const params = processSettingsIntoParams(settings);
   const queryParams = constructQueryParams(params, queryParamMapping);
-  
+
   try {
     const response = await axios({
       method: 'get',
@@ -63,8 +61,22 @@ export const processSettingsIntoParams = (settings) => {
   if (filters.activateFilters) {
     params = { ...filters, search: searchQuery }
 
-    params.maxCookTimeHour = params.maxCookTime ? Math.floor(Number(params.maxCookTime) / 60).toString() : '';
-    params.maxCookTimeMinutes = params.maxCookTime ? (Number(params.maxCookTime) % 60).toString() : '';
+    // Convert max cook time to integer before splitting into hours and minutes as the
+    // server expects these values to be integers.
+    if (params.maxCookTime) {
+      const maxCookTime = Math.floor(Number(params.maxCookTime));
+
+      params.maxCookTimeHour = Math.floor(maxCookTime / 60).toString();
+      params.maxCookTimeMinutes = (maxCookTime % 60).toString();
+    }
+
+    // Server expects cost in cents
+    if (params.maxCost) {
+      params.maxCost = (Number(params.maxCost) * 100).toString();
+    }
+    else {
+      delete params.maxCost;
+    }
 
     delete params.activateFilters;
     delete params.maxCookTime;

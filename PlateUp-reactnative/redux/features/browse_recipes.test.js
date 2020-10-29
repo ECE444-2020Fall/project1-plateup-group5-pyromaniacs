@@ -14,7 +14,6 @@ describe('processSettingsIntoParams', () => {
         }
 
         expect(processSettingsIntoParams(settings)).toEqual({
-            maxCost: "",
             maxCookTimeHour: "2",
             maxCookTimeMinutes: "0",
             search: ""
@@ -26,15 +25,13 @@ describe('processSettingsIntoParams', () => {
             filterSettings: {
                 activateFilters: true,
                 maxCookTime: "",
-                maxCost: "10",
+                maxCost: "10", // In dollars
             },
             searchQuery: "test"
         }
 
         expect(processSettingsIntoParams(settings)).toEqual({
-            maxCost: "10",
-            maxCookTimeHour: "",
-            maxCookTimeMinutes: "",
+            maxCost: "1000", // In cents
             search: "test"
         })
     });
@@ -43,7 +40,7 @@ describe('processSettingsIntoParams', () => {
         const settings = {
             filterSettings: {
                 activateFilters: false,
-                maxCookTime: "",
+                maxCookTime: "10",
                 maxCost: "10"
             },
             searchQuery: "test"
