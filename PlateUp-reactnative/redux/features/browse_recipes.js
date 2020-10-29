@@ -17,31 +17,7 @@ const queryParamMapping = {
 };
 
 export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRecipes', async (settings, { rejectWithValue }) => {
-  const filters = { ...settings.filterSettings };
-  const searchQuery = settings.searchQuery;
-  let params = {}
-
-  if (filters.activateFilters) {
-    params = { ...filters, search: searchQuery }
-
-    // Convert max cook time to integer before splitting into hours and minutes as the
-    // server expects these values to be integers.
-    if (params.maxCookTime) {
-      const maxCookTime = Math.floor(Number(params.maxCookTime));
-      params.maxCookTimeHour = Math.floor(maxCookTime / 60).toString();
-      params.maxCookTimeMinutes = (maxCookTime % 60).toString();
-    }
-
-    // Server expects cost in cents
-    params.maxCost = Number(params.maxCost) * 100;
-
-    delete params.activateFilters;
-    delete params.maxCookTime;
-  }
-  else {
-    params = { search: searchQuery }
-  }
-
+  const params = processSettingsIntoParams(settings);
   const queryParams = constructQueryParams(params, queryParamMapping);
 
   try {
@@ -51,7 +27,6 @@ export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRe
       url: `${env.SERVER_URL}/recipe${queryParams}`,
       responseType: 'json'
     });
-
     return response.data;
   } catch (err) {
     return rejectWithValue(err.response.data);
@@ -77,5 +52,40 @@ const browseRecipesSlice = createSlice({
     }
   }
 });
+
+export const processSettingsIntoParams = (settings) => {
+  const filters = { ...settings.filterSettings };
+  const searchQuery = settings.searchQuery;
+  let params = {}
+
+  if (filters.activateFilters) {
+    params = { ...filters, search: searchQuery }
+
+    // Convert max cook time to integer before splitting into hours and minutes as the
+    // server expects these values to be integers.
+    if (params.maxCookTime) {
+      const maxCookTime = Math.floor(Number(params.maxCookTime));
+
+      params.maxCookTimeHour = Math.floor(maxCookTime / 60).toString();
+      params.maxCookTimeMinutes = (maxCookTime % 60).toString();
+    }
+
+    // Server expects cost in cents
+    if (params.maxCost) {
+      params.maxCost = (Number(params.maxCost) * 100).toString();
+    }
+    else {
+      delete params.maxCost;
+    }
+
+    delete params.activateFilters;
+    delete params.maxCookTime;
+  }
+  else {
+    params = { search: searchQuery }
+  }
+
+  return params;
+}
 
 export default browseRecipesSlice.reducer;
