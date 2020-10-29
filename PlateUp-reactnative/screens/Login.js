@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   },
   nameImage: {
     resizeMode: "contain",
-    aspectRatio: 2.2,
+    width: "70%"
   },
   loginContainer: {
     width: width * 0.9,
