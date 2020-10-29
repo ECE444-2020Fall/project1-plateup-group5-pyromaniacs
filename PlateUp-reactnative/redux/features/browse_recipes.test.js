@@ -7,7 +7,7 @@ describe('processSettingsIntoParams', () => {
         const settings = {
             filterSettings: {
                 activateFilters: true,
-                maxCookTime: "120",
+                maxCookTime: "150.5",
                 maxCost: ""
             },
             searchQuery: ""
@@ -15,7 +15,7 @@ describe('processSettingsIntoParams', () => {
 
         expect(processSettingsIntoParams(settings)).toEqual({
             maxCookTimeHour: "2",
-            maxCookTimeMinutes: "0",
+            maxCookTimeMinutes: "30",
             search: ""
         })
     });
@@ -88,7 +88,7 @@ describe('browseRecipesReducer', () => {
 
         const expectedState = {
             status: "idle",
-            error: "Error Message",
+            error: action.error.message,
             data: "stale"
         }
 
