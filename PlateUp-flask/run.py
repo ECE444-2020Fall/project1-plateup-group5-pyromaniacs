@@ -21,7 +21,7 @@ userR = api.namespace('user', description='User operations')
 loginR = api.namespace('login', description='Login/logout operations')
 mailR = api.namespace('mail', description='Mailing operations')
 recipeR = api.namespace('recipe', description='Preview of recipe')
-recipeInstructionR = api.namespace('recipeInstruction', description='Insturction of recipe')
+recipeDetailR = api.namespace('recipeDetail', description='Insturction of recipe')
 
 # -----------------------------------------------------------------------------
 # DB Schemas (Marshmallow)
@@ -36,7 +36,7 @@ class RecipeSchema(ma.Schema):
 
 class InstructionSchema(ma.Schema):
     class Meta:
-        fields = ('recipe_id', 'step_num', 'step', 'ingredients', 'equipment')
+        fields = ('step_instruction',)
 
 # Init schemas
 user_schema = UserSchema()
@@ -149,8 +149,8 @@ class MailAPI(Resource):
 
         return Response("NOT OK - Mail NOT Sent!", status=400)
 
-@recipeInstructionR.route('', methods=['GET', 'POST'])
-class RecipeInstructionAPI(Resource):
+@recipeR.route('/<id>', methods=['GET', 'POST'])
+class RecipeDetailAPI(Resource):
     resourceFields = recipeR.model('Information to get recipe instruction', {
         'recipe_id': fields.String,
         'step_num': fields.Integer,
@@ -159,9 +159,12 @@ class RecipeInstructionAPI(Resource):
         'equipment': fields.String,
     })
 
-
     def __get_recipe_instructions_by_id(self, recipe_id):
         recipe_found = db.session.query(Instruction).filter(Instruction.recipe_id.like(recipe_id)).all()
+        return recipe_found
+
+    def __get_recipe_preview_by_id(self, recipe_id):
+        recipe_found = db.session.query(Recipe).filter(Recipe.id.like(recipe_id)).all()
         return recipe_found
 
     def __sort_recipe_instructions_by_step(self, recipe_instruction_list_unsorted):
@@ -181,19 +184,38 @@ class RecipeInstructionAPI(Resource):
             print(list[i].ingredients)
             print(list[i].equipment)
         print("end")
+        list = db.session.query(Recipe).all()
+        print("current table")
+        for i in range(len(list)):
+            print(list[i].id)
+            print(list[i].name)
+        print("end")
 
     @recipeR.doc(description="Get recipe preview json by name and filter",
                  params={'recipe_id': {'description': 'search recipe id', 'type': 'string'}})
-    def get(self):
-        recipe_id = request.args.get('recipe_id')
+    def get(self, id):
+        recipe_id = id
+
         recipe_instruction_list_unsorted=self.__get_recipe_instructions_by_id(recipe_id)
         recipe_instruction_list_sorted=self.__sort_recipe_instructions_by_step(recipe_instruction_list_unsorted)
-        return_result = instructions_schema.dump(recipe_instruction_list_sorted)
-        return jsonify(return_result)
 
-    @recipeInstructionR.doc(description="Insert recipe instruction to database")
-    @recipeInstructionR.expect(resourceFields, validate=True)
-    def post(self):
+        recipe_preview=self.__get_recipe_preview_by_id(id)
+
+        if(len(recipe_instruction_list_sorted)==0):
+            return Response("recipe instruction not found!", status=500)
+
+        if (len(recipe_preview) == 0):
+            return Response("recipe preview not found!", status=500)
+
+        return_instruction = instructions_schema.dump(recipe_instruction_list_sorted)
+        return_preview  = recipe_schema.dump(recipe_preview[0])
+        return_dict = {"recipe_instruction": return_instruction, "recipe_preview": return_preview}
+
+        return jsonify(return_dict)
+
+    @recipeR.doc(description="Insert recipe instruction to database")
+    @recipeR.expect(resourceFields, validate=True)
+    def post(self, id):
         #self.__debug_delete_table()
         new_instruction_recipe_id = request.json["recipe_id"]
         new_instruction_step_num = request.json["step_num"]
@@ -334,7 +356,7 @@ class RecipeAPI(Resource):
         print("current list")
         for i in range(len(list)):
             print(list[i].name)
-            print("ingredient"+str(list[i].ingredients))
+            print("id "+str(list[i].id))
         print("end")
 
     def __debug_add_recipe(self):
@@ -445,7 +467,7 @@ class RecipeAPI(Resource):
         recipe_list=recipe_list[limit*page:limit*page+limit]
 
         return_result=recipes_schema.dump(recipe_list)
-        
+
         return_dict = {"recipes": return_result, "is_random": self.random_pick}
         return jsonify(return_dict)
 
