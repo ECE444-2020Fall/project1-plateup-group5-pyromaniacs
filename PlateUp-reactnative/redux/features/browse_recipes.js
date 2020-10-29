@@ -33,7 +33,7 @@ export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRe
     }
 
     // Server expects cost in cents
-    params.maxCost *= 100;
+    params.maxCost = Number(params.maxCost) * 100;
 
     delete params.activateFilters;
     delete params.maxCookTime;
