@@ -32,12 +32,13 @@ class Recipe extends React.Component {
 
     return (
       <Block>
+        <Text style={styles.subtitle}> Description </Text>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={styles.description}
+          style={styles.infoContainer}
         >
           <Block middle>
-            <Text center size={16}>{recipe.preview_text}</Text>
+            <Text center style={styles.mainText}>{recipe.preview_text}</Text>
           </Block>
         </ScrollView>
         <Block style={styles.info}>
@@ -58,19 +59,27 @@ class Recipe extends React.Component {
 
   renderIngredients() {
     const ingredients = JSON.parse(this.props.recipeDetails.data.recipe_preview.ingredients);
+
     return (
-      <Block style={styles.ingredients}>
-        {
-          Object.entries(ingredients).map( ([item, quantity], index) => (
-            <Block key={index}>
-              <Text size={16}>
-                <Text bold>{item}</Text>
-                <Text>{" "}{quantity}</Text>
-              </Text>
-            </Block>
-          ))
-        }
+      <Block>
+        <Text style={styles.subtitle}> Ingredients </Text>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={styles.infoContainer}
+        >
+          {
+            Object.entries(ingredients).map( ([item, quantity], index) => (
+              <Block key={index}>
+                <Text style={styles.mainText}>
+                  <Text bold>{index+1}.{" "}{item}:</Text>
+                  <Text>{" "}{quantity}</Text>
+                </Text>
+              </Block>
+            ))
+          }
+      </ScrollView>
       </Block>
+      
     );
   }
 
@@ -78,17 +87,23 @@ class Recipe extends React.Component {
     const instructions = this.props.recipeDetails.data.recipe_instruction;
 
     return (
-      <Block style={styles.instructions}>
-        {
-          instructions.map((instruction, index) => (
-            <Block key={index}>
-              <Text size={16}>
-                <Text bold>{index+1}.</Text>
-                <Text>{" "}{instruction.step_instruction}</Text>
-              </Text>
-            </Block>
-          ))
-        }
+      <Block>
+        <Text style={styles.subtitle}> Instructions </Text>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={styles.infoContainer}
+        >
+          {
+            instructions.map((instruction, index) => (
+              <Block key={index}>
+                <Text style={styles.mainText}>
+                  <Text bold>{index+1}.</Text>
+                  <Text>{" "}{instruction.step_instruction}</Text>
+                </Text>
+              </Block>
+            ))
+          }
+        </ScrollView>
       </Block>
     );
   }
@@ -123,6 +138,7 @@ class Recipe extends React.Component {
         <Swiper
           paginationStyle={styles.paginationStyle}
           activeDotColor={argonTheme.COLORS.PRIMARY}
+          loop={false}
         >
           {this.renderMainPage()}
           {this.renderIngredients()}
@@ -203,18 +219,8 @@ const styles = StyleSheet.create({
     borderBottomColor: argonTheme.COLORS.GRAY,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  description: {
-    marginVertical: 25,
-    marginHorizontal: 10,
-    height: height * 0.275,
-  },
-  instructions: {
-    marginVertical: 25,
-    marginHorizontal: 10,
-    height: height * 0.275
-  },
-  ingredients: {
-    marginVertical: 25,
+  infoContainer: {
+    marginBottom: 10,
     marginHorizontal: 10,
     height: height * 0.275
   },
@@ -240,6 +246,17 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0
   },
+  subtitle: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    alignSelf: "center",
+    color: argonTheme.COLORS.TEXT_COLOR,
+    marginVertical: 10,
+  },
+  mainText: {
+    fontSize: 16,
+    color: argonTheme.COLORS.TEXT_COLOR
+  }
 });
 
 const mapStateToProps = (state) => ({
