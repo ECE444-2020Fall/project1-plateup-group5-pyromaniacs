@@ -34,7 +34,9 @@ class Recipe extends React.Component {
           colors={[
             argonTheme.COLORS.GRADIENT_START,
             argonTheme.COLORS.GRADIENT_END,
+            argonTheme.COLORS.WHITE
           ]}
+          locations={[0, 0.45, 0.45]}
         >
           <Block flex>
             <Block flex style={styles.recipeCard}>
@@ -137,7 +139,7 @@ const styles = StyleSheet.create({
   description: {
     marginVertical: 25,
     marginHorizontal: 10,
-    height: height * 0.275
+    height: height * 0.275,
   },
   instructions: {
     marginVertical: 25,
@@ -152,7 +154,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontWeight: 'bold',
     fontSize: 14,
-    color: argonTheme.COLORS.BLACK,
+    color: argonTheme.COLORS.WHITE,
   },
   button: {
     width: width - theme.SIZES.BASE * 4,
@@ -160,7 +162,7 @@ const styles = StyleSheet.create({
     shadowRadius: 0,
     shadowOpacity: 0,
     marginBottom: height * 0.05,
-    backgroundColor: argonTheme.COLORS.BUTTON_COLOR
+    backgroundColor: argonTheme.COLORS.PRIMARY
   },
   paginationStyle: {
     position: "absolute",
