@@ -37,43 +37,71 @@ export default mockHTTP = () => {
         shopping_id: '18606ab6-10c8-11eb-8a7f-0242ac110002'
       }));
 
+      this.get('/recipe/1', () => ({
+        recipe_instruction: [
+          {
+            step_instruction: "instruction number 1"
+          },
+          {
+            step_instruction: "this is the second instruction for the recipe"
+          },
+          {
+            step_instruction: "finally, the last instruction"
+          }
+        ],
+        recipe_preview: {
+          id: '1',
+          ingredients: "{\"broccoli\": \"150.0 g\", \"chocolate ice cream sauce\": \"300.0 g\", \"elbow pasta\": \"250.0 g\", \"ham\": \"3.0 slices\", \"mushrooms\": \"3.0 \", \"olive oil\": \"2.0 tablespoons\", \"parmesan cheese\": \"1.0 oz\", \"shrimps\": \"10.0 medium\", \"water\": \"1.0 cup\"}",
+          name: 'Taro Ice Cream',
+          preview_media_url: Image.resolveAssetSource(recipe1Img).uri,
+          preview_text: 'Make taro flavoured ice-cream at home!',
+          time_h: 5,
+          time_min: 50,
+          cost: 654.52
+        }
+      }));
+
       this.get('/recipe', () => ({
         recipes: [
           {
-            ingredients: {},
+            id: '1',
+            ingredients: "{\"broccoli\": \"150.0 g\", \"chocolate ice cream sauce\": \"300.0 g\", \"elbow pasta\": \"250.0 g\", \"ham\": \"3.0 slices\", \"mushrooms\": \"3.0 \", \"olive oil\": \"2.0 tablespoons\", \"parmesan cheese\": \"1.0 oz\", \"shrimps\": \"10.0 medium\", \"water\": \"1.0 cup\"}",
             name: 'Taro Ice Cream',
             preview_media_url: Image.resolveAssetSource(recipe1Img).uri,
             preview_text: 'Make taro flavoured ice-cream at home!',
-            recipe_id: '1',
             time_h: 5,
-            time_min: 50
+            time_min: 50,
+            cost: 654.52
           },
           {
-            ingredients: {},
+            id: '2',
+            ingredients: "{\"broccoli\": \"150.0 g\", \"chocolate ice cream sauce\": \"300.0 g\", \"elbow pasta\": \"250.0 g\", \"ham\": \"3.0 slices\", \"mushrooms\": \"3.0 \", \"olive oil\": \"2.0 tablespoons\", \"parmesan cheese\": \"1.0 oz\", \"shrimps\": \"10.0 medium\", \"water\": \"1.0 cup\"}",
             name: 'Expresso',
             preview_media_url: Image.resolveAssetSource(recipe2Img).uri,
             preview_text: 'Pulling the best shot of expresso...',
-            recipe_id: '2',
             time_h: 1,
-            time_min: 30
+            time_min: 30,
+            cost: 90.50
           },
           {
-            ingredients: {},
+            id: '3',
+            ingredients: "{\"broccoli\": \"150.0 g\", \"chocolate ice cream sauce\": \"300.0 g\", \"elbow pasta\": \"250.0 g\", \"ham\": \"3.0 slices\", \"mushrooms\": \"3.0 \", \"olive oil\": \"2.0 tablespoons\", \"parmesan cheese\": \"1.0 oz\", \"shrimps\": \"10.0 medium\", \"water\": \"1.0 cup\"}",
             name: 'Over-roast Prime',
             preview_media_url: Image.resolveAssetSource(recipe3Img).uri,
             preview_text: 'Easy to make oven-roast prime...',
-            recipe_id: '3',
             time_h: 3,
-            time_min: 0
+            time_min: 0,
+            cost: 120
           },
           {
-            ingredients: {},
+            id: '4',
+            ingredients: "{\"broccoli\": \"150.0 g\", \"chocolate ice cream sauce\": \"300.0 g\", \"elbow pasta\": \"250.0 g\", \"ham\": \"3.0 slices\", \"mushrooms\": \"3.0 \", \"olive oil\": \"2.0 tablespoons\", \"parmesan cheese\": \"1.0 oz\", \"shrimps\": \"10.0 medium\", \"water\": \"1.0 cup\"}",
             name: 'Thanksgiving Turkey',
             preview_media_url: Image.resolveAssetSource(recipe4Img).uri,
             preview_text: 'Thankgiving turkey, a healthy alternative for protein.',
-            recipe_id: '4',
             time_h: 2,
-            time_min: 50
+            time_min: 50,
+            cost: 342.99
           }
         ],
         is_random: false
