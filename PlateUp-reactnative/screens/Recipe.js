@@ -35,7 +35,7 @@ class Recipe extends React.Component {
         <Text style={styles.subtitle}> Description </Text>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          style={styles.infoContainer}
+          style={styles.descriptionContainer}
         >
           <Block middle>
             <Text center style={styles.mainText}>{recipe.preview_text}</Text>
@@ -219,10 +219,15 @@ const styles = StyleSheet.create({
     borderBottomColor: argonTheme.COLORS.GRAY,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
+  descriptionContainer: {
+    marginBottom: 10,
+    marginHorizontal: 10,
+    height: height * 0.29
+  },
   infoContainer: {
     marginBottom: 10,
     marginHorizontal: 10,
-    height: height * 0.275
+    height: height * 0.345
   },
   stepByStepInstructions: {
     alignItems: 'center',

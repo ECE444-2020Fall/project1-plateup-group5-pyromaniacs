@@ -40,21 +40,39 @@ export default mockHTTP = () => {
       this.get('/recipe/1', () => ({
         recipe_instruction: [
           {
-            step_instruction: "instruction number 1"
+            step_instruction: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis."
           },
           {
-            step_instruction: "this is the second instruction for the recipe"
+            step_instruction: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis."
           },
           {
-            step_instruction: "finally, the last instruction"
+            step_instruction: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis."
+          },
+          {
+            step_instruction: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis."
+          },
+          {
+            step_instruction: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis."
+          },
+          {
+            step_instruction: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis."
+          },
+          {
+            step_instruction: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis."
+          },
+          {
+            step_instruction: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis."
+          },
+          {
+            step_instruction: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis."
           }
         ],
         recipe_preview: {
           id: '1',
-          ingredients: "{\"broccoli\": \"150.0 g\", \"chocolate ice cream sauce\": \"300.0 g\", \"elbow pasta\": \"250.0 g\", \"ham\": \"3.0 slices\", \"mushrooms\": \"3.0 \", \"olive oil\": \"2.0 tablespoons\", \"parmesan cheese\": \"1.0 oz\", \"shrimps\": \"10.0 medium\", \"water\": \"1.0 cup\"}",
+          ingredients: "{\"broccoli\": \"150.0 g\", \"chocolate ice cream sauce\": \"300.0 g\", \"elbow pasta\": \"250.0 g\", \"ham\": \"3.0 slices\", \"mushrooms\": \"3.0 \", \"olive oil\": \"2.0 tablespoons\", \"parmesan cheese\": \"1.0 oz\", \"shrimps\": \"10.0 medium\", \"water\": \"1.0 cup\", \"broccoli2\": \"150.0 g\", \"chocolate ice cream sauce2\": \"300.0 g\", \"elbow pasta2\": \"250.0 g\", \"ham2\": \"3.0 slices\", \"mushrooms2\": \"3.0 \", \"olive oil2\": \"2.0 tablespoons\", \"parmesan cheese2\": \"1.0 oz\", \"shrimps2\": \"10.0 medium\", \"water2\": \"1.0 cup\"}",
           name: 'Taro Ice Cream',
           preview_media_url: Image.resolveAssetSource(recipe1Img).uri,
-          preview_text: 'Make taro flavoured ice-cream at home!',
+          preview_text: 'Make taro flavoured ice-cream at home! Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis. Ut neque nisi, vestibulum pellentesque magna quis, feugiat pharetra sapien. Phasellus suscipit facilisis sollicitudin. Proin ultrices iaculis viverra. Nam tempus facilisis dui eu blandit. Vestibulum pulvinar ligula ut feugiat commodo. Aliquam blandit porta laoreet. Phasellus non consequat nunc. Pellentesque quis suscipit leo. Sed ultricies bibendum auctor. Nam convallis diam egestas felis imperdiet, nec vulputate augue pellentesque.',
           time_h: 5,
           time_min: 50,
           cost: 654.52
