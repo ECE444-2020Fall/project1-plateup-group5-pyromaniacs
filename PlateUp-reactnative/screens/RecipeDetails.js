@@ -58,7 +58,7 @@ class RecipeDetails extends React.Component {
   }
 
   renderIngredients() {
-    const ingredients = JSON.parse(this.props.recipeDetails.data.recipe_preview.ingredients);
+    const ingredients = this.props.recipeDetails.data.recipe_preview.ingredients;
 
     return (
       <Block>

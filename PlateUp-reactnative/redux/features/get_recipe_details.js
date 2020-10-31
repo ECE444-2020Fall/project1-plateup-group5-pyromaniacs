@@ -34,6 +34,9 @@ const recipeDetailsSlice = createSlice({
       if (state.status === FETCHING) {
         state.status = IDLE;
         state.data = action.payload;
+
+        // Parse JSON here instead of where ingredients are displayed
+        state.data.recipe_preview.ingredients = JSON.parse(state.data.recipe_preview.ingredients)
       }
     },
     [getRecipeDetails.rejected]: (state, action) => {
