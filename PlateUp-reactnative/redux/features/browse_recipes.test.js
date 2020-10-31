@@ -1,4 +1,4 @@
-import { fetchBrowseRecipes, processSettingsIntoParams } from "./browse_recipes";
+import { fetchBrowseRecipes, processSettingsIntoParams, FETCHING, IDLE } from "./browse_recipes";
 import browseRecipesReducer from "./browse_recipes";
 
 // Tests written by Pranav Patel
@@ -60,13 +60,13 @@ describe('browseRecipesReducer', () => {
         }
 
         const previousState = {
-            status: "idle",
+            status: IDLE,
             error: null,
             data: "stale",
         }
 
         const expectedState = {
-            status: "fetching",
+            status: FETCHING,
             error: null,
             data: previousState.data
         }
@@ -81,13 +81,13 @@ describe('browseRecipesReducer', () => {
         }
 
         const previousState = {
-            status: "fetching",
+            status: FETCHING,
             error: null,
             data: "stale",
         }
 
         const expectedState = {
-            status: "idle",
+            status: IDLE,
             error: action.error.message,
             data: previousState.data
         }
@@ -102,13 +102,13 @@ describe('browseRecipesReducer', () => {
         }
 
         const previousState = {
-            status: "fetching",
+            status: FETCHING,
             error: null,
             data: "stale"
         }
 
         const expectedState = {
-            status: "idle",
+            status: IDLE,
             error: null,
             data: action.payload
         }
