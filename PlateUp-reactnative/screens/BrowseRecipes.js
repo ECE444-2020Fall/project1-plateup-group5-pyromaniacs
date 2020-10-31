@@ -11,7 +11,7 @@ import { argonTheme } from '../constants';
 
 const { width } = Dimensions.get('screen');
 
-class Home extends React.Component {
+class BrowseRecipes extends React.Component {
   constructor(props) {
     super(props);
     this.state = { loading: true };
@@ -103,7 +103,7 @@ class Home extends React.Component {
               key={index}
               item={recipeItem}
               horizontal
-              onPress={() => this.props.navigation.navigate("Recipe", { id: recipeItem.id })}
+              handlePress={() => this.props.navigation.navigate("Recipe", { id: recipeItem.id })}
             />
           ))
         }
@@ -142,4 +142,4 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = { fetchBrowseRecipes };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(BrowseRecipes);

@@ -1,13 +1,10 @@
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import env from '../../env';
 import { constructQueryParams } from '../../constants/utils';
+import env from '../../env';
 
-const initialState = {
-  data: {},
-  status: 'idle',
-  error: null
-};
+export const FETCHING = 'FETCHING';
+export const IDLE = 'IDLE';
 
 const queryParamMapping = {
   maxCost: 'Filter_cost',
@@ -30,26 +27,6 @@ export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRe
     return response.data;
   } catch (err) {
     return rejectWithValue(err.response.data);
-  }
-});
-
-const browseRecipesSlice = createSlice({
-  name: 'browseRecipes',
-  initialState,
-  reducers: {},
-  extraReducers: {
-    [fetchBrowseRecipes.pending]: (state) => {
-      state.status = 'fetching';
-      state.error = null;
-    },
-    [fetchBrowseRecipes.fulfilled]: (state, action) => {
-      state.status = 'idle';
-      state.data = action.payload;
-    },
-    [fetchBrowseRecipes.rejected]: (state, action) => {
-      state.status = 'idle';
-      state.error = action.error.message;
-    }
   }
 });
 
@@ -87,5 +64,31 @@ export const processSettingsIntoParams = (settings) => {
 
   return params;
 }
+
+const initialState = {
+  data: {},
+  status: IDLE,
+  error: null
+};
+
+const browseRecipesSlice = createSlice({
+  name: 'browseRecipes',
+  initialState,
+  reducers: {},
+  extraReducers: {
+    [fetchBrowseRecipes.pending]: (state) => {
+      state.status = FETCHING;
+      state.error = null;
+    },
+    [fetchBrowseRecipes.fulfilled]: (state, action) => {
+      state.status = IDLE;
+      state.data = action.payload;
+    },
+    [fetchBrowseRecipes.rejected]: (state, action) => {
+      state.status = IDLE;
+      state.error = action.error.message;
+    }
+  }
+});
 
 export default browseRecipesSlice.reducer;

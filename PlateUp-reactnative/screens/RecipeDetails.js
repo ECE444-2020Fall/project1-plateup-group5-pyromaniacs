@@ -16,7 +16,7 @@ import { getRecipeDetails } from '../redux/features/get_recipe_details';
 
 const { width, height } = Dimensions.get("screen");
 
-class Recipe extends React.Component {
+class RecipeDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = { loading: true };
@@ -27,7 +27,7 @@ class Recipe extends React.Component {
     this.setState({ loading: false });
   }
 
-  renderMainPage() {
+  renderRecipeOverview() {
     const recipe = this.props.recipeDetails.data.recipe_preview;
 
     return (
@@ -140,7 +140,7 @@ class Recipe extends React.Component {
           activeDotColor={argonTheme.COLORS.PRIMARY}
           loop={false}
         >
-          {this.renderMainPage()}
+          {this.renderRecipeOverview()}
           {this.renderIngredients()}
           {this.renderInstructions()}
         </Swiper>
@@ -270,4 +270,4 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = { getRecipeDetails };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Recipe);
+export default connect(mapStateToProps, mapDispatchToProps)(RecipeDetails);

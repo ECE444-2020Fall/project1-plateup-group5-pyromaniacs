@@ -2,14 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import env from '../../env';
 
-export const GET_RECIPE_DETAILS_IPR = 'GETTING_RECIPE_DETAILS';
+export const FETCHING = 'FETCHING';
 export const IDLE = 'IDLE';
-
-const initialState = {
-  status: IDLE,
-  error: null,
-  data: null,
-};
 
 export const getRecipeDetails = createAsyncThunk('recipeDetails/getRecipeDetails', async (id, { rejectWithValue }) => {
   try {
@@ -20,24 +14,30 @@ export const getRecipeDetails = createAsyncThunk('recipeDetails/getRecipeDetails
   }
 });
 
+const initialState = {
+  data: null,
+  status: IDLE,
+  error: null,
+};
+
 const recipeDetailsSlice = createSlice({
   name: 'recipeDetails',
   initialState,
   extraReducers: {
     [getRecipeDetails.pending]: (state) => {
       if (state.status === IDLE) {
-        state.status = GET_RECIPE_DETAILS_IPR;
+        state.status = FETCHING;
         state.error = null;
       }
     },
     [getRecipeDetails.fulfilled]: (state, action) => {
-      if (state.status === GET_RECIPE_DETAILS_IPR) {
+      if (state.status === FETCHING) {
         state.status = IDLE;
         state.data = action.payload;
       }
     },
     [getRecipeDetails.rejected]: (state, action) => {
-      if (state.status === GET_RECIPE_DETAILS_IPR) {
+      if (state.status === FETCHING) {
         state.status = IDLE;
         state.error = action.payload;
       }
