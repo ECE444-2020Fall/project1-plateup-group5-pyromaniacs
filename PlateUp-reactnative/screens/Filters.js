@@ -135,8 +135,8 @@ const styles = StyleSheet.create({
   },
   filterText: {
     flexWrap: 'wrap',
-    fontSize: 16,
-    lineHeight: 19,
+    fontSize: 15,
+    lineHeight: 18,
     width: '65%',
   },
   switch: {
