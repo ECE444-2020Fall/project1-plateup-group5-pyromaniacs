@@ -113,7 +113,7 @@ class RecipeDetails extends React.Component {
 
     if (error) {
       return (
-        <Block flex style={styles.recipeCard}>
+        <Block flex style={[styles.recipeCard, { flex: 0.8 }]}>
           <Text center> Something went wrong. </Text>
         </Block>
       );
@@ -122,35 +122,41 @@ class RecipeDetails extends React.Component {
     const recipe = this.props.recipeDetails.data.recipe_preview;
 
     return (
-      <Block flex style={styles.recipeCard}>
-        <Block middle style={styles.recipeImageContainer}>
-          <Image
-            source={{ uri: recipe.preview_media_url }}
-            style={styles.recipeImage}
-          />
+      <Block flex>
+        <Block flex style={styles.recipeCard}>
+          <Block middle style={styles.recipeImageContainer}>
+            <Image
+              source={{ uri: recipe.preview_media_url }}
+              style={styles.recipeImage}
+            />
+          </Block>
+          <Block middle style={styles.recipeName}>
+            <Text bold size={24}>{recipe.name}</Text>
+          </Block>
+          <Block middle>
+            <Block style={styles.divider} />
+          </Block>
+          <Swiper
+            paginationStyle={styles.paginationStyle}
+            activeDotColor={argonTheme.COLORS.PRIMARY}
+            loop={false}
+          >
+            {this.renderRecipeOverview()}
+            {this.renderIngredients()}
+            {this.renderInstructions()}
+          </Swiper>
         </Block>
-        <Block middle style={styles.recipeName}>
-          <Text bold size={24}>{recipe.name}</Text>
+        <Block style={styles.stepByStepInstructions}>
+          <Button style={styles.button}>
+            <Text style={styles.buttonText}>Let's Go!</Text>
+          </Button>
         </Block>
-        <Block middle>
-          <Block style={styles.divider} />
-        </Block>
-        <Swiper
-          paginationStyle={styles.paginationStyle}
-          activeDotColor={argonTheme.COLORS.PRIMARY}
-          loop={false}
-        >
-          {this.renderRecipeOverview()}
-          {this.renderIngredients()}
-          {this.renderInstructions()}
-        </Swiper>
       </Block>
     );
   }
 
   render() {
     const { loading } = this.state;
-    const { error } = this.props.recipeDetails;
 
     return (
       <Block flex>
@@ -165,22 +171,12 @@ class RecipeDetails extends React.Component {
         >
           { loading
             ?
-            <Block flex style={styles.recipeCard}>
+            <Block flex style={[styles.recipeCard, { flex: 0.8 }]}>
               <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
             </Block>
             :
             this.renderContent()
           }
-
-          <Block style={styles.stepByStepInstructions}>
-            { !loading && !error &&
-              <Button
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>Let's Go!</Text>
-              </Button>
-            }
-          </Block>
         </LinearGradient>
       </Block>
     );
