@@ -256,7 +256,8 @@ const styles = StyleSheet.create({
   },
   mainText: {
     fontSize: 16,
-    color: argonTheme.COLORS.TEXT_COLOR
+    color: argonTheme.COLORS.TEXT_COLOR,
+    paddingBottom: 4,
   }
 });
 
