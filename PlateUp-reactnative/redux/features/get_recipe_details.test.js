@@ -1,4 +1,3 @@
-import deepEqual from 'deep-equal';
 import { getRecipeDetails, FETCHING, IDLE } from "./get_recipe_details";
 import recipeDetailsReducer from "./get_recipe_details";
 
