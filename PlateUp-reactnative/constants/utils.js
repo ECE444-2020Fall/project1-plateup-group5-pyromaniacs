@@ -13,11 +13,11 @@ export function toast(msg) {
 }
 
 export function constructQueryParams(params, keyTransforms) {
-  let queryParams = "";
+  let queryParams = '';
 
   for (const param in params) {
     if (params[param]) {
-      let key = keyTransforms[param] ? keyTransforms[param] : param
+      const key = keyTransforms[param] ? keyTransforms[param] : param;
       queryParams = appendQueryParam(queryParams, `${key}=${params[param]}`);
     }
   }
@@ -26,11 +26,13 @@ export function constructQueryParams(params, keyTransforms) {
 }
 
 function appendQueryParam(existingQueryParams, newParam) {
+  let updatedQueryParams = '';
+
   if (existingQueryParams) {
-    existingQueryParams += `&${newParam}`;
+    updatedQueryParams = `${existingQueryParams}&${newParam}`;
   } else {
-    existingQueryParams = `?${newParam}`;
+    updatedQueryParams = `?${newParam}`;
   }
 
-  return existingQueryParams;
+  return updatedQueryParams;
 }

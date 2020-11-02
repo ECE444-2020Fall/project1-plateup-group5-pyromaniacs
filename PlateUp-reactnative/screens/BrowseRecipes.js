@@ -93,20 +93,20 @@ class BrowseRecipes extends React.Component {
 
     return (
       <Block>
-        { is_random && !!this.props.searchQuery.trim() &&
+        { is_random && !!this.props.searchQuery.trim()
+          && (
           <Text style={{ paddingBottom: theme.SIZES.BASE }} center>
             No recipes found for search query. Showing random results with given filters.
-          </Text> 
-        }
+          </Text>
+          )}
         { recipeItems.map((recipeItem, index) => (
-            <Card
-              key={index}
-              item={recipeItem}
-              horizontal
-              handlePress={() => this.props.navigation.navigate("Recipe", { id: recipeItem.id })}
-            />
-          ))
-        }
+          <Card
+            key={index}
+            item={recipeItem}
+            horizontal
+            handlePress={() => this.props.navigation.navigate('Recipe', { id: recipeItem.id })}
+          />
+        ))}
       </Block>
     );
   }

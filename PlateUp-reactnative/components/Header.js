@@ -43,17 +43,16 @@ class Header extends React.Component {
     }
   }
 
-  renderHeader = () => {
-    return (
-      <Block>
-        { this.props.search &&
+  renderHeader = () => (
+    <Block>
+      { this.props.search
+          && (
           <Block center style={{ paddingBottom: 15 }}>
             <SearchBar />
           </Block>
-        }
-      </Block>
-    );
-  }
+          )}
+    </Block>
+  )
 
   render() {
     const {

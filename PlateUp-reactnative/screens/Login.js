@@ -25,7 +25,7 @@ class Login extends React.Component {
     keyboardIsOpen: false,
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       () => this.setState({ keyboardIsOpen: true })
@@ -36,7 +36,7 @@ class Login extends React.Component {
     );
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.keyboardDidShowListener.remove();
     this.keyboardDidHideListener.remove();
   }
@@ -120,32 +120,34 @@ class Login extends React.Component {
                   />
                 </Block>
                 { this.props.userSettings.status == LOGIN_IPR
-                  ?
-                  <Block style={styles.loading}>
-                    <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
-                  </Block>
-                  :
-                  <Block middle>
-                    <Button
-                      color="primary"
-                      style={styles.createButton}
-                      onPress={this.handleLogin}
-                    >
-                      <Text bold size={14} color={argonTheme.COLORS.WHITE}>
-                        Login
-                      </Text>
-                    </Button>
-                  </Block>
-                }
+                  ? (
+                    <Block style={styles.loading}>
+                      <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
+                    </Block>
+                  )
+                  : (
+                    <Block middle>
+                      <Button
+                        color="primary"
+                        style={styles.createButton}
+                        onPress={this.handleLogin}
+                      >
+                        <Text bold size={14} color={argonTheme.COLORS.WHITE}>
+                          Login
+                        </Text>
+                      </Button>
+                    </Block>
+                  )}
               </KeyboardAvoidingView>
             </Block>
           </Block>
         </Block>
-        { !this.state.keyboardIsOpen &&
+        { !this.state.keyboardIsOpen
+          && (
           <Block style={styles.imageContainer}>
             <Image source={Images.PlateUpName} style={styles.nameImage} />
           </Block>
-        }
+          )}
       </LinearGradient>
     );
   }
@@ -168,7 +170,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   nameImage: {
-    resizeMode: "contain",
+    resizeMode: 'contain',
     width: width * 0.725
   },
   loginContainer: {
@@ -187,14 +189,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   loading: {
-    alignContent: "center",
-    justifyContent: "center",
+    alignContent: 'center',
+    justifyContent: 'center',
     flex: 1
   },
   imageContainer: {
-    alignContent: "center",
-    alignItems: "center",
-    justifyContent: "flex-end",
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
     flex: 0.1,
     paddingBottom: 15
   }

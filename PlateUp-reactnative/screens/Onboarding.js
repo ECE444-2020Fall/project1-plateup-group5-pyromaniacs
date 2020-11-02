@@ -12,7 +12,7 @@ import Images from '../constants/Images';
 
 const { width, height } = Dimensions.get('screen');
 
-class Onboarding extends React.Component {
+class Onboarding extends React.PureComponent {
   render() {
     const { navigation } = this.props;
 

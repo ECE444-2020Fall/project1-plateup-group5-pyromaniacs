@@ -10,7 +10,7 @@ export const getRecipeDetails = createAsyncThunk('recipeDetails/getRecipeDetails
     const response = await axios.get(`${env.SERVER_URL}/recipe/${id}`, { timeout: 1000 });
     return response.data;
   } catch (err) {
-    return rejectWithValue(err.response ? err.response.data : "Unknown error.");
+    return rejectWithValue(err.response ? err.response.data : 'Unknown error.');
   }
 });
 
@@ -33,7 +33,7 @@ const recipeDetailsSlice = createSlice({
       state.data = action.payload;
 
       // Parse JSON here instead of where ingredients are displayed
-      state.data.recipe_preview.ingredients = JSON.parse(state.data.recipe_preview.ingredients)
+      state.data.recipe_preview.ingredients = JSON.parse(state.data.recipe_preview.ingredients);
     },
     [getRecipeDetails.rejected]: (state, action) => {
       state.status = IDLE;
