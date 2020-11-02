@@ -1,20 +1,20 @@
-import { Button } from "../components";
-import { argonTheme } from "../constants";
 import { LinearGradient } from 'expo-linear-gradient';
-import { Block, Text, theme } from "galio-framework";
-import React from "react";
+import { Block, Text, theme } from 'galio-framework';
+import React from 'react';
 import {
   ActivityIndicator,
   Dimensions,
   Image,
   ScrollView,
   StyleSheet,
-} from "react-native";
-import Swiper from 'react-native-swiper'
+} from 'react-native';
+import Swiper from 'react-native-swiper';
 import { connect } from 'react-redux';
+import { argonTheme } from '../constants';
+import { Button } from '../components';
 import { getRecipeDetails } from '../redux/features/get_recipe_details';
 
-const { width, height } = Dimensions.get("screen");
+const { width, height } = Dimensions.get('screen');
 
 class RecipeDetails extends React.Component {
   constructor(props) {
@@ -44,11 +44,19 @@ class RecipeDetails extends React.Component {
         <Block style={styles.info}>
           <Block row space="between" style={{ marginHorizontal: 15 }}>
             <Block middle>
-              <Text bold size={18}>{recipe.time_h}hr{recipe.time_min}m</Text>
+              <Text bold size={18}>
+                {recipe.time_h}
+                hr
+                {recipe.time_min}
+                m
+              </Text>
               <Text size={12}>Cook Time</Text>
             </Block>
             <Block middle>
-              <Text bold size={18}>${(recipe.cost / 100).toFixed(2)}</Text>
+              <Text bold size={18}>
+                $
+                {(recipe.cost / 100).toFixed(2)}
+              </Text>
               <Text size={12}>Cost per Serving</Text>
             </Block>
           </Block>
@@ -58,7 +66,7 @@ class RecipeDetails extends React.Component {
   }
 
   renderIngredients() {
-    const ingredients = this.props.recipeDetails.data.recipe_preview.ingredients;
+    const { ingredients } = this.props.recipeDetails.data.recipe_preview;
 
     return (
       <Block>
@@ -68,18 +76,27 @@ class RecipeDetails extends React.Component {
           style={styles.infoContainer}
         >
           {
-            Object.entries(ingredients).map( ([item, quantity], index) => (
+            Object.entries(ingredients).map(([item, quantity], index) => (
               <Block key={index}>
                 <Text style={styles.mainText}>
-                  <Text bold>{index+1}.{" "}{item}:</Text>
-                  <Text>{" "}{quantity}</Text>
+                  <Text bold>
+                    {index + 1}
+                    .
+                    {' '}
+                    {item}
+                    :
+                  </Text>
+                  <Text>
+                    {' '}
+                    {quantity}
+                  </Text>
                 </Text>
               </Block>
             ))
           }
-      </ScrollView>
+        </ScrollView>
       </Block>
-      
+
     );
   }
 
@@ -97,8 +114,14 @@ class RecipeDetails extends React.Component {
             instructions.map((instruction, index) => (
               <Block key={index}>
                 <Text style={styles.mainText}>
-                  <Text bold>{index+1}.</Text>
-                  <Text>{" "}{instruction.step_instruction}</Text>
+                  <Text bold>
+                    {index + 1}
+                    .
+                  </Text>
+                  <Text>
+                    {' '}
+                    {instruction.step_instruction}
+                  </Text>
                 </Text>
               </Block>
             ))
@@ -170,13 +193,12 @@ class RecipeDetails extends React.Component {
           locations={[0, 0.45, 0.45]}
         >
           { loading
-            ?
-            <Block flex style={[styles.recipeCard, { flex: 0.8 }]}>
-              <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
-            </Block>
-            :
-            this.renderContent()
-          }
+            ? (
+              <Block flex style={[styles.recipeCard, { flex: 0.8 }]}>
+                <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
+              </Block>
+            )
+            : this.renderContent()}
         </LinearGradient>
       </Block>
     );
@@ -197,7 +219,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40
   },
   recipeImageContainer: {
-    position: "relative",
+    position: 'relative',
     marginTop: -80
   },
   recipeImage: {
@@ -211,7 +233,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   divider: {
-    width: "90%",
+    width: '90%',
     borderBottomColor: argonTheme.COLORS.GRAY,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
@@ -244,13 +266,13 @@ const styles = StyleSheet.create({
     backgroundColor: argonTheme.COLORS.PRIMARY
   },
   paginationStyle: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 0
   },
   subtitle: {
     fontWeight: 'bold',
     fontSize: 20,
-    alignSelf: "center",
+    alignSelf: 'center',
     color: argonTheme.COLORS.TEXT_COLOR,
     marginVertical: 10,
   },

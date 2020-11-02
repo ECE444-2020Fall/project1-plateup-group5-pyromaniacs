@@ -32,11 +32,11 @@ export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRe
 
 export const processSettingsIntoParams = (settings) => {
   const filters = { ...settings.filterSettings };
-  const searchQuery = settings.searchQuery;
-  let params = {}
+  const { searchQuery } = settings;
+  let params = {};
 
   if (filters.activateFilters) {
-    params = { ...filters, search: searchQuery }
+    params = { ...filters, search: searchQuery };
 
     // Convert max cook time to integer before splitting into hours and minutes as the
     // server expects these values to be integers.
@@ -50,20 +50,18 @@ export const processSettingsIntoParams = (settings) => {
     // Server expects cost in cents
     if (params.maxCost) {
       params.maxCost = (Number(params.maxCost) * 100).toString();
-    }
-    else {
+    } else {
       delete params.maxCost;
     }
 
     delete params.activateFilters;
     delete params.maxCookTime;
-  }
-  else {
-    params = { search: searchQuery }
+  } else {
+    params = { search: searchQuery };
   }
 
   return params;
-}
+};
 
 const initialState = {
   data: {},

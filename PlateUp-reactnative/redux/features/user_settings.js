@@ -18,7 +18,7 @@ export const register = createAsyncThunk('userSettings/register', async (newUser
     const response = await axios.post(`${env.SERVER_URL}/user`, newUser, { timeout: 1000 });
     return response.data;
   } catch (err) {
-    return rejectWithValue(err.response ? err.response.data : "Unknown error.");
+    return rejectWithValue(err.response ? err.response.data : 'Unknown error.');
   }
 });
 
@@ -27,7 +27,7 @@ export const login = createAsyncThunk('userSettings/login', async (user, { rejec
     const response = await axios.post(`${env.SERVER_URL}/login`, user, { timeout: 1000 });
     return response.data;
   } catch (err) {
-    return rejectWithValue(err.response ? err.response.data : "Unknown error.");
+    return rejectWithValue(err.response ? err.response.data : 'Unknown error.');
   }
 });
 
