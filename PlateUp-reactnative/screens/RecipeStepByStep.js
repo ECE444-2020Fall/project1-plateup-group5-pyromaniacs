@@ -185,7 +185,7 @@ class RecipeStepByStep extends React.Component {
         </Block>
 
         <Block style={styles.card}>
-          <Block style={{ height: '60%' }}>
+          <Block style={styles.sliderContainer}>
             <Swiper
               activeDotColor={argonTheme.COLORS.PRIMARY}
               autoplay
@@ -263,6 +263,9 @@ const styles = StyleSheet.create({
   },
   header: {
     justifyContent: 'space-between'
+  },
+  sliderContainer: {
+    height: '60%'
   },
   stepNavigation: {
     marginHorizontal: theme.SIZES.BASE,
