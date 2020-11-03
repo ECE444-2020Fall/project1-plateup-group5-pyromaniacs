@@ -188,7 +188,7 @@ class RecipeStepByStep extends React.Component {
           <Block style={{ height: '60%' }}>
             <Swiper
               activeDotColor={argonTheme.COLORS.PRIMARY}
-              autoplay={true}
+              autoplay
               index={0}
               key={stepDetails.equipment.length + stepDetails.ingredients.length}
             >
