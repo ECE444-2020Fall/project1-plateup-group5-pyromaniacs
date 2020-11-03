@@ -2,6 +2,7 @@ export default {
   COLORS: {
     DEFAULT: '#172B4D',
     PRIMARY: '#EB5757',
+    PRIMARY_LIGHT: 'rgba(235, 87, 87, 0.5)',
     SECONDARY: '#F2994A',
     LABEL: '#FE2472',
     INFO: '#11CDEF',

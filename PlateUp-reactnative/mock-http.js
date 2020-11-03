@@ -1,10 +1,19 @@
 import { createServer } from 'miragejs';
 import { Image } from 'react-native';
+import { loremIpsum } from "lorem-ipsum";
 import env from './env';
-import recipe1Img from './assets/imgs/mock-recipe-1.png';
-import recipe2Img from './assets/imgs/mock-recipe-2.png';
-import recipe3Img from './assets/imgs/mock-recipe-3.png';
-import recipe4Img from './assets/imgs/mock-recipe-4.png';
+import recipe1Img from './assets/imgs/mock-data/mock-recipe-1.png';
+import recipe2Img from './assets/imgs/mock-data/mock-recipe-2.png';
+import recipe3Img from './assets/imgs/mock-data/mock-recipe-3.png';
+import recipe4Img from './assets/imgs/mock-data/mock-recipe-4.png';
+
+import eggsImg from './assets/imgs/mock-data/brown-eggs.jpg';
+import vanillaImg from './assets/imgs/mock-data/vanilla.jpg';
+import almondMilkImg from './assets/imgs/mock-data/almond-milk.jpg';
+
+import freezerImg from './assets/imgs/mock-data/freezer.jpg';
+import bowlImg from './assets/imgs/mock-data/bowl.jpg';
+import mixerImg from './assets/imgs/mock-data/mixer.jpg';
 
 export default mockHTTP = () => {
   if (window.server) {
@@ -40,31 +49,43 @@ export default mockHTTP = () => {
       this.get('/recipe/1', () => ({
         recipe_instruction: [
           {
-            step_instruction: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis.'
+            step_instruction: loremIpsum({ count: 1, units: 'sentences' }),
+            time: 7,
+            ingredients: [
+              { name: 'eggs', img: Image.resolveAssetSource(eggsImg).uri },
+            ],
+            equipment: [
+              { name: 'bowl', img: Image.resolveAssetSource(bowlImg).uri }
+            ]
           },
           {
-            step_instruction: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis.'
+            step_instruction: loremIpsum({ count: 2, units: 'sentences' }),
+            time: 10,
+            ingredients: [
+              { name: 'vanilla', img: Image.resolveAssetSource(vanillaImg).uri },
+              { name: 'almond milk', img: Image.resolveAssetSource(almondMilkImg).uri }
+            ],
+            equipment: [
+              { name: 'bowl', img: Image.resolveAssetSource(bowlImg).uri }
+            ]
           },
           {
-            step_instruction: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis.'
+            step_instruction: loremIpsum({ count: 3, units: 'sentences' }),
+            time: 8,
+            ingredients: [
+              { name: 'almond milk', img: Image.resolveAssetSource(almondMilkImg).uri }
+            ],
+            equipment: [
+              { name: 'mixer', img: Image.resolveAssetSource(mixerImg).uri }
+            ]
           },
           {
-            step_instruction: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis.'
-          },
-          {
-            step_instruction: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis.'
-          },
-          {
-            step_instruction: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis.'
-          },
-          {
-            step_instruction: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis.'
-          },
-          {
-            step_instruction: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis.'
-          },
-          {
-            step_instruction: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus interdum lorem nec dui pretium sagittis.'
+            step_instruction: loremIpsum({ count: 2, units: 'sentences' }),
+            time: 5,
+            ingredients: [],
+            equipment: [
+              { name: 'freezer', img: Image.resolveAssetSource(freezerImg).uri }
+            ]
           }
         ],
         recipe_preview: {

@@ -170,7 +170,7 @@ class RecipeDetails extends React.Component {
           </Swiper>
         </Block>
         <Block style={styles.stepByStepInstructions}>
-          <Button style={styles.button}>
+          <Button style={styles.button} onPress={() => this.props.navigation.navigate('RecipeStepByStep', { id: this.props.route.params.id })}>
             <Text style={styles.buttonText}>Let's Go!</Text>
           </Button>
         </Block>
@@ -192,7 +192,7 @@ class RecipeDetails extends React.Component {
           ]}
           locations={[0, 0.45, 0.45]}
         >
-          { loading
+          {loading
             ? (
               <Block flex style={[styles.recipeCard, { flex: 0.8 }]}>
                 <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />

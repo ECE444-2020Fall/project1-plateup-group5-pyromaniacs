@@ -11,6 +11,7 @@ import Onboarding from '../screens/Onboarding';
 import Register from '../screens/Register';
 import Filters from '../screens/Filters';
 import RecipeDetails from '../screens/RecipeDetails';
+import RecipeStepByStep from '../screens/RecipeStepByStep';
 
 // drawer
 import CustomDrawerContent from './Menu';
@@ -69,6 +70,23 @@ function HomeStack(props) {
               titleColor={argonTheme.COLORS.WHITE}
               iconColor={argonTheme.COLORS.WHITE}
               bgColor={argonTheme.COLORS.PRIMARY}
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="RecipeStepByStep"
+        component={RecipeStepByStep}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title="Recipe Details"
+              back
+              noShadow
+              titleColor={argonTheme.COLORS.SECONDARY}
+              iconColor={argonTheme.COLORS.SECONDARY}
               navigation={navigation}
               scene={scene}
             />

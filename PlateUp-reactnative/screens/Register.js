@@ -53,7 +53,7 @@ class Register extends React.Component {
   }
 
   handleCreateAccount = () => {
-    const {name, email, password} = this.state;
+    const { name, email, password } = this.state;
     // Don't try to create an account if some information is missing
     if (name.length === 0 || email.length === 0 || password.length === 0) {
       toast('Please fill in all fields.');
