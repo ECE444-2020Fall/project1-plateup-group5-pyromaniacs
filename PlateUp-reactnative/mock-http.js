@@ -1,6 +1,6 @@
 import { createServer } from 'miragejs';
 import { Image } from 'react-native';
-import { loremIpsum } from "lorem-ipsum";
+import { loremIpsum } from 'lorem-ipsum';
 import env from './env';
 import recipe1Img from './assets/imgs/mock-data/mock-recipe-1.png';
 import recipe2Img from './assets/imgs/mock-data/mock-recipe-2.png';
