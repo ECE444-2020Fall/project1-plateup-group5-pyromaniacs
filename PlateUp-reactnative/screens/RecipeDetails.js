@@ -23,12 +23,16 @@ class RecipeDetails extends React.Component {
   }
 
   async componentDidMount() {
-    await this.props.getRecipeDetails(this.props.route.params.id);
+    const {
+      route: { params: { id: recipeId } }, getRecipeDetails: fetchRecipeDetails
+    } = this.props;
+
+    await fetchRecipeDetails(recipeId);
     this.setState({ loading: false });
   }
 
   renderRecipeOverview() {
-    const recipe = this.props.recipeDetails.data.recipe_preview;
+    const { recipeDetails: { data: { recipe_preview: recipe } } } = this.props;
 
     return (
       <Block>
@@ -66,7 +70,7 @@ class RecipeDetails extends React.Component {
   }
 
   renderIngredients() {
-    const { ingredients } = this.props.recipeDetails.data.recipe_preview;
+    const { recipeDetails: { data: { recipe_preview: { ingredients } } } } = this.props;
 
     return (
       <Block>
@@ -101,7 +105,7 @@ class RecipeDetails extends React.Component {
   }
 
   renderInstructions() {
-    const instructions = this.props.recipeDetails.data.recipe_instruction;
+    const { recipeDetails: { data: { recipe_instruction: instructions } } } = this.props;
 
     return (
       <Block>
@@ -132,9 +136,9 @@ class RecipeDetails extends React.Component {
   }
 
   renderContent() {
-    const { error } = this.props.recipeDetails;
+    const { recipeDetails, navigation, route: { params: { id: recipeId } } } = this.props;
 
-    if (error) {
+    if (recipeDetails.error) {
       return (
         <Block flex style={[styles.recipeCard, { flex: 0.8 }]}>
           <Text center> Something went wrong. </Text>
@@ -142,7 +146,7 @@ class RecipeDetails extends React.Component {
       );
     }
 
-    const recipe = this.props.recipeDetails.data.recipe_preview;
+    const { data: { recipe_preview: recipe } } = recipeDetails;
 
     return (
       <Block flex>
@@ -170,8 +174,11 @@ class RecipeDetails extends React.Component {
           </Swiper>
         </Block>
         <Block style={styles.stepByStepInstructions}>
-          <Button style={styles.button}>
-            <Text style={styles.buttonText}>Let's Go!</Text>
+          <Button
+            style={styles.button}
+            onPress={() => navigation.navigate('RecipeStepByStep', { id: recipeId })}
+          >
+            <Text style={styles.buttonText}>Let&apos;s Go!</Text>
           </Button>
         </Block>
       </Block>
@@ -192,7 +199,7 @@ class RecipeDetails extends React.Component {
           ]}
           locations={[0, 0.45, 0.45]}
         >
-          { loading
+          {loading
             ? (
               <Block flex style={[styles.recipeCard, { flex: 0.8 }]}>
                 <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />

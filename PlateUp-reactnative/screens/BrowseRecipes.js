@@ -59,7 +59,7 @@ class BrowseRecipes extends React.Component {
         contentContainerStyle={styles.browsingContainer}
       >
         <Block flex>
-          { this.renderRecipes() }
+          {this.renderRecipes()}
         </Block>
       </ScrollView>
     );
@@ -95,9 +95,9 @@ class BrowseRecipes extends React.Component {
       <Block>
         { is_random && !!this.props.searchQuery.trim()
           && (
-          <Text style={{ paddingBottom: theme.SIZES.BASE }} center>
-            No recipes found for search query. Showing random results with given filters.
-          </Text>
+            <Text style={{ paddingBottom: theme.SIZES.BASE }} center>
+              No recipes found for search query. Showing random results with given filters.
+            </Text>
           )}
         { recipeItems.map((recipeItem, index) => (
           <Card
