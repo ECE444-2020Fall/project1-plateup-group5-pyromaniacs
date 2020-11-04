@@ -53,6 +53,8 @@ class CustomDrawerContent extends React.Component {
             />
             <DrawerCustomItem
               title="Inventory"
+              navigation={navigation}
+              navigationScreenName="Inventory"
               key={1}
               focused={state.index === 1}
             />
