@@ -2,35 +2,14 @@ import { Block, Text } from 'galio-framework';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import PropTypes from 'prop-types';
 
 import Icon from './Icon';
 import { argonTheme } from '../constants';
 
 class List extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      items: [
-        { ingredient: 'Milk', quantity: '2L' },
-        { ingredient: 'Ground Beef', quantity: '500g' },
-        { ingredient: 'Shrimp', quantity: '300g' }
-      ]
-    };
-  }
-
-  handleDeleteItem = (key) => {
-    const { items } = this.state;
-
-    // Find and remove item with the given key (ingredient name)
-    const newItems = Array.from(items);
-    const itemToRemoveIdx = newItems.map((item) => item.ingredient).indexOf(key);
-    newItems.splice(itemToRemoveIdx, 1);
-
-    this.setState({ items: newItems });
-  }
-
-  render() {
-    const { items } = this.state;
+  renderItems() {
+    const { onDeleteItem, onAddItem, items } = this.props;
 
     return (
       <ScrollView style={styles.listContainer}>
@@ -47,7 +26,7 @@ class List extends React.Component {
                   size={24}
                   color={argonTheme.COLORS.TEXT_COLOR}
                   style={styles.deleteIcon}
-                  onPress={() => this.handleDeleteItem(key)}
+                  onPress={() => onDeleteItem(key)}
                 />
                 <Block style={styles.itemContainer}>
                   <Text style={styles.text}>
@@ -64,7 +43,21 @@ class List extends React.Component {
       </ScrollView>
     );
   }
+
+  render() {
+    return (
+      <Block flex>
+        {this.renderItems()}
+      </Block>
+    );
+  }
 }
+
+List.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string, PropTypes.string)).isRequired,
+  onDeleteItem: PropTypes.func.isRequired,
+  onAddItem: PropTypes.func.isRequired,
+};
 
 const styles = StyleSheet.create({
   listContainer: {
