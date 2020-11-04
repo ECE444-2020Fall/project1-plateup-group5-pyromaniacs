@@ -13,7 +13,7 @@ import { ProgressButton } from 'react-native-progress-button';
 import { argonTheme } from '../constants';
 
 const { width } = Dimensions.get('screen');
-const defaultStepTime = 10000;
+const DEFAULT_STEP_TIME = 10000;
 
 class RecipeStepByStep extends React.Component {
   constructor(props) {
@@ -27,12 +27,12 @@ class RecipeStepByStep extends React.Component {
       currentStep: 1,
       maxStep: steps.length,
       stepProgress: {
-        buttonState: 'static',
+        buttonState: 'static', // Initially, the button is static when the progress has not begun
         progress: 0,
         paused: false,
         text: 'Pause Timer',
         timingConfig: {
-          duration: (steps[0].time ? steps[0].time * 1000 : defaultStepTime)
+          duration: (steps[0].time ? steps[0].time * 1000 : DEFAULT_STEP_TIME)
         },
       },
       stepDetails: steps[0],
@@ -47,14 +47,15 @@ class RecipeStepByStep extends React.Component {
   startStepTimer = () => {
     const { stepDetails } = this.state;
 
+    // Animation starts by going from static state to progress state
     this.setState({
       stepProgress: {
         buttonState: 'progress',
-        progress: 100,
+        progress: 100, // This value is basically the end value the animation goes till
         paused: false,
         text: 'Pause Timer',
         timingConfig: {
-          duration: stepDetails.time ? stepDetails.time * 1000 : defaultStepTime
+          duration: stepDetails.time ? stepDetails.time * 1000 : DEFAULT_STEP_TIME
         },
       }
     });
@@ -66,7 +67,7 @@ class RecipeStepByStep extends React.Component {
     this.setState({
       stepProgress: {
         ...stepProgress,
-        paused: true,
+        paused: true, // To pause the animation, we can simply set paused to true
         text: 'Resume Timer'
       }
     });
@@ -85,16 +86,16 @@ class RecipeStepByStep extends React.Component {
   incrementStep = () => {
     const { recipeDetails: { data: { recipe_instruction: steps } } } = this.props;
     const { currentStep, maxStep, stepProgress } = this.state;
-    const nextStep = currentStep + 1;
 
     if (currentStep < maxStep) {
+      const nextStep = currentStep + 1;
+
       this.setState({
-        cookingComplete: false,
         currentStep: nextStep,
         stepDetails: steps[nextStep - 1],
         stepProgress: {
           ...stepProgress,
-          buttonState: 'static',
+          buttonState: 'static', // We set the button state to static again to reset the animation
           progress: 0
         }
       }, this.startStepTimer);
@@ -104,16 +105,17 @@ class RecipeStepByStep extends React.Component {
   decrementStep = () => {
     const { recipeDetails: { data: { recipe_instruction: steps } } } = this.props;
     const { currentStep, stepProgress } = this.state;
-    const nextStep = currentStep - 1;
 
     if (currentStep > 1) {
+      const nextStep = currentStep - 1;
+
       this.setState({
         cookingComplete: false,
         currentStep: nextStep,
         stepDetails: steps[nextStep - 1],
         stepProgress: {
           ...stepProgress,
-          buttonState: 'static',
+          buttonState: 'static', // We set the button state to static again to reset the animation
           progress: 0
         }
       }, this.startStepTimer);
@@ -129,7 +131,7 @@ class RecipeStepByStep extends React.Component {
           cookingComplete: true,
           stepProgress: {
             ...stepProgress,
-            text: 'Cooking complete!'
+            text: 'Cooking complete!' // Update the text on the 100% completed progress button
           }
         });
       } else {

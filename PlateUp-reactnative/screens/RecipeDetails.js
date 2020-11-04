@@ -137,15 +137,16 @@ class RecipeDetails extends React.Component {
 
   renderContent() {
     const { recipeDetails, navigation, route: { params: { id: recipeId } } } = this.props;
-    const { data: { recipe_preview: recipe }, error } = recipeDetails;
 
-    if (error) {
+    if (recipeDetails.error) {
       return (
         <Block flex style={[styles.recipeCard, { flex: 0.8 }]}>
           <Text center> Something went wrong. </Text>
         </Block>
       );
     }
+
+    const { data: { recipe_preview: recipe } } = recipeDetails;
 
     return (
       <Block flex>
