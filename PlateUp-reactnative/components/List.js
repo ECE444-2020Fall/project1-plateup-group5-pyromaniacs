@@ -1,5 +1,5 @@
-import React from 'react';
 import { Block, Text } from 'galio-framework';
+import React from 'react';
 import { StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -71,6 +71,10 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 20,
   },
+  deleteIcon: {
+    paddingRight: 10,
+    alignSelf: 'center',
+  },
   itemContainer: {
     justifyContent: 'space-between',
     flexDirection: 'row',
@@ -81,12 +85,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   text: {
-    fontSize: 18
+    fontSize: 18,
   },
-  deleteIcon: {
-    paddingRight: 10,
-    alignSelf: 'center',
-  }
 });
 
 export default List;
