@@ -11,9 +11,9 @@ import Swiper from 'react-native-swiper';
 import { connect } from 'react-redux';
 import { ProgressButton } from 'react-native-progress-button';
 import { argonTheme } from '../constants';
-import { getRecipeDetails } from '../redux/features/get_recipe_details';
 
 const { width } = Dimensions.get('screen');
+const defaultStepTime = 10000;
 
 class RecipeStepByStep extends React.Component {
   constructor(props) {
@@ -21,6 +21,8 @@ class RecipeStepByStep extends React.Component {
 
     const { recipeDetails: { data: { recipe_instruction: steps } } } = this.props;
 
+    // The fields in the stepProgress are props related to the ProgressButton component
+    // Documentation on it can be found at: https://github.com/xinghui0000/react-native-progress-button
     this.state = {
       currentStep: 1,
       maxStep: steps.length,
@@ -30,26 +32,19 @@ class RecipeStepByStep extends React.Component {
         paused: false,
         text: 'Pause Timer',
         timingConfig: {
-          duration: (steps[0].time ? steps[0].time * 1000 : 3000)
+          duration: (steps[0].time ? steps[0].time * 1000 : defaultStepTime)
         },
       },
       stepDetails: steps[0],
       cookingComplete: false
     };
-
-    this.incrementStep = this.incrementStep.bind(this);
-    this.decrementStep = this.decrementStep.bind(this);
-    this.pauseStepTimer = this.pauseStepTimer.bind(this);
-    this.startStepTimer = this.startStepTimer.bind(this);
-    this.toggleStepTimer = this.toggleStepTimer.bind(this);
-    this.handleProgressAnimatedFinished = this.handleProgressAnimatedFinished.bind(this);
   }
 
   componentDidMount() {
     this.startStepTimer();
   }
 
-  startStepTimer() {
+  startStepTimer = () => {
     const { stepDetails } = this.state;
 
     this.setState({
@@ -59,13 +54,13 @@ class RecipeStepByStep extends React.Component {
         paused: false,
         text: 'Pause Timer',
         timingConfig: {
-          duration: stepDetails.time ? stepDetails.time * 1000 : 3000
+          duration: stepDetails.time ? stepDetails.time * 1000 : defaultStepTime
         },
       }
     });
   }
 
-  pauseStepTimer() {
+  pauseStepTimer = () => {
     const { stepProgress } = this.state;
 
     this.setState({
@@ -77,7 +72,7 @@ class RecipeStepByStep extends React.Component {
     });
   }
 
-  toggleStepTimer() {
+  toggleStepTimer = () => {
     const { stepProgress } = this.state;
 
     if (stepProgress.paused) {
@@ -87,15 +82,16 @@ class RecipeStepByStep extends React.Component {
     }
   }
 
-  incrementStep() {
-    const { recipeDetails: { data: { recipe_instruction: instructions } } } = this.props;
+  incrementStep = () => {
+    const { recipeDetails: { data: { recipe_instruction: steps } } } = this.props;
     const { currentStep, maxStep, stepProgress } = this.state;
+    const nextStep = currentStep + 1;
 
     if (currentStep < maxStep) {
       this.setState({
         cookingComplete: false,
-        currentStep: currentStep + 1,
-        stepDetails: instructions[currentStep + 1 - 1], // Array index starts at 0
+        currentStep: nextStep,
+        stepDetails: steps[nextStep - 1],
         stepProgress: {
           ...stepProgress,
           buttonState: 'static',
@@ -105,15 +101,16 @@ class RecipeStepByStep extends React.Component {
     }
   }
 
-  decrementStep() {
-    const { recipeDetails: { data: { recipe_instruction: instructions } } } = this.props;
+  decrementStep = () => {
+    const { recipeDetails: { data: { recipe_instruction: steps } } } = this.props;
     const { currentStep, stepProgress } = this.state;
+    const nextStep = currentStep - 1;
 
     if (currentStep > 1) {
       this.setState({
         cookingComplete: false,
-        currentStep: currentStep - 1,
-        stepDetails: instructions[currentStep - 1 - 1], // Array index starts at 0
+        currentStep: nextStep,
+        stepDetails: steps[nextStep - 1],
         stepProgress: {
           ...stepProgress,
           buttonState: 'static',
@@ -123,7 +120,7 @@ class RecipeStepByStep extends React.Component {
     }
   }
 
-  handleProgressAnimatedFinished(progress) {
+  handleProgressAnimatedFinished = (progress) => {
     if (progress === 100) {
       const { currentStep, maxStep, stepProgress } = this.state;
 
@@ -216,7 +213,7 @@ class RecipeStepByStep extends React.Component {
             onPress={() => (!cookingComplete && this.toggleStepTimer())}
             onProgressAnimatedFinished={(progress) => this.handleProgressAnimatedFinished(progress)}
           />
-          <Block row style={styles.stepNavigation}>
+          <Block row>
             <TouchableOpacity style={styles.stepNavigation} onPress={this.decrementStep}>
               <Text bold color={argonTheme.COLORS.SECONDARY}>
                 Previous Step
@@ -247,7 +244,6 @@ const styles = StyleSheet.create({
   card: {
     padding: theme.SIZES.BASE,
     marginVertical: theme.SIZES.BASE,
-    marginHorizontal: theme.SIZES.BASE,
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
     backgroundColor: theme.COLORS.WHITE,
@@ -269,7 +265,7 @@ const styles = StyleSheet.create({
   },
   stepNavigation: {
     marginHorizontal: theme.SIZES.BASE,
-    marginTop: 6
+    marginTop: 12
   }
 });
 
@@ -277,6 +273,4 @@ const mapStateToProps = (state) => ({
   recipeDetails: state.recipeDetails,
 });
 
-const mapDispatchToProps = { getRecipeDetails };
-
-export default connect(mapStateToProps, mapDispatchToProps)(RecipeStepByStep);
+export default connect(mapStateToProps)(RecipeStepByStep);
