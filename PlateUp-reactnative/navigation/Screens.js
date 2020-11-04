@@ -12,6 +12,7 @@ import Register from '../screens/Register';
 import Filters from '../screens/Filters';
 import RecipeDetails from '../screens/RecipeDetails';
 import RecipeStepByStep from '../screens/RecipeStepByStep';
+import Inventory from '../screens/Inventory';
 
 // drawer
 import CustomDrawerContent from './Menu';
@@ -152,6 +153,7 @@ function AppStack() {
       initialRouteName="Home"
     >
       <Drawer.Screen name="Home" component={HomeStack} />
+      <Drawer.Screen name="Inventory" component={Inventory} />
     </Drawer.Navigator>
   );
 }
