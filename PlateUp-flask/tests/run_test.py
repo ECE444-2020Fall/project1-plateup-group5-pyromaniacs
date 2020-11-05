@@ -133,42 +133,52 @@ def get_instructions(client, recipeId):
 def add_instructions(client, id):
     new_instruction={
         'recipe_id': "random",
-        'step_num': 1,
-        'step_instruction': "instruction_step1_id1",
-        'ingredients': "ingredient_step1_id1",
-        'equipment': "ingredient_step1_id1",
+        "step_num": 1,
+        "step_instruction": "random_1",
+        "ingredients_text": "random_1",
+        "ingredients_image": "random_1",
+        "equipment_text": "random_1",
+        "equipment_image": "random_1"
     }
     post_instructions(client, instructions=new_instruction)
     new_instruction = {
         'recipe_id': "random",
-        'step_num': 2,
-        'step_instruction': "instruction_step2_id1",
-        'ingredients': "ingredient_step2_id1",
-        'equipment': "ingredient_step2_id1",
+        "step_num": 2,
+        "step_instruction": "random_2",
+        "ingredients_text": "random_2",
+        "ingredients_image": "random_2",
+        "equipment_text": "random_2",
+        "equipment_image": "random_2"
     }
     post_instructions(client, instructions=new_instruction)
     new_instruction = {
         'recipe_id': str(id),
-        'step_num': 1,
-        'step_instruction': "instruction_id2_step1",
-        'ingredients': "ingredient_step1_id2",
-        'equipment': "ingredient_step1_id2",
+        "step_num": 1,
+        "step_instruction": "step_instruction_test_1",
+        "ingredients_text": "test_1",
+        "ingredients_image": "test_1",
+        "equipment_text": "test_1",
+        "equipment_image": "test_1"
     }
     post_instructions(client, instructions=new_instruction)
     new_instruction = {
         'recipe_id': str(id),
-        'step_num': 2,
-        'step_instruction': "instruction_id2_step2",
-        'ingredients': "ingredient_id2_step2",
-        'equipment': "ingredient_id2_step2",
+        "step_num": 2,
+        "step_instruction": "step_instruction_test_2",
+        "ingredients_text": "test_2",
+        "ingredients_image": "test_2",
+        "equipment_text": "test_2",
+        "equipment_image": "test_2"
     }
     post_instructions(client, instructions=new_instruction)
     new_instruction = {
         'recipe_id': str(id),
-        'step_num': 3,
-        'step_instruction': "instruction_id2_step3",
-        'ingredients': "ingredient_id2_step3",
-        'equipment': "ingredient_id2_step3",
+        "step_num": 3,
+        "step_instruction": "step_instruction_test_3",
+        "ingredients_text": "test_3",
+        "ingredients_image": "test_3",
+        "equipment_text": "test_3",
+        "equipment_image": "test_3"
     }
     post_instructions(client, instructions=new_instruction)
 
@@ -220,7 +230,9 @@ def test_get_instructions(client):
     if rv.status != "200 OK":
         debug_show_table()
 
-    assert rv.json["recipe_instruction"][0]["step_instruction"]=="instruction_id2_step1"
-    assert rv.json["recipe_instruction"][1]["step_instruction"] == "instruction_id2_step2"
-    assert rv.json["recipe_instruction"][2]["step_instruction"] == "instruction_id2_step3"
+    assert rv.json["recipe_instruction"][0]["step_instruction"]=="step_instruction_test_1"
+    assert rv.json["recipe_instruction"][1]["step_instruction"] == "step_instruction_test_2"
+    assert rv.json["recipe_instruction"][2]["step_instruction"] == "step_instruction_test_3"
+    assert rv.json["equipment"][0]["equipment_image"] == "test_1"
+    assert rv.json["ingredient"][0]["ingredient_image"] == "test_1"
 
