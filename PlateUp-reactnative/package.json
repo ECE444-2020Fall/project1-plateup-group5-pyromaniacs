@@ -44,11 +44,13 @@
     "react-native-gesture-handler": "~1.6.0",
     "react-native-progress-button": "^1.0.3",
     "react-native-reanimated": "~1.7.0",
+    "react-native-render-html": "^4.2.4",
     "react-native-safe-area-context": "0.7.3",
     "react-native-screens": "^2.2.0",
     "react-native-swiper": "^1.6.0",
     "react-redux": "^7.2.1",
-    "redux": "^4.0.5"
+    "redux": "^4.0.5",
+    "react-native-webview": "8.1.1"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
