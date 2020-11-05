@@ -36,6 +36,9 @@ class List extends React.Component {
       return;
     }
 
+    // Only add item to list if the key isn't already in the list
+    // The user's input will be trimmed and lowercased and be
+    // compared to all the lowercased keys.
     const keyExists = items.some((item) => {
       const itemKey = Object.values(item)[0];
       return itemKey.toLowerCase() === key.toLowerCase();
