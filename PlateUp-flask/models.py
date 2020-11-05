@@ -53,27 +53,31 @@ class Recipe(db.Model):
 
 class Ingredient(db.Model):
     __tablename__ = "recipe_ingredient"
-    recipe_id = db.Column(db.String(40), db.ForeignKey('recipe.id'), primary_key=True)
-    step_num = db.Column(db.Integer, primary_key=True)
-    ingredient_text = db.Column(db.String)
-    ingredient_image = db.Column(db.String)
+    id = db.Column(db.String(40), primary_key=True)
+    recipe_id = db.Column(db.String(40), db.ForeignKey('recipe.id'))
+    step_num = db.Column(db.Integer)
+    name = db.Column(db.String)
+    image = db.Column(db.String)
     def __init__(self, recipe_id, step_num, ingredient_text, ingredient_image):
+        self.id = str(uuid1())
         self.recipe_id = recipe_id
         self.step_num = step_num
-        self.ingredient_text = ingredient_text
-        self.ingredient_image = ingredient_image
+        self.name = ingredient_text
+        self.image = ingredient_image
 
 class Equipment(db.Model):
     __tablename__ = "recipe_equipment"
-    recipe_id = db.Column(db.String(40), db.ForeignKey('recipe.id'), primary_key=True)
-    step_num = db.Column(db.Integer, primary_key=True)
-    equipment_text = db.Column(db.String)
-    equipment_image = db.Column(db.String)
+    id = db.Column(db.String(40), primary_key=True)
+    recipe_id = db.Column(db.String(40), db.ForeignKey('recipe.id'))
+    step_num = db.Column(db.Integer)
+    name = db.Column(db.String)
+    image = db.Column(db.String)
     def __init__(self, recipe_id, step_num, equipment_text, equipment_image):
+        self.id = str(uuid1())
         self.recipe_id = recipe_id
         self.step_num = step_num
-        self.equipment_text = equipment_text
-        self.equipment_image=equipment_image
+        self.name = equipment_text
+        self.image = equipment_image
 
 class Instruction(db.Model):
     __tablename__ = "recipe_instruction"

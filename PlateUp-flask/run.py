@@ -40,11 +40,11 @@ class InstructionSchema(ma.Schema):
 
 class EquipmentSchema(ma.Schema):
     class Meta:
-        fields = ('equipment_text','equipment_image',)
+        fields = ('name','image',)
 
 class IngredientSchema(ma.Schema):
     class Meta:
-        fields = ('ingredient_text','ingredient_image',)
+        fields = ('name','image',)
 
 # Init schemas
 user_schema = UserSchema()
@@ -214,7 +214,38 @@ class RecipeDetailAPI(Resource):
             print(list[i].name)
         print("end")
 
-    @login_required
+    def __get_object_for_one_step(self, object_list, step_num):
+        list_for_one_step=[]
+        for i in range(len(object_list)):
+            if object_list[i].step_num==step_num:
+                list_for_one_step.append(object_list[i])
+        return list_for_one_step
+
+    def __not_exist_instruction(self, recipe_instruction_object):
+        instruction_list=self.__get_recipe_instructions_by_id(recipe_instruction_object.recipe_id)
+        for i in range(len(instruction_list)):
+            if instruction_list[i].step_num==recipe_instruction_object.step_num:
+                return False
+        return True
+
+    def __organize_return_object(self, recipe_instruction_list, \
+                                 recipe_ingredient_list_sorted,\
+                                 recipe_equipment_list_sorted):
+        dict_list=[]
+        for i in range(len(recipe_instruction_list)):
+            step_instruction=recipe_instruction_list[i]
+            step_number=step_instruction.step_num
+            step_ingredient=self.__get_object_for_one_step(recipe_ingredient_list_sorted, step_number)
+            step_equipement = self.__get_object_for_one_step(recipe_equipment_list_sorted, step_number)
+
+            return_ingredient = ingredients_schema.dump(step_ingredient)
+            return_equipment = equipments_schema.dump(step_equipement)
+            return_dict = {"step_instruction": step_instruction.step_instruction,\
+                           "ingredients": return_ingredient, "equipment": return_equipment, }
+            dict_list.append(return_dict)
+        return dict_list
+
+    #@login_required
     def get(self, id):
         recipe_id = id
 
@@ -233,20 +264,16 @@ class RecipeDetailAPI(Resource):
 
         if(len(recipe_preview)==0):
             return Response("recipe preview not found!", status=500)
+        return_step_list=self.__organize_return_object(recipe_instruction_list_sorted, recipe_ingredient_list_sorted,\
+                                                    recipe_equipment_list_sorted)
+        return_preview=recipe_schema.dump(recipe_preview[0])
+        return_object={"recipe_preview": return_preview, "steps":return_step_list}
 
-        return_instruction = instructions_schema.dump(recipe_instruction_list_sorted)
-        return_ingredient= ingredients_schema.dump(recipe_ingredient_list_sorted)
-        return_equipment = equipments_schema.dump(recipe_equipment_list_sorted)
-
-        return_preview  = recipe_schema.dump(recipe_preview[0])
-        return_dict = {"recipe_instruction": return_instruction, "recipe_preview": return_preview,\
-                      "ingredient": return_ingredient, "equipment": return_equipment,}
-
-        return jsonify(return_dict)
+        return jsonify(return_object)
 
     @recipeR.doc(description="Insert recipe instruction to database")
     @recipeR.expect(resourceFields, validate=True)
-    @login_required
+    #@login_required
     def post(self, id):
         #self.__debug_delete_table()
         new_instruction_recipe_id = request.json["recipe_id"]
@@ -262,12 +289,13 @@ class RecipeDetailAPI(Resource):
         new_instruction_ingredient=Ingredient(new_instruction_recipe_id, new_instruction_step_num,
                                               new_instruction_ingredients_text,
                                               new_instruction_ingredients_image)
-        ew_instruction_equipment = Equipment(new_instruction_recipe_id, new_instruction_step_num,
+        new_instruction_equipment = Equipment(new_instruction_recipe_id, new_instruction_step_num,
                                                new_instruction_equipment_text,
                                                new_instruction_equipment_image)
-        db.session.add(new_instruction_description)
+        if self.__not_exist_instruction(new_instruction_description):
+            db.session.add(new_instruction_description)
         db.session.add(new_instruction_ingredient)
-        db.session.add(ew_instruction_equipment)
+        db.session.add(new_instruction_equipment)
         db.session.commit()
 
         #self.__debug_show_table()
@@ -290,7 +318,7 @@ class RecipeAPI(Resource):
 
     __dataBaseLength=0
     __parser=''
-    __debug=False
+    __debug=True
     random_pick=False
 
     #Retrive JSON stuff
@@ -434,7 +462,7 @@ class RecipeAPI(Resource):
     #insert recipe to database
     @recipeR.doc(description="Insert recipe to database")
     @recipeR.expect(resourceFields, validate=True)
-    @login_required
+    #@login_required
     def post(self):
         new_recipe_name=request.json["Name"]
         new_recipe_ingredients=request.json["Ingredients"]
@@ -471,7 +499,7 @@ class RecipeAPI(Resource):
                     'Limit': {'description': 'number of recipes to return', 'type': 'int'},
                     'Page': {'description': 'page number determines range of data returned: [page x limit -> page x limit + limit]', 'type': 'int'}
                     })
-    @login_required
+    #@login_required
     def get(self):
         #get params
         recipe_list = []
@@ -671,7 +699,7 @@ def constructRecipeTags(recipe):
 if __name__ == '__main__':
     db.create_all()
     scheduler.start()
-    updateRecipesToDB()
+    #updateRecipesToDB()
     app.run(host='0.0.0.0')
 
     # Terminate background tasks
