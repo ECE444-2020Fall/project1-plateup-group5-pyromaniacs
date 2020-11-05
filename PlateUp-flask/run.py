@@ -8,7 +8,7 @@ from flask import jsonify, request, Response
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_restx import fields, Resource, reqparse
 from initializer import api, app, db, login_manager, ma, scheduler, sp_api
-from models import User, Recipe, Instruction, ShoppingList
+from models import User, Recipe, Instruction, ShoppingList, Ingredient, Equipment
 from werkzeug.security import check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 
@@ -38,12 +38,22 @@ class InstructionSchema(ma.Schema):
     class Meta:
         fields = ('step_instruction',)
 
+class EquipmentSchema(ma.Schema):
+    class Meta:
+        fields = ('equipment_text','equipment_image',)
+
+class IngredientSchema(ma.Schema):
+    class Meta:
+        fields = ('ingredient_text','ingredient_image',)
+
 # Init schemas
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 recipe_schema = RecipeSchema()
 recipes_schema = RecipeSchema(many=True)
 instructions_schema = InstructionSchema(many=True)
+equipments_schema = EquipmentSchema(many=True)
+ingredients_schema = IngredientSchema(many=True)
 
 # -----------------------------------------------------------------------------
 # Flask API start
@@ -155,24 +165,37 @@ class RecipeDetailAPI(Resource):
         'recipe_id': fields.String,
         'step_num': fields.Integer,
         'step_instruction': fields.String,
-        'ingredients': fields.String,
-        'equipment': fields.String,
+        'ingredients_text': fields.String,
+        'ingredients_image': fields.String,
+        'equipment_text': fields.String,
+        'equipment_image': fields.String,
     })
 
     def __get_recipe_instructions_by_id(self, recipe_id):
         recipe_found = db.session.query(Instruction).filter(Instruction.recipe_id.like(recipe_id)).all()
         return recipe_found
 
+    def __get_recipe_ingredient_by_id(self, recipe_id):
+        recipe_found = db.session.query(Ingredient).filter(Ingredient.recipe_id.like(recipe_id)).all()
+        return recipe_found
+
+    def __get_recipe_equipment_by_id(self, recipe_id):
+        recipe_found = db.session.query(Equipment).filter(Equipment.recipe_id.like(recipe_id)).all()
+        return recipe_found
+
     def __get_recipe_preview_by_id(self, recipe_id):
         recipe_found = db.session.query(Recipe).filter(Recipe.id.like(recipe_id)).all()
         return recipe_found
 
-    def __sort_recipe_instructions_by_step(self, recipe_instruction_list_unsorted):
-        sorted_list = sorted(recipe_instruction_list_unsorted, key=operator.attrgetter("step_num"), reverse=False)
+    def __sort_by_step(self, unsorted_list):
+        sorted_list = sorted(unsorted_list, key=operator.attrgetter("step_num"), reverse=False)
         return sorted_list
 
     def __debug_delete_table(self):
-        db.session.query(Instruction).delete()
+        Instruction.__table__.drop(db.engine)
+        Ingredient.__table__.drop(db.engine)
+        Equipment.__table__.drop(db.engine)
+        #db.session.query(Instruction).delete()
 
     def __debug_show_table(self):
         list = db.session.query(Instruction).all()
@@ -191,12 +214,17 @@ class RecipeDetailAPI(Resource):
             print(list[i].name)
         print("end")
 
-    @login_required
+    #@login_required
     def get(self, id):
         recipe_id = id
 
         recipe_instruction_list_unsorted=self.__get_recipe_instructions_by_id(recipe_id)
-        recipe_instruction_list_sorted=self.__sort_recipe_instructions_by_step(recipe_instruction_list_unsorted)
+        recipe_ingredient_list_unsorted = self.__get_recipe_ingredient_by_id(recipe_id)
+        recipe_equipment_list_unsorted = self.__get_recipe_equipment_by_id(recipe_id)
+
+        recipe_instruction_list_sorted=self.__sort_by_step(recipe_instruction_list_unsorted)
+        recipe_ingredient_list_sorted=self.__sort_by_step(recipe_ingredient_list_unsorted)
+        recipe_equipment_list_sorted=self.__sort_by_step(recipe_equipment_list_unsorted)
 
         recipe_preview=self.__get_recipe_preview_by_id(id)
 
@@ -207,26 +235,39 @@ class RecipeDetailAPI(Resource):
             return Response("recipe preview not found!", status=500)
 
         return_instruction = instructions_schema.dump(recipe_instruction_list_sorted)
+        return_ingredient= ingredients_schema.dump(recipe_ingredient_list_sorted)
+        return_equipment = equipments_schema.dump(recipe_equipment_list_sorted)
+
         return_preview  = recipe_schema.dump(recipe_preview[0])
-        return_dict = {"recipe_instruction": return_instruction, "recipe_preview": return_preview}
+        return_dict = {"recipe_instruction": return_instruction, "recipe_preview": return_preview,\
+                      "ingredient": return_ingredient, "equipment": return_equipment,}
 
         return jsonify(return_dict)
 
     @recipeR.doc(description="Insert recipe instruction to database")
     @recipeR.expect(resourceFields, validate=True)
-    @login_required
+    #@login_required
     def post(self, id):
         #self.__debug_delete_table()
         new_instruction_recipe_id = request.json["recipe_id"]
         new_instruction_step_num = request.json["step_num"]
         new_instruction_step_instruction = request.json["step_instruction"]
-        new_instruction_ingredients = request.json["ingredients"]
-        new_instruction_equipment = request.json["equipment"]
+        new_instruction_ingredients_text = request.json["ingredients_text"]
+        new_instruction_ingredients_image = request.json["ingredients_image"]
+        new_instruction_equipment_text = request.json["equipment_text"]
+        new_instruction_equipment_image = request.json["equipment_image"]
 
-        new_instruction=Instruction(new_instruction_recipe_id, new_instruction_step_num,
-                                    new_instruction_step_instruction, new_instruction_ingredients,
-                                    new_instruction_equipment)
-        db.session.add(new_instruction)
+        new_instruction_description=Instruction(new_instruction_recipe_id, new_instruction_step_num,
+                                    new_instruction_step_instruction)
+        new_instruction_ingredient=Ingredient(new_instruction_recipe_id, new_instruction_step_num,
+                                              new_instruction_ingredients_text,
+                                              new_instruction_ingredients_image)
+        ew_instruction_equipment = Equipment(new_instruction_recipe_id, new_instruction_step_num,
+                                               new_instruction_equipment_text,
+                                               new_instruction_equipment_image)
+        db.session.add(new_instruction_description)
+        db.session.add(new_instruction_ingredient)
+        db.session.add(ew_instruction_equipment)
         db.session.commit()
 
         #self.__debug_show_table()
@@ -249,7 +290,7 @@ class RecipeAPI(Resource):
 
     __dataBaseLength=0
     __parser=''
-    __debug=False
+    __debug=True
     random_pick=False
 
     #Retrive JSON stuff
@@ -393,7 +434,7 @@ class RecipeAPI(Resource):
     #insert recipe to database
     @recipeR.doc(description="Insert recipe to database")
     @recipeR.expect(resourceFields, validate=True)
-    @login_required
+    #@login_required
     def post(self):
         new_recipe_name=request.json["Name"]
         new_recipe_ingredients=request.json["Ingredients"]
@@ -430,7 +471,7 @@ class RecipeAPI(Resource):
                     'Limit': {'description': 'number of recipes to return', 'type': 'int'},
                     'Page': {'description': 'page number determines range of data returned: [page x limit -> page x limit + limit]', 'type': 'int'}
                     })
-    @login_required
+    #@login_required
     def get(self):
         #get params
         recipe_list = []
@@ -630,7 +671,7 @@ def constructRecipeTags(recipe):
 if __name__ == '__main__':
     db.create_all()
     scheduler.start()
-    updateRecipesToDB()
+    #updateRecipesToDB()
     app.run(host='0.0.0.0')
 
     # Terminate background tasks

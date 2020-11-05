@@ -51,22 +51,40 @@ class Recipe(db.Model):
         self.preview_media_url = preview_media
         self.tags = tags
 
+class Ingredient(db.Model):
+    __tablename__ = "recipe_ingredient"
+    recipe_id = db.Column(db.String(40), db.ForeignKey('recipe.id'), primary_key=True)
+    step_num = db.Column(db.Integer, primary_key=True)
+    ingredient_text = db.Column(db.String)
+    ingredient_image = db.Column(db.String)
+    def __init__(self, recipe_id, step_num, ingredient_text, ingredient_image):
+        self.recipe_id = recipe_id
+        self.step_num = step_num
+        self.ingredient_text = ingredient_text
+        self.ingredient_image = ingredient_image
+
+class Equipment(db.Model):
+    __tablename__ = "recipe_equipment"
+    recipe_id = db.Column(db.String(40), db.ForeignKey('recipe.id'), primary_key=True)
+    step_num = db.Column(db.Integer, primary_key=True)
+    equipment_text = db.Column(db.String)
+    equipment_image = db.Column(db.String)
+    def __init__(self, recipe_id, step_num, equipment_text, equipment_image):
+        self.recipe_id = recipe_id
+        self.step_num = step_num
+        self.equipment_text = equipment_text
+        self.equipment_image=equipment_image
 
 class Instruction(db.Model):
     __tablename__ = "recipe_instruction"
     recipe_id = db.Column(db.String(40), db.ForeignKey('recipe.id'), primary_key=True)
     step_num = db.Column(db.Integer, primary_key=True)
     step_instruction = db.Column(db.String)
-    ingredients = db.Column(db.String)
-    equipment = db.Column(db.String)
 
-    def __init__(self, recipe_id, step_num, step, ingredients, equipment):
+    def __init__(self, recipe_id, step_num, step):
         self.recipe_id = recipe_id
         self.step_num = step_num
         self.step_instruction = step
-        self.ingredients = ingredients
-        self.equipment = equipment
-
 
 class ShoppingList(db.Model):
     __tablename__ = "shoppinglist"
