@@ -79,7 +79,7 @@ class List extends React.Component {
             onPress={() => this.handleCancelDialog()}
           />
           <Dialog.Button
-            label="OK"
+            label="Submit"
             color={argonTheme.COLORS.PRIMARY}
             onPress={() => this.handleOKDialog()}
           />
@@ -113,6 +113,10 @@ class List extends React.Component {
       <Block>
         {
         items.map((item) => {
+          /* Since this list component is generic, we can't destructure the item
+           * as it would assume the names of the properties. Instead, just grab
+           * the first two manually.
+           */
           const key = Object.values(item)[0];
           const val = Object.values(item)[1];
 
@@ -157,6 +161,12 @@ class List extends React.Component {
 }
 
 List.propTypes = {
+  /* items: [
+   *    { key: "...", value: "..." },
+   *    { key: "...", value: "..." },
+   *    ...
+   * ]
+   */
   items: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string, PropTypes.string)).isRequired,
   onDeleteItem: PropTypes.func.isRequired,
   onAddItem: PropTypes.func.isRequired,
