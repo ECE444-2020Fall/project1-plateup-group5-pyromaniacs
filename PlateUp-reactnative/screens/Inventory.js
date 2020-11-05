@@ -1,6 +1,3 @@
-import {
-  Block, Text,
-} from 'galio-framework';
 import React from 'react';
 
 import { List } from '../components';
