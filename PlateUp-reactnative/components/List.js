@@ -90,8 +90,8 @@ class List extends React.Component {
           onPress={() => this.setState({ addItemDialogVisible: true })}
         >
           <Icon
-            name="add"
-            family="MaterialIcons"
+            name="plus"
+            family="EvilIcons"
             size={24}
             color={argonTheme.COLORS.PRIMARY}
             style={styles.addIcon}
@@ -118,14 +118,15 @@ class List extends React.Component {
 
           return (
             <Block key={key} row>
-              <Icon
-                name="close"
-                family="Ionicons"
-                size={24}
-                color={argonTheme.COLORS.TEXT_COLOR}
-                style={styles.deleteIcon}
-                onPress={() => this.handleDeleteItem(key)}
-              />
+              <TouchableOpacity style={styles.deleteIconContainer}>
+                <Icon
+                  name="minus"
+                  family="EvilIcons"
+                  size={24}
+                  color={argonTheme.COLORS.TEXT_COLOR}
+                  onPress={() => this.handleDeleteItem(key)}
+                />
+              </TouchableOpacity>
               <Block style={styles.listItemContainer}>
                 <Text style={styles.text}>
                   {key}
@@ -184,9 +185,10 @@ const styles = StyleSheet.create({
   addItemContainer: {
     flexDirection: 'row',
   },
-  deleteIcon: {
+  deleteIconContainer: {
     paddingRight: 10,
-    alignSelf: 'center',
+    flex: 1,
+    justifyContent: 'center',
   },
   addIcon: {
     paddingRight: 10,
