@@ -17,7 +17,7 @@ class Inventory extends React.Component {
   }
 
   handleAddItem = (key, val) => {
-    console.log(`Item with (key,val) '(${key},${val})' deleted!`);
+    console.log(`Item with (key,val) '(${key},${val})' added!`);
   }
 
   render() {
