@@ -17,6 +17,7 @@
     ]
   },
   "dependencies": {
+    "@expo/vector-icons": "^10.2.1",
     "@react-native-community/masked-view": "0.1.6",
     "@react-navigation/bottom-tabs": "^5.9.2",
     "@react-navigation/compat": "^5.0.0",
@@ -43,7 +44,7 @@
     "react-native-progress-button": "^1.0.3",
     "react-native-reanimated": "~1.7.0",
     "react-native-safe-area-context": "0.7.3",
-    "react-native-screens": "~2.2.0",
+    "react-native-screens": "^2.2.0",
     "react-native-swiper": "^1.6.0",
     "react-redux": "^7.2.1",
     "redux": "^4.0.5"

@@ -1,6 +1,6 @@
 import { createServer } from 'miragejs';
 import { Image } from 'react-native';
-import { loremIpsum } from "lorem-ipsum";
+import { loremIpsum } from 'lorem-ipsum';
 import env from './env';
 import recipe1Img from './assets/imgs/mock-data/mock-recipe-1.png';
 import recipe2Img from './assets/imgs/mock-data/mock-recipe-2.png';
@@ -15,9 +15,9 @@ import freezerImg from './assets/imgs/mock-data/freezer.jpg';
 import bowlImg from './assets/imgs/mock-data/bowl.jpg';
 import mixerImg from './assets/imgs/mock-data/mixer.jpg';
 
-export default mockHTTP = () => {
+export default function mockHTTP() {
   if (window.server) {
-    server.shutdown();
+    window.server.shutdown();
   }
 
   window.server = createServer({
@@ -147,4 +147,4 @@ export default mockHTTP = () => {
       }));
     }
   });
-};
+}

@@ -1,7 +1,8 @@
 import {
-  AlertIOS, Platform, ToastAndroid
+  AlertIOS, Dimensions, Platform, ToastAndroid
 } from 'react-native';
 
+const { height, width } = Dimensions.get('window');
 export const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812);
 
 export function toast(msg) {
@@ -15,12 +16,12 @@ export function toast(msg) {
 export function constructQueryParams(params, keyTransforms) {
   let queryParams = '';
 
-  for (const param in params) {
+  Object.keys(params).forEach((param) => {
     if (params[param]) {
       const key = keyTransforms[param] ? keyTransforms[param] : param;
       queryParams = appendQueryParam(queryParams, `${key}=${params[param]}`);
     }
-  }
+  });
 
   return queryParams;
 }
