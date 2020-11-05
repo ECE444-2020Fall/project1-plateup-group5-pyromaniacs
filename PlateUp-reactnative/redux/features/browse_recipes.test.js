@@ -99,7 +99,7 @@ describe('browseRecipesReducer', () => {
   test('correctly updates state on response success', () => {
     const action = {
       type: fetchBrowseRecipes.fulfilled,
-      payload: { recipes: [], isRandom: false }
+      payload: { recipes: [], is_random: false }
     };
 
     const previousState = {
@@ -111,7 +111,10 @@ describe('browseRecipesReducer', () => {
     const expectedState = {
       status: IDLE,
       error: null,
-      data: action.payload
+      data: {
+        recipes: [],
+        isRandom: false
+      }
     };
 
     expect(browseRecipesReducer(previousState, action)).toEqual(expectedState);

@@ -81,6 +81,8 @@ class RecipeDetails extends React.Component {
         >
           {
             Object.entries(ingredients).map(([item, quantity], index) => (
+              // Reasonable to disable here as this is a static array
+              // eslint-disable-next-line react/no-array-index-key
               <Block key={index}>
                 <Text style={styles.mainText}>
                   <Text bold>
@@ -116,6 +118,8 @@ class RecipeDetails extends React.Component {
         >
           {
             instructions.map((instruction, index) => (
+              // Reasonable to disable here as this is a static array
+              // eslint-disable-next-line react/no-array-index-key
               <Block key={index}>
                 <Text style={styles.mainText}>
                   <Text bold>

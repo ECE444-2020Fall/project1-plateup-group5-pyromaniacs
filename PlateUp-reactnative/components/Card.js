@@ -7,7 +7,7 @@ import Icon from './Icon';
 
 import { argonTheme } from '../constants';
 
-class Card extends React.Component {
+class Card extends React.PureComponent {
   render() {
     const {
       item, horizontal, full, style, ctaColor, imageStyle, handlePress
@@ -18,7 +18,8 @@ class Card extends React.Component {
       imageStyle
     ];
     const cardContainer = [styles.card, styles.shadow, style];
-    const imgContainer = [styles.imageContainer,
+    const imgContainer = [
+      styles.imageContainer,
       horizontal ? styles.horizontalStyles : styles.verticalStyles,
       styles.shadow
     ];
@@ -35,12 +36,20 @@ class Card extends React.Component {
             <Text size={14} style={styles.cardTitle}>{item.title}</Text>
             <Block row space="between">
               <Text size={12} muted={!ctaColor} color={ctaColor} bold>{item.cta}</Text>
-              { item.tag
+              {item.tag
                 && (
-                <Block row style={styles.tagContainer}>
-                  {item.tag.icon && <Icon size={20} style={styles.tagIcon} name={item.tag.icon.name} family={item.tag.icon.family} color={item.tag.icon.color} />}
-                  <Text size={12} style={styles.tagText}>{item.tag.text}</Text>
-                </Block>
+                  <Block row style={styles.tagContainer}>
+                    {item.tag.icon && (
+                      <Icon
+                        size={20}
+                        style={styles.tagIcon}
+                        name={item.tag.icon.name}
+                        family={item.tag.icon.family}
+                        color={item.tag.icon.color}
+                      />
+                    )}
+                    <Text size={12} style={styles.tagText}>{item.tag.text}</Text>
+                  </Block>
                 )}
             </Block>
           </Block>
@@ -52,8 +61,11 @@ class Card extends React.Component {
 
 Card.defaultProps = {
   ctaColor: argonTheme.COLORS.SECONDARY,
+  full: false,
   handlePress: null,
+  horizontal: false,
   imageStyle: {},
+  tag: null
 };
 
 Card.propTypes = {
@@ -61,8 +73,12 @@ Card.propTypes = {
   full: PropTypes.bool,
   handlePress: PropTypes.func,
   horizontal: PropTypes.bool,
-  imageStyle: PropTypes.any,
-  item: PropTypes.object,
+  imageStyle: PropTypes.shape({}),
+  item: PropTypes.shape({
+    title: PropTypes.string,
+    img: PropTypes.string,
+    cta: PropTypes.string
+  }).isRequired,
   tag: PropTypes.shape({
     icon: PropTypes.string,
     text: PropTypes.string

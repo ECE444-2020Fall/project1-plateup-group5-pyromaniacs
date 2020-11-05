@@ -74,18 +74,26 @@ const browseRecipesSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
-    [fetchBrowseRecipes.pending]: (state) => {
-      state.status = FETCHING;
-      state.error = null;
-    },
+    [fetchBrowseRecipes.pending]: (state) => ({
+      ...state,
+      status: FETCHING,
+      error: null
+    }),
     [fetchBrowseRecipes.fulfilled]: (state, action) => {
-      state.status = IDLE;
-      state.data = action.payload;
+      const { recipes, is_random: isRandom } = action.payload;
+      const transformedData = { recipes, isRandom };
+
+      return {
+        ...state,
+        status: IDLE,
+        data: transformedData
+      };
     },
-    [fetchBrowseRecipes.rejected]: (state, action) => {
-      state.status = IDLE;
-      state.error = action.error.message;
-    }
+    [fetchBrowseRecipes.rejected]: (state, action) => ({
+      ...state,
+      status: IDLE,
+      error: action.error.message
+    })
   }
 });
 

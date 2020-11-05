@@ -25,7 +25,7 @@ const { width } = Dimensions.get('screen');
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-function HomeStack(props) {
+function HomeStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -97,7 +97,7 @@ function HomeStack(props) {
   );
 }
 
-export default function OnboardingStack(props) {
+export default function OnboardingStack() {
   return (
     <Stack.Navigator mode="card" headerMode="none">
       <Stack.Screen
@@ -114,11 +114,17 @@ export default function OnboardingStack(props) {
   );
 }
 
-function AppStack(props) {
+function AppStack() {
   return (
     <Drawer.Navigator
       style={{ flex: 1 }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      drawerContent={({ focused, navigation, state }) => (
+        <CustomDrawerContent
+          focused={focused}
+          navigation={navigation}
+          state={state}
+        />
+      )}
       drawerStyle={{
         backgroundColor: 'white',
         width: width * 0.8,

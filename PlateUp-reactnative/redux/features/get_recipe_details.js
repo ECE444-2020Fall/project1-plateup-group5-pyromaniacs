@@ -24,21 +24,27 @@ const recipeDetailsSlice = createSlice({
   name: 'recipeDetails',
   initialState,
   extraReducers: {
-    [getRecipeDetails.pending]: (state) => {
-      state.status = FETCHING;
-      state.error = null;
-    },
+    [getRecipeDetails.pending]: (state) => ({
+      ...state,
+      status: FETCHING,
+      error: null
+    }),
     [getRecipeDetails.fulfilled]: (state, action) => {
-      state.status = IDLE;
-      state.data = action.payload;
+      const ingredientsParsed = JSON.parse(action.payload.recipe_preview.ingredients);
+      const transformedPayload = action.payload;
+      transformedPayload.recipe_preview.ingredients = ingredientsParsed;
 
-      // Parse JSON here instead of where ingredients are displayed
-      state.data.recipe_preview.ingredients = JSON.parse(state.data.recipe_preview.ingredients);
+      return {
+        ...state,
+        status: IDLE,
+        data: transformedPayload
+      };
     },
-    [getRecipeDetails.rejected]: (state, action) => {
-      state.status = IDLE;
-      state.error = action.payload;
-    },
+    [getRecipeDetails.rejected]: (state, action) => ({
+      ...state,
+      status: IDLE,
+      error: action.payload
+    }),
   }
 });
 

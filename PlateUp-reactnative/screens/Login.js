@@ -19,10 +19,13 @@ import { login, LOGIN_IPR, IDLE } from '../redux/features/user_settings';
 const { width, height } = Dimensions.get('screen');
 
 class Login extends React.Component {
-  state = {
-    email: '',
-    password: '',
-    keyboardIsOpen: false,
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: '',
+      password: '',
+      keyboardIsOpen: false,
+    };
   }
 
   componentDidMount() {
@@ -36,31 +39,39 @@ class Login extends React.Component {
     );
   }
 
+  componentDidUpdate(prevProps) {
+    const { userSettings, navigation } = this.props;
+
+    if (prevProps.userSettings.status === LOGIN_IPR && userSettings.status === IDLE) {
+      if (userSettings.error) {
+        toast(userSettings.error);
+      } else {
+        navigation.navigate('App');
+      }
+    }
+  }
+
   componentWillUnmount() {
     this.keyboardDidShowListener.remove();
     this.keyboardDidHideListener.remove();
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.userSettings.status === LOGIN_IPR && this.props.userSettings.status === IDLE) {
-      if (this.props.userSettings.error) {
-        toast(this.props.userSettings.error);
-      } else {
-        this.props.navigation.navigate('App');
-      }
-    }
-  }
-
   handleLogin = () => {
+    const { email, password } = this.state;
+    const { login: loginRequest } = this.props;
+
     // Don't try to log in if some information is missing
-    if (this.state.email.length === 0 || this.state.password.length === 0) {
+    if (email.length === 0 || password.length === 0) {
       toast('Please fill in all fields.');
       return;
     }
-    this.props.login({ ...this.state });
+    loginRequest({ ...this.state });
   }
 
   render() {
+    const { userSettings } = this.props;
+    const { keyboardIsOpen } = this.state;
+
     return (
       <LinearGradient
         style={styles.container}
@@ -119,7 +130,7 @@ class Login extends React.Component {
                     onChangeText={(password) => this.setState({ password })}
                   />
                 </Block>
-                { this.props.userSettings.status == LOGIN_IPR
+                {userSettings.status === LOGIN_IPR
                   ? (
                     <Block style={styles.loading}>
                       <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
@@ -142,11 +153,11 @@ class Login extends React.Component {
             </Block>
           </Block>
         </Block>
-        { !this.state.keyboardIsOpen
+        { !keyboardIsOpen
           && (
-          <Block style={styles.imageContainer}>
-            <Image source={Images.PlateUpName} style={styles.nameImage} />
-          </Block>
+            <Block style={styles.imageContainer}>
+              <Image source={Images.PlateUpName} style={styles.nameImage} />
+            </Block>
           )}
       </LinearGradient>
     );

@@ -11,6 +11,7 @@ module.exports = {
     'comma-dangle': 'off'
   },
   globals: {
-    fetch: false
+    fetch: false,
+    window: true
   }
 };

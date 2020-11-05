@@ -12,27 +12,30 @@ const { width } = Dimensions.get('window');
 class SearchBar extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { value: this.props.searchQuery };
-
-    this.handleSubmit = this.handleSubmit.bind(this);
+    const { searchQuery } = this.props;
+    this.state = { value: searchQuery };
   }
 
-  handleSubmit() {
-    const searchQuery = this.state.value;
-    this.props.saveSearch(searchQuery);
+  handleSubmit = () => {
+    const { value: searchQuery } = this.state;
+    const { saveSearch: saveSearchRequest } = this.props;
+
+    saveSearchRequest(searchQuery);
   }
 
   render() {
+    const { value } = this.state;
+
     return (
       <Input
         right
         color="black"
         style={styles.search}
         placeholder="Search by ingredient, name, or type..."
-        value={this.state.value}
+        value={value}
         iconContent={
           <Icon size={16} color={argonTheme.COLORS.MUTED} name="search-zoom-in" family="ArgonExtra" />
-                }
+        }
         returnKeyType="search"
         onChangeText={(newValue) => this.setState({ value: newValue })}
         onSubmitEditing={this.handleSubmit}

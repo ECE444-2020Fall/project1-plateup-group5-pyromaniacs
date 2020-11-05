@@ -10,8 +10,12 @@ const ArgonExtra = require('../assets/font/argon.ttf');
 const IconArgonExtra = createIconSetFromIcoMoon(argonConfig, 'ArgonExtra');
 
 class IconExtra extends React.Component {
-  state = {
-    fontLoaded: false,
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      fontLoaded: false
+    };
   }
 
   async componentDidMount() {
@@ -21,11 +25,16 @@ class IconExtra extends React.Component {
 
   render() {
     const { name, family, ...rest } = this.props;
+    const { fontLoaded } = this.state;
 
-    if (name && family && this.state.fontLoaded) {
+    if (name && family && fontLoaded) {
       if (family === 'ArgonExtra') {
+        // Reasonable to disable here as this is a wrapper component
+        // eslint-disable-next-line react/jsx-props-no-spreading
         return <IconArgonExtra name={name} family={family} {...rest} />;
       }
+      // Reasonable to disable here as this is a wrapper component
+      // eslint-disable-next-line react/jsx-props-no-spreading
       return <Icon name={name} family={family} {...rest} />;
     }
 

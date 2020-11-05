@@ -4,7 +4,7 @@ import {
 } from 'galio-framework';
 import React from 'react';
 import {
-  TouchableOpacity, StyleSheet, Platform, Dimensions
+  StyleSheet, Platform, Dimensions
 } from 'react-native';
 import argonTheme from '../constants/Theme';
 import Icon from './Icon';
@@ -41,18 +41,24 @@ class Header extends React.Component {
       default:
         break;
     }
+
+    return null;
   }
 
-  renderHeader = () => (
-    <Block>
-      { this.props.search
+  renderHeader = () => {
+    const { search } = this.props;
+
+    return (
+      <Block>
+        { search
           && (
-          <Block center style={{ paddingBottom: 15 }}>
-            <SearchBar />
-          </Block>
+            <Block center style={{ paddingBottom: 15 }}>
+              <SearchBar />
+            </Block>
           )}
-    </Block>
-  )
+      </Block>
+    );
+  }
 
   render() {
     const {
@@ -94,6 +100,8 @@ class Header extends React.Component {
             { color: argonTheme.COLORS.HEADER },
             titleColor && { color: titleColor }
           ]}
+          // Reasonable to disable here as this is a wrapper component
+          // eslint-disable-next-line react/jsx-props-no-spreading
           {...props}
         />
         {this.renderHeader()}
