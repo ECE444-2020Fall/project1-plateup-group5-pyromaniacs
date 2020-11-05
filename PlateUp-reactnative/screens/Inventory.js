@@ -3,21 +3,21 @@ import React from 'react';
 import { List } from '../components';
 
 const testItems = [
-  { ingredient: 'Milk', quantity: '2L' },
-  { ingredient: 'Ground Beef', quantity: '500g' },
-  { ingredient: 'Shrimp', quantity: '300g' },
-  { ingredient: 'Milk2', quantity: '2L' },
-  { ingredient: 'Ground Beef2', quantity: '500g' },
-  { ingredient: 'Shrimp2', quantity: '300g' },
-  { ingredient: 'Milk3', quantity: '2L' },
-  { ingredient: 'Ground Beef3', quantity: '500g' },
-  { ingredient: 'Shrimp3', quantity: '300g' },
-  { ingredient: 'Milk4', quantity: '2L' },
-  { ingredient: 'Ground Beef4', quantity: '500g' },
-  { ingredient: 'Shrimp4', quantity: '300g' },
-  { ingredient: 'Milk5', quantity: '2L' },
-  { ingredient: 'Ground Beef5', quantity: '500g' },
-  { ingredient: 'Shrimp5', quantity: '300g' },
+  { key: 'Milk', value: '2L' },
+  { key: 'Ground Beef', value: '500g' },
+  { key: 'Shrimp', value: '300g' },
+  { key: 'Milk2', value: '2L' },
+  { key: 'Ground Beef2', value: '500g' },
+  { key: 'Shrimp2', value: '300g' },
+  { key: 'Milk3', value: '2L' },
+  { key: 'Ground Beef3', value: '500g' },
+  { key: 'Shrimp3', value: '300g' },
+  { key: 'Milk4', value: '2L' },
+  { key: 'Ground Beef4', value: '500g' },
+  { key: 'Shrimp4', value: '300g' },
+  { key: 'Milk5', value: '2L' },
+  { key: 'Ground Beef5', value: '500g' },
+  { key: 'Shrimp5', value: '300g' },
 ];
 
 class Inventory extends React.Component {

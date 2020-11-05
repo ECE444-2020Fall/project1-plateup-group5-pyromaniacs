@@ -25,7 +25,7 @@ class List extends React.Component {
     this.setState(DEFAULT_DIALOG_STATE);
   }
 
-  handleOKDialog = () => {
+  handleSubmitDialog = () => {
     const { onAddItem, items } = this.props;
     const { dialogKey, dialogVal } = this.state;
     const key = dialogKey.trim();
@@ -39,12 +39,7 @@ class List extends React.Component {
     // Only add item to list if the key isn't already in the list
     // The user's input will be trimmed and lowercased and be
     // compared to all the lowercased keys.
-    const keyExists = items.some((item) => {
-      const itemKey = Object.values(item)[0];
-      return itemKey.toLowerCase() === key.toLowerCase();
-    });
-
-    if (keyExists) {
+    if (items.some(({ key: itemKey, }) => itemKey.toLowerCase() === key.toLowerCase())) {
       toast(`Cannot add "${key}" as it already exists!`);
       return;
     }
@@ -84,7 +79,7 @@ class List extends React.Component {
           <Dialog.Button
             label="Submit"
             color={argonTheme.COLORS.PRIMARY}
-            onPress={() => this.handleOKDialog()}
+            onPress={() => this.handleSubmitDialog()}
           />
         </Dialog.Container>
 
@@ -115,36 +110,27 @@ class List extends React.Component {
     return (
       <Block>
         {
-        items.map((item) => {
-          /* Since this list component is generic, we can't destructure the item
-           * as it would assume the names of the properties. Instead, just grab
-           * the first two manually.
-           */
-          const key = Object.values(item)[0];
-          const val = Object.values(item)[1];
-
-          return (
-            <Block key={key} row>
-              <TouchableOpacity style={styles.deleteIconContainer}>
-                <Icon
-                  name="minus"
-                  family="EvilIcons"
-                  size={24}
-                  color={argonTheme.COLORS.TEXT_COLOR}
-                  onPress={() => this.handleDeleteItem(key)}
-                />
-              </TouchableOpacity>
-              <Block style={styles.listItemContainer}>
-                <Text style={styles.text}>
-                  {key}
-                </Text>
-                <Text style={styles.text}>
-                  {val}
-                </Text>
-              </Block>
+        items.map(({ key, value }) => (
+          <Block key={key} row>
+            <TouchableOpacity style={styles.deleteIconContainer}>
+              <Icon
+                name="minus"
+                family="EvilIcons"
+                size={24}
+                color={argonTheme.COLORS.TEXT_COLOR}
+                onPress={() => this.handleDeleteItem(key)}
+              />
+            </TouchableOpacity>
+            <Block style={styles.listItemContainer}>
+              <Text style={styles.text}>
+                {key}
+              </Text>
+              <Text style={styles.text}>
+                {value}
+              </Text>
             </Block>
-          );
-        })
+          </Block>
+        ))
         }
       </Block>
     );
@@ -164,13 +150,10 @@ class List extends React.Component {
 }
 
 List.propTypes = {
-  /* items: [
-   *    { key: "...", value: "..." },
-   *    { key: "...", value: "..." },
-   *    ...
-   * ]
-   */
-  items: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string, PropTypes.string)).isRequired,
+  items: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string,
+    value: PropTypes.string
+  })).isRequired,
   onDeleteItem: PropTypes.func.isRequired,
   onAddItem: PropTypes.func.isRequired,
 
