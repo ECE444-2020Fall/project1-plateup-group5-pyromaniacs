@@ -56,12 +56,29 @@ class List extends React.Component {
     return (
       <Block>
         <Dialog.Container visible={addItemDialogVisible}>
-          <Dialog.Title>New Item</Dialog.Title>
-          <Dialog.Input label="Ingredient" onChangeText={(dialogIngredient) => this.setState({ dialogIngredient })} />
-          <Dialog.Input label="Quantity" onChangeText={(dialogQuantity) => this.setState({ dialogQuantity })} />
-          <Dialog.Button label="Cancel" onPress={() => this.handleCancelDialog()} />
-          <Dialog.Button label="OK" onPress={() => this.handleOKDialog()} />
+          <Dialog.Title>Enter new item</Dialog.Title>
+          <Dialog.Input
+            placeholder="Ingredient"
+            wrapperStyle={styles.dialogTextInput}
+            onChangeText={(dialogIngredient) => this.setState({ dialogIngredient })}
+          />
+          <Dialog.Input
+            placeholder="Quantity"
+            wrapperStyle={styles.dialogTextInput}
+            onChangeText={(dialogQuantity) => this.setState({ dialogQuantity })}
+          />
+          <Dialog.Button
+            label="Cancel"
+            color={argonTheme.COLORS.PRIMARY}
+            onPress={() => this.handleCancelDialog()}
+          />
+          <Dialog.Button
+            label="OK"
+            color={argonTheme.COLORS.PRIMARY}
+            onPress={() => this.handleOKDialog()}
+          />
         </Dialog.Container>
+
         <TouchableOpacity
           style={styles.addItemContainer}
           onPress={() => this.setState({ addItemDialogVisible: true })}
@@ -161,6 +178,19 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
   },
+  dialogTextInput: {
+    paddingLeft: 12,
+    height: 44,
+    borderWidth: 1,
+    borderRadius: 4,
+    borderColor: argonTheme.COLORS.BORDER,
+    backgroundColor: argonTheme.COLORS.WHITE,
+    shadowColor: argonTheme.COLORS.BLACK,
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 2,
+    shadowOpacity: 0.05,
+    elevation: 2,
+  }
 });
 
 export default List;
