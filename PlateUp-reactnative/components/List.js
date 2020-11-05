@@ -110,7 +110,7 @@ class List extends React.Component {
     const { items } = this.props;
 
     return (
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <Block>
         {
         items.map((item) => {
           const key = Object.values(item)[0];
@@ -138,16 +138,19 @@ class List extends React.Component {
           );
         })
         }
-      </ScrollView>
+      </Block>
     );
   }
 
   render() {
     return (
-      <Block style={styles.listContainer}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={styles.listContainer}
+      >
         {this.renderItems()}
         {this.renderAddItem()}
-      </Block>
+      </ScrollView>
     );
   }
 }
