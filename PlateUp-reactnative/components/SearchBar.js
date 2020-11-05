@@ -18,9 +18,9 @@ class SearchBar extends React.Component {
 
   handleSubmit = () => {
     const { value: searchQuery } = this.state;
-    const { saveSearch: saveSearchRequest } = this.props;
+    const { saveSearch: saveSearchDispatch } = this.props;
 
-    saveSearchRequest(searchQuery);
+    saveSearchDispatch(searchQuery);
   }
 
   render() {
