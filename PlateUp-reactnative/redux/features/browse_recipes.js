@@ -26,7 +26,7 @@ export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRe
     });
     return response.data;
   } catch (err) {
-    return rejectWithValue(err.response.data);
+    return rejectWithValue(err.response ? err.response.data : 'Unknown error.');
   }
 });
 
@@ -92,7 +92,7 @@ const browseRecipesSlice = createSlice({
     [fetchBrowseRecipes.rejected]: (state, action) => ({
       ...state,
       status: IDLE,
-      error: action.error.message
+      error: action.payload
     })
   }
 });

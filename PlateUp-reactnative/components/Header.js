@@ -39,10 +39,8 @@ class Header extends React.Component {
           </Button>
         );
       default:
-        break;
+        return null;
     }
-
-    return null;
   }
 
   renderHeader = () => {

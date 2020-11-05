@@ -21,6 +21,7 @@ class BrowseRecipes extends React.Component {
     const {
       filterSettings, searchQuery, fetchBrowseRecipes: fetchBrowseRecipesRequest
     } = this.props;
+
     await fetchBrowseRecipesRequest({
       filterSettings,
       searchQuery
@@ -34,10 +35,10 @@ class BrowseRecipes extends React.Component {
     // This means that the data is stale and we need to fetch it again
     // Set state to loading and since setState isn't synchronous, pass a callback function to it
     // The callback function fetches the data, once the data is fetched, set loading to false
-
     const {
       filterSettings, searchQuery, fetchBrowseRecipes: fetchBrowseRecipesRequest
     } = this.props;
+
     if (
       !prevState.loading
       && (

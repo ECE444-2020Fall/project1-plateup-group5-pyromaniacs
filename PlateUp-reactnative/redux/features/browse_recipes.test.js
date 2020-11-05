@@ -78,7 +78,7 @@ describe('browseRecipesReducer', () => {
   test('correctly updates state on response error', () => {
     const action = {
       type: fetchBrowseRecipes.rejected,
-      error: { message: 'Error Message' }
+      payload: 'Error Message'
     };
 
     const previousState = {
@@ -89,7 +89,7 @@ describe('browseRecipesReducer', () => {
 
     const expectedState = {
       status: IDLE,
-      error: action.error.message,
+      error: action.payload,
       data: previousState.data
     };
 

@@ -20,6 +20,7 @@ const { width, height } = Dimensions.get('screen');
 class CustomDrawerContent extends React.Component {
   componentDidUpdate(prevProps) {
     const { userSettings, navigation } = this.props;
+
     if (prevProps.userSettings.status === LOGOUT_IPR && userSettings.status === IDLE) {
       if (userSettings.error) {
         toast(userSettings.error);

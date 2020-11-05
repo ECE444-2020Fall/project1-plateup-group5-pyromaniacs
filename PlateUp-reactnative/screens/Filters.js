@@ -26,6 +26,7 @@ class Filters extends React.Component {
 
   handleApplyFilters = () => {
     const { saveFilters: saveFiltersRequest, navigation } = this.props;
+
     saveFiltersRequest({ ...this.state });
     // The only way to get to this screen is from the Home screen, so simply go back to it
     navigation.goBack();
