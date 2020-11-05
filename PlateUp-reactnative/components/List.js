@@ -11,8 +11,8 @@ import { toast } from '../constants/utils';
 
 const DEFAULT_DIALOG_STATE = {
   addItemDialogVisible: false,
-  dialogIngredient: '',
-  dialogQuantity: '',
+  dialogKey: '',
+  dialogVal: '',
 };
 
 class List extends React.Component {
@@ -27,21 +27,26 @@ class List extends React.Component {
 
   handleOKDialog = () => {
     const { onAddItem, items } = this.props;
-    const { dialogIngredient, dialogQuantity } = this.state;
-    const ingredient = dialogIngredient.trim();
-    const quantity = dialogQuantity.trim();
+    const { dialogKey, dialogVal } = this.state;
+    const key = dialogKey.trim();
+    const val = dialogVal.trim();
 
-    if (ingredient.length === 0 || quantity.length === 0) {
+    if (key.length === 0 || val.length === 0) {
       toast('Please fill in all fields.');
       return;
     }
 
-    if (items.some((item) => item.ingredient.toLowerCase() === ingredient.toLowerCase())) {
-      toast(`Cannot add "${ingredient}" as it already exists!`);
+    const keyExists = items.some((item) => {
+      const itemKey = Object.values(item)[0];
+      return itemKey.toLowerCase() === key.toLowerCase();
+    });
+
+    if (keyExists) {
+      toast(`Cannot add "${key}" as it already exists!`);
       return;
     }
 
-    onAddItem(ingredient, quantity);
+    onAddItem(key, val);
     this.setState(DEFAULT_DIALOG_STATE);
   };
 
@@ -52,20 +57,21 @@ class List extends React.Component {
 
   renderAddItem() {
     const { addItemDialogVisible } = this.state;
+    const { keyName, valName } = this.props;
 
     return (
       <Block>
         <Dialog.Container visible={addItemDialogVisible}>
           <Dialog.Title>Enter new item</Dialog.Title>
           <Dialog.Input
-            placeholder="Ingredient"
+            placeholder={keyName}
             wrapperStyle={styles.dialogTextInput}
-            onChangeText={(dialogIngredient) => this.setState({ dialogIngredient })}
+            onChangeText={(dialogKey) => this.setState({ dialogKey })}
           />
           <Dialog.Input
-            placeholder="Quantity"
+            placeholder={valName}
             wrapperStyle={styles.dialogTextInput}
-            onChangeText={(dialogQuantity) => this.setState({ dialogQuantity })}
+            onChangeText={(dialogVal) => this.setState({ dialogVal })}
           />
           <Dialog.Button
             label="Cancel"
@@ -107,8 +113,8 @@ class List extends React.Component {
       <ScrollView showsVerticalScrollIndicator={false}>
         {
         items.map((item) => {
-          const { ingredient, quantity } = item;
-          const key = ingredient;
+          const key = Object.values(item)[0];
+          const val = Object.values(item)[1];
 
           return (
             <Block key={key} row>
@@ -122,10 +128,10 @@ class List extends React.Component {
               />
               <Block style={styles.listItemContainer}>
                 <Text style={styles.text}>
-                  {ingredient}
+                  {key}
                 </Text>
                 <Text style={styles.text}>
-                  {quantity}
+                  {val}
                 </Text>
               </Block>
             </Block>
@@ -150,6 +156,14 @@ List.propTypes = {
   items: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.string, PropTypes.string)).isRequired,
   onDeleteItem: PropTypes.func.isRequired,
   onAddItem: PropTypes.func.isRequired,
+
+  keyName: PropTypes.string,
+  valName: PropTypes.string,
+};
+
+List.defaultProps = {
+  keyName: 'Key',
+  valName: 'Value',
 };
 
 const styles = StyleSheet.create({
