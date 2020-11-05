@@ -2,67 +2,86 @@ import { Block, Text } from 'galio-framework';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { StyleSheet } from 'react-native';
+import Dialog from 'react-native-dialog';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
 import Icon from './Icon';
 import { argonTheme } from '../constants';
 import { toast } from '../constants/utils';
 
+const DEFAULT_DIALOG_STATE = {
+  addItemDialogVisible: false,
+  dialogIngredient: '',
+  dialogQuantity: '',
+};
+
 class List extends React.Component {
-  handleAddItem = () => {
-    // Alert.prompt(
-    //   'Ingredient Name',
-    //   'Quantity',
-    //   [
-    //     {
-    //       text: 'Cancel',
-    //       onPress: () => console.log('Cancel Pressed'),
-    //       style: 'cancel'
-    //     },
-    //     {
-    //       text: 'OK',
-    //       onPress: console.log('OK Pressed')
-    //     }
-    //   ],
-    // );
+  constructor(props) {
+    super(props);
+    this.state = { ...DEFAULT_DIALOG_STATE };
+  }
 
+  handleCancelDialog = () => {
+    this.setState(DEFAULT_DIALOG_STATE);
+  }
+
+  handleOKDialog = () => {
     const { onAddItem, items } = this.props;
+    const { dialogIngredient, dialogQuantity } = this.state;
+    const ingredient = dialogIngredient.trim();
+    const quantity = dialogQuantity.trim();
 
-    const key = '';
-    const val = '';
-
-    if (items.some((item) => item.key === key)) {
-      toast(`Cannot add "${key}" as it already exists!`);
+    if (ingredient.length === 0 || quantity.length === 0) {
+      toast('Please fill in all fields.');
       return;
     }
 
-    onAddItem(key, val);
-  }
+    if (items.some((item) => item.ingredient.toLowerCase() === ingredient.toLowerCase())) {
+      toast(`Cannot add "${ingredient}" as it already exists!`);
+      return;
+    }
+
+    onAddItem(ingredient, quantity);
+    this.setState(DEFAULT_DIALOG_STATE);
+  };
 
   handleDeleteItem = (key) => {
     const { onDeleteItem } = this.props;
     onDeleteItem(key);
   }
 
-  renderAddItem = () => (
-    <TouchableOpacity
-      style={styles.addItemContainer}
-      onPress={() => this.handleAddItem()}
-    >
-      <Icon
-        name="add"
-        family="MaterialIcons"
-        size={24}
-        color={argonTheme.COLORS.PRIMARY}
-        style={styles.addIcon}
-      />
-      <Block style={{ padding: 15 }}>
-        <Text style={styles.text} bold color={argonTheme.COLORS.PRIMARY}>
-          Add Item
-        </Text>
+  renderAddItem() {
+    const { addItemDialogVisible } = this.state;
+
+    return (
+      <Block>
+        <Dialog.Container visible={addItemDialogVisible}>
+          <Dialog.Title>New Item</Dialog.Title>
+          <Dialog.Input label="Ingredient" onChangeText={(dialogIngredient) => this.setState({ dialogIngredient })} />
+          <Dialog.Input label="Quantity" onChangeText={(dialogQuantity) => this.setState({ dialogQuantity })} />
+          <Dialog.Button label="Cancel" onPress={() => this.handleCancelDialog()} />
+          <Dialog.Button label="OK" onPress={() => this.handleOKDialog()} />
+        </Dialog.Container>
+        <TouchableOpacity
+          style={styles.addItemContainer}
+          onPress={() => this.setState({ addItemDialogVisible: true })}
+        >
+          <Icon
+            name="add"
+            family="MaterialIcons"
+            size={24}
+            color={argonTheme.COLORS.PRIMARY}
+            style={styles.addIcon}
+          />
+          <Block style={{ padding: 15 }}>
+            <Text style={styles.text} bold color={argonTheme.COLORS.PRIMARY}>
+              Add Item
+            </Text>
+          </Block>
+        </TouchableOpacity>
       </Block>
-    </TouchableOpacity>
-  )
+    );
+  }
 
   renderItems() {
     const { items } = this.props;
