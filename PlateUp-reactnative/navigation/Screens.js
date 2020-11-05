@@ -5,11 +5,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 // screens
-import Home from '../screens/Home';
+import BrowseRecipes from '../screens/BrowseRecipes';
 import Login from '../screens/Login';
 import Onboarding from '../screens/Onboarding';
 import Register from '../screens/Register';
 import Filters from '../screens/Filters';
+import RecipeDetails from '../screens/RecipeDetails';
 
 // drawer
 import CustomDrawerContent from './Menu';
@@ -28,7 +29,7 @@ function HomeStack(props) {
     <Stack.Navigator>
       <Stack.Screen
         name="Home"
-        component={Home}
+        component={BrowseRecipes}
         options={{
           header: ({ navigation, scene }) => (
             <Header
@@ -47,13 +48,31 @@ function HomeStack(props) {
         options={{
           header: ({ navigation, scene }) => (
             <Header
-              title="Filters"
+              title="Browse"
               back
               navigation={navigation}
               scene={scene}
             />
           ),
           cardStyle: { backgroundColor: argonTheme.COLORS.GREY },
+        }}
+      />
+      <Stack.Screen
+        name="Recipe"
+        component={RecipeDetails}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title="Browse"
+              back
+              noShadow
+              titleColor={argonTheme.COLORS.WHITE}
+              iconColor={argonTheme.COLORS.WHITE}
+              bgColor={argonTheme.COLORS.PRIMARY}
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
         }}
       />
     </Stack.Navigator>

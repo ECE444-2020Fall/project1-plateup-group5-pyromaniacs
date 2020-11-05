@@ -11,7 +11,7 @@ import { argonTheme } from '../constants';
 
 const { width } = Dimensions.get('screen');
 
-class Home extends React.Component {
+class BrowseRecipes extends React.Component {
   constructor(props) {
     super(props);
     this.state = { loading: true };
@@ -76,7 +76,7 @@ class Home extends React.Component {
 
     for (const recipe of recipes) {
       recipeItems.push({
-        id: recipe.recipe_id,
+        id: recipe.id,
         title: recipe.name,
         image: recipe.preview_media_url,
         cta: 'View recipe',
@@ -93,12 +93,20 @@ class Home extends React.Component {
 
     return (
       <Block>
-        { is_random && !!this.props.searchQuery.trim() &&
+        { is_random && !!this.props.searchQuery.trim()
+          && (
           <Text style={{ paddingBottom: theme.SIZES.BASE }} center>
             No recipes found for search query. Showing random results with given filters.
-          </Text> 
-        }
-        { recipeItems.map((recipeItem, index) => <Card key={index} item={recipeItem} horizontal />) }
+          </Text>
+          )}
+        { recipeItems.map((recipeItem, index) => (
+          <Card
+            key={index}
+            item={recipeItem}
+            horizontal
+            handlePress={() => this.props.navigation.navigate('Recipe', { id: recipeItem.id })}
+          />
+        ))}
       </Block>
     );
   }
@@ -134,4 +142,4 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = { fetchBrowseRecipes };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(BrowseRecipes);

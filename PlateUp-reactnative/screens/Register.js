@@ -26,7 +26,7 @@ class Register extends React.Component {
     keyboardIsOpen: false,
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       () => this.setState({ keyboardIsOpen: true })
@@ -35,11 +35,6 @@ class Register extends React.Component {
       'keyboardDidHide',
       () => this.setState({ keyboardIsOpen: false })
     );
-  }
-
-  componentWillUnmount () {
-    this.keyboardDidShowListener.remove();
-    this.keyboardDidHideListener.remove();
   }
 
   componentDidUpdate(prevProps) {
@@ -52,9 +47,15 @@ class Register extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
+
   handleCreateAccount = () => {
+    const {name, email, password} = this.state;
     // Don't try to create an account if some information is missing
-    if (this.state.name.length === 0 || this.state.email.length === 0 || this.state.password.length === 0) {
+    if (name.length === 0 || email.length === 0 || password.length === 0) {
       toast('Please fill in all fields.');
       return;
     }
@@ -159,32 +160,34 @@ class Register extends React.Component {
                   </Text>
                 </Block>
                 { this.props.userSettings.status == REGISTER_IPR
-                  ?
-                  <Block style={styles.loading}>
-                    <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
-                  </Block>
-                  :
-                  <Block middle>
-                    <Button
-                      color="primary"
-                      style={styles.createButton}
-                      onPress={this.handleCreateAccount}
-                    >
-                      <Text bold size={14} color={argonTheme.COLORS.WHITE}>
-                        Create Account
-                      </Text>
-                    </Button>
-                  </Block>
-                }
+                  ? (
+                    <Block style={styles.loading}>
+                      <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
+                    </Block>
+                  )
+                  : (
+                    <Block middle>
+                      <Button
+                        color="primary"
+                        style={styles.createButton}
+                        onPress={this.handleCreateAccount}
+                      >
+                        <Text bold size={14} color={argonTheme.COLORS.WHITE}>
+                          Create Account
+                        </Text>
+                      </Button>
+                    </Block>
+                  )}
               </KeyboardAvoidingView>
             </Block>
           </Block>
         </Block>
-        { !this.state.keyboardIsOpen &&
+        { !this.state.keyboardIsOpen
+          && (
           <Block style={styles.imageContainer}>
             <Image source={Images.PlateUpName} style={styles.nameImage} />
           </Block>
-        }
+          )}
       </LinearGradient>
     );
   }
@@ -207,7 +210,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   nameImage: {
-    resizeMode: "contain",
+    resizeMode: 'contain',
     width: width * 0.725
   },
   passwordCheck: {
@@ -231,14 +234,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   loading: {
-    alignContent: "center",
-    justifyContent: "center",
+    alignContent: 'center',
+    justifyContent: 'center',
     flex: 1
   },
   imageContainer: {
-    alignContent: "center",
-    alignItems: "center",
-    justifyContent: "flex-end",
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
     flex: 0.1,
     paddingBottom: 15
   }

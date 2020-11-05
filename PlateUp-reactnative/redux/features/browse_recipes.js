@@ -1,13 +1,10 @@
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import env from '../../env';
 import { constructQueryParams } from '../../constants/utils';
+import env from '../../env';
 
-const initialState = {
-  data: {},
-  status: 'idle',
-  error: null
-};
+export const FETCHING = 'FETCHING';
+export const IDLE = 'IDLE';
 
 const queryParamMapping = {
   maxCost: 'Filter_cost',
@@ -33,33 +30,13 @@ export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRe
   }
 });
 
-const browseRecipesSlice = createSlice({
-  name: 'browseRecipes',
-  initialState,
-  reducers: {},
-  extraReducers: {
-    [fetchBrowseRecipes.pending]: (state) => {
-      state.status = 'fetching';
-      state.error = null;
-    },
-    [fetchBrowseRecipes.fulfilled]: (state, action) => {
-      state.status = 'idle';
-      state.data = action.payload;
-    },
-    [fetchBrowseRecipes.rejected]: (state, action) => {
-      state.status = 'idle';
-      state.error = action.error.message;
-    }
-  }
-});
-
 export const processSettingsIntoParams = (settings) => {
   const filters = { ...settings.filterSettings };
-  const searchQuery = settings.searchQuery;
-  let params = {}
+  const { searchQuery } = settings;
+  let params = {};
 
   if (filters.activateFilters) {
-    params = { ...filters, search: searchQuery }
+    params = { ...filters, search: searchQuery };
 
     // Convert max cook time to integer before splitting into hours and minutes as the
     // server expects these values to be integers.
@@ -73,19 +50,43 @@ export const processSettingsIntoParams = (settings) => {
     // Server expects cost in cents
     if (params.maxCost) {
       params.maxCost = (Number(params.maxCost) * 100).toString();
-    }
-    else {
+    } else {
       delete params.maxCost;
     }
 
     delete params.activateFilters;
     delete params.maxCookTime;
-  }
-  else {
-    params = { search: searchQuery }
+  } else {
+    params = { search: searchQuery };
   }
 
   return params;
-}
+};
+
+const initialState = {
+  data: {},
+  status: IDLE,
+  error: null
+};
+
+const browseRecipesSlice = createSlice({
+  name: 'browseRecipes',
+  initialState,
+  reducers: {},
+  extraReducers: {
+    [fetchBrowseRecipes.pending]: (state) => {
+      state.status = FETCHING;
+      state.error = null;
+    },
+    [fetchBrowseRecipes.fulfilled]: (state, action) => {
+      state.status = IDLE;
+      state.data = action.payload;
+    },
+    [fetchBrowseRecipes.rejected]: (state, action) => {
+      state.status = IDLE;
+      state.error = action.error.message;
+    }
+  }
+});
 
 export default browseRecipesSlice.reducer;
