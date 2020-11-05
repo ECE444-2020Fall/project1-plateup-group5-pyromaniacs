@@ -40,11 +40,11 @@ class InstructionSchema(ma.Schema):
 
 class EquipmentSchema(ma.Schema):
     class Meta:
-        fields = ('name','image',)
+        fields = ('name','img',)
 
 class IngredientSchema(ma.Schema):
     class Meta:
-        fields = ('name','image',)
+        fields = ('name','img',)
 
 # Init schemas
 user_schema = UserSchema()
@@ -245,7 +245,7 @@ class RecipeDetailAPI(Resource):
             dict_list.append(return_dict)
         return dict_list
 
-    #@login_required
+    @login_required
     def get(self, id):
         recipe_id = id
 
@@ -267,13 +267,13 @@ class RecipeDetailAPI(Resource):
         return_step_list=self.__organize_return_object(recipe_instruction_list_sorted, recipe_ingredient_list_sorted,\
                                                     recipe_equipment_list_sorted)
         return_preview=recipe_schema.dump(recipe_preview[0])
-        return_object={"recipe_preview": return_preview, "steps":return_step_list}
+        return_object={"recipe_preview": return_preview, "recipe_instruction":return_step_list}
 
         return jsonify(return_object)
 
     @recipeR.doc(description="Insert recipe instruction to database")
     @recipeR.expect(resourceFields, validate=True)
-    #@login_required
+    @login_required
     def post(self, id):
         #self.__debug_delete_table()
         new_instruction_recipe_id = request.json["recipe_id"]
@@ -318,7 +318,7 @@ class RecipeAPI(Resource):
 
     __dataBaseLength=0
     __parser=''
-    __debug=True
+    __debug=False
     random_pick=False
 
     #Retrive JSON stuff
@@ -462,7 +462,7 @@ class RecipeAPI(Resource):
     #insert recipe to database
     @recipeR.doc(description="Insert recipe to database")
     @recipeR.expect(resourceFields, validate=True)
-    #@login_required
+    @login_required
     def post(self):
         new_recipe_name=request.json["Name"]
         new_recipe_ingredients=request.json["Ingredients"]
@@ -499,7 +499,7 @@ class RecipeAPI(Resource):
                     'Limit': {'description': 'number of recipes to return', 'type': 'int'},
                     'Page': {'description': 'page number determines range of data returned: [page x limit -> page x limit + limit]', 'type': 'int'}
                     })
-    #@login_required
+    @login_required
     def get(self):
         #get params
         recipe_list = []
@@ -699,7 +699,7 @@ def constructRecipeTags(recipe):
 if __name__ == '__main__':
     db.create_all()
     scheduler.start()
-    #updateRecipesToDB()
+    updateRecipesToDB()
     app.run(host='0.0.0.0')
 
     # Terminate background tasks

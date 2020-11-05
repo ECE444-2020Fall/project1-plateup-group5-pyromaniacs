@@ -155,30 +155,30 @@ def add_instructions(client, id):
         'recipe_id': str(id),
         "step_num": 1,
         "step_instruction": "step_instruction_test_1",
-        "ingredients_text": "test_1",
-        "ingredients_image": "test_1",
-        "equipment_text": "test_1",
-        "equipment_image": "test_1"
+        "ingredients_text": "test_1_ing_txt",
+        "ingredients_image": "test_1_ing_img",
+        "equipment_text": "test_1_equ_txt",
+        "equipment_image": "test_1_equ_img"
     }
     post_instructions(client, instructions=new_instruction)
     new_instruction = {
         'recipe_id': str(id),
         "step_num": 2,
         "step_instruction": "step_instruction_test_2",
-        "ingredients_text": "test_2",
-        "ingredients_image": "test_2",
-        "equipment_text": "test_2",
-        "equipment_image": "test_2"
+        "ingredients_text": "test_2_ing_txt",
+        "ingredients_image": "test_2_ing_img",
+        "equipment_text": "test_2_equ_txt",
+        "equipment_image": "test_2_equ_img"
     }
     post_instructions(client, instructions=new_instruction)
     new_instruction = {
         'recipe_id': str(id),
         "step_num": 3,
         "step_instruction": "step_instruction_test_3",
-        "ingredients_text": "test_3",
-        "ingredients_image": "test_3",
-        "equipment_text": "test_3",
-        "equipment_image": "test_3"
+        "ingredients_text": "test_3_ing_txt",
+        "ingredients_image": "test_3_ing_img",
+        "equipment_text": "test_3_equ_txt",
+        "equipment_image": "test_3_equ_img"
     }
     post_instructions(client, instructions=new_instruction)
 
@@ -233,6 +233,6 @@ def test_get_instructions(client):
     assert rv.json["recipe_instruction"][0]["step_instruction"]=="step_instruction_test_1"
     assert rv.json["recipe_instruction"][1]["step_instruction"] == "step_instruction_test_2"
     assert rv.json["recipe_instruction"][2]["step_instruction"] == "step_instruction_test_3"
-    assert rv.json["equipment"][0]["equipment_image"] == "test_1"
-    assert rv.json["ingredient"][0]["ingredient_image"] == "test_1"
+    assert rv.json["recipe_instruction"][0]["ingredients"][0]["name"] == "test_1_ing_txt"
+    assert rv.json["recipe_instruction"][0]["equipment"][0]["img"] == "test_1_equ_img"
 
