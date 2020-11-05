@@ -19,19 +19,21 @@ const { width, height } = Dimensions.get('screen');
 
 class CustomDrawerContent extends React.Component {
   componentDidUpdate(prevProps) {
-    if (prevProps.userSettings.status === LOGOUT_IPR && this.props.userSettings.status === IDLE) {
-      if (this.props.userSettings.error) {
-        toast(this.props.userSettings.error);
+    const { userSettings, navigation } = this.props;
+
+    if (prevProps.userSettings.status === LOGOUT_IPR && userSettings.status === IDLE) {
+      if (userSettings.error) {
+        toast(userSettings.error);
       } else {
         toast('Logged out successfully!');
-        this.props.navigation.dispatch(StackActions.popToTop());
+        navigation.dispatch(StackActions.popToTop());
       }
     }
   }
 
   render() {
     const {
-      drawerPosition, navigation, profile, focused, state, ...rest
+      navigation, focused, state, logout: logoutRequest
     } = this.props;
 
     return (
@@ -53,6 +55,8 @@ class CustomDrawerContent extends React.Component {
             />
             <DrawerCustomItem
               title="Inventory"
+              navigation={navigation}
+              navigationScreenName="Inventory"
               key={1}
               focused={state.index === 1}
             />
@@ -66,7 +70,7 @@ class CustomDrawerContent extends React.Component {
             </Block>
             <TouchableOpacity
               style={{ height: 60 }}
-              onPress={() => this.props.logout()}
+              onPress={() => logoutRequest()}
             >
               <Block flex row style={styles.defaultStyle}>
                 <Block middle flex={0.1} style={{ marginRight: 5 }}>

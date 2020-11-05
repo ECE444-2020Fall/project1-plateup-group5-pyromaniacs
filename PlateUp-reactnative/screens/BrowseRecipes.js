@@ -18,27 +18,39 @@ class BrowseRecipes extends React.Component {
   }
 
   async componentDidMount() {
-    await this.props.fetchBrowseRecipes({
-      filterSettings: this.props.filterSettings,
-      searchQuery: this.props.searchQuery
+    const {
+      filterSettings, searchQuery, fetchBrowseRecipes: fetchBrowseRecipesRequest
+    } = this.props;
+
+    await fetchBrowseRecipesRequest({
+      filterSettings,
+      searchQuery
     });
 
     this.setState({ loading: false });
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    // If the previous state was not loading, this flow was triggered because of filter / search query updates
+    // If the previous state was not loading, this flow was triggered because of prop updates
     // This means that the data is stale and we need to fetch it again
-    // Set state to loading = true and since React setState isn't synchronous, pass a callback function to it
+    // Set state to loading and since setState isn't synchronous, pass a callback function to it
     // The callback function fetches the data, once the data is fetched, set loading to false
+    const {
+      filterSettings, searchQuery, fetchBrowseRecipes: fetchBrowseRecipesRequest
+    } = this.props;
+
     if (
       !prevState.loading
-      && (!deepEqual(prevProps.filterSettings, this.props.filterSettings) || prevProps.searchQuery !== this.props.searchQuery)
+      && (
+        !deepEqual(prevProps.filterSettings, filterSettings)
+        || prevProps.searchQuery !== searchQuery
+      )
     ) {
+      // eslint-disable-next-line react/no-did-update-set-state
       this.setState({ loading: true }, async () => {
-        await this.props.fetchBrowseRecipes({
-          filterSettings: this.props.filterSettings,
-          searchQuery: this.props.searchQuery
+        await fetchBrowseRecipesRequest({
+          filterSettings,
+          searchQuery
         });
 
         this.setState({ loading: false });
@@ -47,7 +59,7 @@ class BrowseRecipes extends React.Component {
   }
 
   renderContent() {
-    const { error } = this.props.browseRecipes;
+    const { browseRecipes: { error } } = this.props;
 
     if (error) {
       return <Text center> Something went wrong. </Text>;
@@ -59,22 +71,22 @@ class BrowseRecipes extends React.Component {
         contentContainerStyle={styles.browsingContainer}
       >
         <Block flex>
-          { this.renderRecipes() }
+          {this.renderRecipes()}
         </Block>
       </ScrollView>
     );
   }
 
   renderRecipes() {
-    const { recipes, is_random } = this.props.browseRecipes.data;
+    const { browseRecipes: { data: { recipes, isRandom } }, searchQuery, navigation } = this.props;
 
-    if (!recipes || recipes.length == 0) {
+    if (!recipes || recipes.length === 0) {
       return <Text center> No recipes found with given filters. </Text>;
     }
 
     const recipeItems = [];
 
-    for (const recipe of recipes) {
+    recipes.forEach((recipe) => {
       recipeItems.push({
         id: recipe.id,
         title: recipe.name,
@@ -89,22 +101,22 @@ class BrowseRecipes extends React.Component {
           }
         }
       });
-    }
+    });
 
     return (
       <Block>
-        { is_random && !!this.props.searchQuery.trim()
+        { isRandom && !!searchQuery.trim()
           && (
-          <Text style={{ paddingBottom: theme.SIZES.BASE }} center>
-            No recipes found for search query. Showing random results with given filters.
-          </Text>
+            <Text style={{ paddingBottom: theme.SIZES.BASE }} center>
+              No recipes found for search query. Showing random results with given filters.
+            </Text>
           )}
-        { recipeItems.map((recipeItem, index) => (
+        { recipeItems.map((recipeItem) => (
           <Card
-            key={index}
+            key={recipeItem.id}
             item={recipeItem}
             horizontal
-            handlePress={() => this.props.navigation.navigate('Recipe', { id: recipeItem.id })}
+            handlePress={() => navigation.navigate('Recipe', { id: recipeItem.id })}
           />
         ))}
       </Block>

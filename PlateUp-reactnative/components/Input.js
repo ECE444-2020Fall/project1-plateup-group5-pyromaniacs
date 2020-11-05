@@ -1,22 +1,22 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-
 import { Input } from 'galio-framework';
 
-import Icon from './Icon';
 import { argonTheme } from '../constants';
 
-class ArInput extends React.Component {
+class ArInput extends React.PureComponent {
   render() {
-    const { shadowless, success, error } = this.props;
+    const {
+      shadowless, success, style, error
+    } = this.props;
 
     const inputStyles = [
       styles.input,
       !shadowless && styles.shadow,
       success && styles.success,
       error && styles.error,
-      { ...this.props.style }
+      { ...style }
     ];
 
     return (
@@ -25,6 +25,8 @@ class ArInput extends React.Component {
         placeholderTextColor={argonTheme.COLORS.MUTED}
         style={inputStyles}
         color={argonTheme.COLORS.HEADER}
+        // Reasonable to disable here as this is a wrapper component
+        // eslint-disable-next-line react/jsx-props-no-spreading
         {...this.props}
       />
     );

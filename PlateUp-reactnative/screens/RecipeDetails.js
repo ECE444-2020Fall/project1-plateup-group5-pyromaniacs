@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { connect } from 'react-redux';
+import HTML from 'react-native-render-html';
+
 import { argonTheme } from '../constants';
 import { Button } from '../components';
 import { getRecipeDetails } from '../redux/features/get_recipe_details';
@@ -23,12 +25,16 @@ class RecipeDetails extends React.Component {
   }
 
   async componentDidMount() {
-    await this.props.getRecipeDetails(this.props.route.params.id);
+    const {
+      route: { params: { id: recipeId } }, getRecipeDetails: fetchRecipeDetails
+    } = this.props;
+
+    await fetchRecipeDetails(recipeId);
     this.setState({ loading: false });
   }
 
   renderRecipeOverview() {
-    const recipe = this.props.recipeDetails.data.recipe_preview;
+    const { recipeDetails: { data: { recipe_preview: recipe } } } = this.props;
 
     return (
       <Block>
@@ -38,7 +44,7 @@ class RecipeDetails extends React.Component {
           style={styles.descriptionContainer}
         >
           <Block middle>
-            <Text center style={styles.mainText}>{recipe.preview_text}</Text>
+            <HTML html={recipe.preview_text} baseFontStyle={styles.mainText} />
           </Block>
         </ScrollView>
         <Block style={styles.info}>
@@ -66,7 +72,7 @@ class RecipeDetails extends React.Component {
   }
 
   renderIngredients() {
-    const { ingredients } = this.props.recipeDetails.data.recipe_preview;
+    const { recipeDetails: { data: { recipe_preview: { ingredients } } } } = this.props;
 
     return (
       <Block>
@@ -77,6 +83,8 @@ class RecipeDetails extends React.Component {
         >
           {
             Object.entries(ingredients).map(([item, quantity], index) => (
+              // Reasonable to disable here as this is a static array
+              // eslint-disable-next-line react/no-array-index-key
               <Block key={index}>
                 <Text style={styles.mainText}>
                   <Text bold>
@@ -101,7 +109,7 @@ class RecipeDetails extends React.Component {
   }
 
   renderInstructions() {
-    const instructions = this.props.recipeDetails.data.recipe_instruction;
+    const { recipeDetails: { data: { recipe_instruction: instructions } } } = this.props;
 
     return (
       <Block>
@@ -112,6 +120,8 @@ class RecipeDetails extends React.Component {
         >
           {
             instructions.map((instruction, index) => (
+              // Reasonable to disable here as this is a static array
+              // eslint-disable-next-line react/no-array-index-key
               <Block key={index}>
                 <Text style={styles.mainText}>
                   <Text bold>
@@ -132,9 +142,9 @@ class RecipeDetails extends React.Component {
   }
 
   renderContent() {
-    const { error } = this.props.recipeDetails;
+    const { recipeDetails, navigation, route: { params: { id: recipeId } } } = this.props;
 
-    if (error) {
+    if (recipeDetails.error) {
       return (
         <Block flex style={[styles.recipeCard, { flex: 0.8 }]}>
           <Text center> Something went wrong. </Text>
@@ -142,7 +152,7 @@ class RecipeDetails extends React.Component {
       );
     }
 
-    const recipe = this.props.recipeDetails.data.recipe_preview;
+    const { data: { recipe_preview: recipe } } = recipeDetails;
 
     return (
       <Block flex>
@@ -153,8 +163,14 @@ class RecipeDetails extends React.Component {
               style={styles.recipeImage}
             />
           </Block>
-          <Block middle style={styles.recipeName}>
-            <Text bold size={24}>{recipe.name}</Text>
+          <Block>
+            <ScrollView
+              showsHorizontalScrollIndicator={false}
+              horizontal
+              style={styles.recipeName}
+            >
+              <Text bold size={24}>{recipe.name}</Text>
+            </ScrollView>
           </Block>
           <Block middle>
             <Block style={styles.divider} />
@@ -170,8 +186,11 @@ class RecipeDetails extends React.Component {
           </Swiper>
         </Block>
         <Block style={styles.stepByStepInstructions}>
-          <Button style={styles.button}>
-            <Text style={styles.buttonText}>Let's Go!</Text>
+          <Button
+            style={styles.button}
+            onPress={() => navigation.navigate('RecipeStepByStep', { id: recipeId })}
+          >
+            <Text style={styles.buttonText}>Let&apos;s Go!</Text>
           </Button>
         </Block>
       </Block>
@@ -192,7 +211,7 @@ class RecipeDetails extends React.Component {
           ]}
           locations={[0, 0.45, 0.45]}
         >
-          { loading
+          {loading
             ? (
               <Block flex style={[styles.recipeCard, { flex: 0.8 }]}>
                 <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
@@ -229,8 +248,7 @@ const styles = StyleSheet.create({
     borderWidth: 0
   },
   recipeName: {
-    marginTop: 10,
-    marginBottom: 10,
+    margin: 10,
   },
   divider: {
     width: '90%',

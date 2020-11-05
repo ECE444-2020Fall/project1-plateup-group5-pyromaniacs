@@ -19,11 +19,14 @@ import { register, REGISTER_IPR, IDLE } from '../redux/features/user_settings';
 const { width, height } = Dimensions.get('screen');
 
 class Register extends React.Component {
-  state = {
-    name: '',
-    email: '',
-    password: '',
-    keyboardIsOpen: false,
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: '',
+      email: '',
+      password: '',
+      keyboardIsOpen: false
+    };
   }
 
   componentDidMount() {
@@ -38,11 +41,13 @@ class Register extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.userSettings.status === REGISTER_IPR && this.props.userSettings.status === IDLE) {
-      if (this.props.userSettings.error) {
-        toast(this.props.userSettings.error);
+    const { navigation, userSettings } = this.props;
+
+    if (prevProps.userSettings.status === REGISTER_IPR && userSettings.status === IDLE) {
+      if (userSettings.error) {
+        toast(userSettings.error);
       } else {
-        this.props.navigation.navigate('Login');
+        navigation.navigate('Login');
       }
     }
   }
@@ -53,17 +58,22 @@ class Register extends React.Component {
   }
 
   handleCreateAccount = () => {
-    const {name, email, password} = this.state;
+    const { name, email, password } = this.state;
+    const { register: registerRequest } = this.props;
+
     // Don't try to create an account if some information is missing
     if (name.length === 0 || email.length === 0 || password.length === 0) {
       toast('Please fill in all fields.');
       return;
     }
 
-    this.props.register({ ...this.state });
+    registerRequest({ ...this.state });
   }
 
   render() {
+    const { userSettings } = this.props;
+    const { keyboardIsOpen } = this.state;
+
     return (
       <LinearGradient
         style={styles.container}
@@ -155,11 +165,15 @@ class Register extends React.Component {
                     color={argonTheme.COLORS.PRIMARY}
                     label="I agree with the "
                   />
-                  <Text color={argonTheme.COLORS.PRIMARY} style={{ fontWeight: argonTheme.COLORS.LIGHT_BOLD }} size={14}>
+                  <Text
+                    color={argonTheme.COLORS.PRIMARY}
+                    style={{ fontWeight: argonTheme.COLORS.LIGHT_BOLD }}
+                    size={14}
+                  >
                     Privacy Policy
                   </Text>
                 </Block>
-                { this.props.userSettings.status == REGISTER_IPR
+                {userSettings.status === REGISTER_IPR
                   ? (
                     <Block style={styles.loading}>
                       <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
@@ -182,11 +196,11 @@ class Register extends React.Component {
             </Block>
           </Block>
         </Block>
-        { !this.state.keyboardIsOpen
+        { !keyboardIsOpen
           && (
-          <Block style={styles.imageContainer}>
-            <Image source={Images.PlateUpName} style={styles.nameImage} />
-          </Block>
+            <Block style={styles.imageContainer}>
+              <Image source={Images.PlateUpName} style={styles.nameImage} />
+            </Block>
           )}
       </LinearGradient>
     );

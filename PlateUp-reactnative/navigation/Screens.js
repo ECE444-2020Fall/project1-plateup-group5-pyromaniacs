@@ -11,6 +11,8 @@ import Onboarding from '../screens/Onboarding';
 import Register from '../screens/Register';
 import Filters from '../screens/Filters';
 import RecipeDetails from '../screens/RecipeDetails';
+import RecipeStepByStep from '../screens/RecipeStepByStep';
+import Inventory from '../screens/Inventory';
 
 // drawer
 import CustomDrawerContent from './Menu';
@@ -24,7 +26,7 @@ const { width } = Dimensions.get('screen');
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-function HomeStack(props) {
+function HomeStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -75,11 +77,28 @@ function HomeStack(props) {
           ),
         }}
       />
+      <Stack.Screen
+        name="RecipeStepByStep"
+        component={RecipeStepByStep}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title="Recipe Details"
+              back
+              noShadow
+              titleColor={argonTheme.COLORS.SECONDARY}
+              iconColor={argonTheme.COLORS.SECONDARY}
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+        }}
+      />
     </Stack.Navigator>
   );
 }
 
-export default function OnboardingStack(props) {
+export default function OnboardingStack() {
   return (
     <Stack.Navigator mode="card" headerMode="none">
       <Stack.Screen
@@ -96,11 +115,17 @@ export default function OnboardingStack(props) {
   );
 }
 
-function AppStack(props) {
+function AppStack() {
   return (
     <Drawer.Navigator
       style={{ flex: 1 }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      drawerContent={({ focused, navigation, state }) => (
+        <CustomDrawerContent
+          focused={focused}
+          navigation={navigation}
+          state={state}
+        />
+      )}
       drawerStyle={{
         backgroundColor: 'white',
         width: width * 0.8,
@@ -128,6 +153,7 @@ function AppStack(props) {
       initialRouteName="Home"
     >
       <Drawer.Screen name="Home" component={HomeStack} />
+      <Drawer.Screen name="Inventory" component={Inventory} />
     </Drawer.Navigator>
   );
 }

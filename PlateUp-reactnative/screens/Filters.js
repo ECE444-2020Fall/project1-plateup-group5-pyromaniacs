@@ -13,94 +13,104 @@ const { width } = Dimensions.get('screen');
 class Filters extends React.Component {
   constructor(props) {
     super(props);
+    const { filterSettings } = this.props;
     this.state = {
-      ...this.props.filterSettings,
+      ...filterSettings,
     };
   }
 
   handleToggleSwitch = (switchId) => {
-    this.setState({ [switchId]: !this.state[switchId] });
+    const { [switchId]: switchState } = this.state;
+    this.setState({ [switchId]: !switchState });
   }
 
   handleApplyFilters = () => {
-    this.props.saveFilters({ ...this.state });
+    const { saveFilters: saveFiltersRequest, navigation } = this.props;
+
+    saveFiltersRequest({ ...this.state });
     // The only way to get to this screen is from the Home screen, so simply go back to it
-    this.props.navigation.goBack();
+    navigation.goBack();
   }
 
-  renderFilters = () => (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <Block style={[styles.filter, { paddingTop: 10 }]}>
-        <Text
-          style={[
-            styles.filterText,
-            !this.state.activateFilters && { opacity: 0.5 },
-          ]}
-        >
-          Show recipes below a maximum cook time (in minutes)
-        </Text>
-        <Input
-          style={[
-            styles.textInput,
-            !this.state.activateFilters && { borderColor: argonTheme.COLORS.MUTED }
-          ]}
-          value={this.state.maxCookTime}
-          placeholder="e.g 45"
-          onChangeText={(maxCookTime) => this.setState({ maxCookTime })}
-          editable={!!this.state.activateFilters}
-        />
-      </Block>
-      <Block style={styles.filter}>
-        <Text
-          style={[
-            styles.filterText,
-            !this.state.activateFilters && { opacity: 0.5 },
-          ]}
-        >
-          Show recipes below a maximum cost per serving (in dollars)
-        </Text>
-        <Input
-          style={[
-            styles.textInput,
-            !this.state.activateFilters && { borderColor: argonTheme.COLORS.MUTED }
-          ]}
-          value={this.state.maxCost}
-          placeholder="e.g 15"
-          onChangeText={(maxCost) => this.setState({ maxCost })}
-          editable={!!this.state.activateFilters}
-        />
-      </Block>
-      <Block style={[styles.filter, { borderBottomWidth: 1 }]}>
-        <Text
-          style={[
-            styles.filterText,
-            !this.state.activateFilters && { opacity: 0.5 },
-          ]}
-        >
-          Show only recipes you have ingredients for
-        </Text>
-        <Switch
-          style={[
-            styles.switch,
-            !this.state.activateFilters && { opacity: 0.5 }
-          ]}
-          value={this.state.recipesWithOwnedIngredients}
-          onValueChange={() => this.handleToggleSwitch('recipesWithOwnedIngredients')}
-          trackColor={{ true: argonTheme.COLORS.PRIMARY, false: argonTheme.COLORS.MUTED }}
-          disabled={!this.state.activateFilters}
-        />
-      </Block>
-      <Block style={[styles.filter, { borderBottomWidth: 0, paddingVertical: 25 }]}>
-        <Text style={[styles.filterText, { fontWeight: 'bold' }]}>Activate filters</Text>
-        <Switch
-          style={styles.switch}
-          value={this.state.activateFilters}
-          onValueChange={() => this.handleToggleSwitch('activateFilters')}
-          trackColor={{ true: argonTheme.COLORS.PRIMARY, false: argonTheme.COLORS.MUTED }}
-        />
-      </Block>
-    </ScrollView>
-  )
+  renderFilters = () => {
+    const {
+      activateFilters, maxCookTime, maxCost, recipesWithOwnedIngredients
+    } = this.state;
+
+    return (
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Block style={[styles.filter, { paddingTop: 10 }]}>
+          <Text
+            style={[
+              styles.filterText,
+              !activateFilters && { opacity: 0.5 },
+            ]}
+          >
+            Show recipes below a maximum cook time (in minutes)
+          </Text>
+          <Input
+            style={[
+              styles.textInput,
+              !activateFilters && { borderColor: argonTheme.COLORS.MUTED }
+            ]}
+            value={maxCookTime}
+            placeholder="e.g 45"
+            onChangeText={(val) => this.setState({ maxCookTime: val })}
+            editable={!!activateFilters}
+          />
+        </Block>
+        <Block style={styles.filter}>
+          <Text
+            style={[
+              styles.filterText,
+              !activateFilters && { opacity: 0.5 },
+            ]}
+          >
+            Show recipes below a maximum cost per serving (in dollars)
+          </Text>
+          <Input
+            style={[
+              styles.textInput,
+              !activateFilters && { borderColor: argonTheme.COLORS.MUTED }
+            ]}
+            value={maxCost}
+            placeholder="e.g 15"
+            onChangeText={(val) => this.setState({ maxCost: val })}
+            editable={!!activateFilters}
+          />
+        </Block>
+        <Block style={[styles.filter, { borderBottomWidth: 1 }]}>
+          <Text
+            style={[
+              styles.filterText,
+              !activateFilters && { opacity: 0.5 },
+            ]}
+          >
+            Show only recipes you have ingredients for
+          </Text>
+          <Switch
+            style={[
+              styles.switch,
+              !activateFilters && { opacity: 0.5 }
+            ]}
+            value={recipesWithOwnedIngredients}
+            onValueChange={() => this.handleToggleSwitch('recipesWithOwnedIngredients')}
+            trackColor={{ true: argonTheme.COLORS.PRIMARY, false: argonTheme.COLORS.MUTED }}
+            disabled={!activateFilters}
+          />
+        </Block>
+        <Block style={[styles.filter, { borderBottomWidth: 0, paddingVertical: 25 }]}>
+          <Text style={[styles.filterText, { fontWeight: 'bold' }]}>Activate filters</Text>
+          <Switch
+            style={styles.switch}
+            value={activateFilters}
+            onValueChange={() => this.handleToggleSwitch('activateFilters')}
+            trackColor={{ true: argonTheme.COLORS.PRIMARY, false: argonTheme.COLORS.MUTED }}
+          />
+        </Block>
+      </ScrollView>
+    );
+  }
 
   render() {
     return (
