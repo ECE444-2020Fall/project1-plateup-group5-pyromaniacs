@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { connect } from 'react-redux';
+import HTML from 'react-native-render-html';
+
 import { argonTheme } from '../constants';
 import { Button } from '../components';
 import { getRecipeDetails } from '../redux/features/get_recipe_details';
@@ -42,7 +44,7 @@ class RecipeDetails extends React.Component {
           style={styles.descriptionContainer}
         >
           <Block middle>
-            <Text center style={styles.mainText}>{recipe.preview_text}</Text>
+            <HTML html={recipe.preview_text} baseFontStyle={styles.mainText} />
           </Block>
         </ScrollView>
         <Block style={styles.info}>
@@ -161,8 +163,14 @@ class RecipeDetails extends React.Component {
               style={styles.recipeImage}
             />
           </Block>
-          <Block middle style={styles.recipeName}>
-            <Text bold size={24}>{recipe.name}</Text>
+          <Block>
+            <ScrollView
+              showsHorizontalScrollIndicator={false}
+              horizontal
+              style={styles.recipeName}
+            >
+              <Text bold size={24}>{recipe.name}</Text>
+            </ScrollView>
           </Block>
           <Block middle>
             <Block style={styles.divider} />
@@ -240,8 +248,7 @@ const styles = StyleSheet.create({
     borderWidth: 0
   },
   recipeName: {
-    marginTop: 10,
-    marginBottom: 10,
+    margin: 10,
   },
   divider: {
     width: '90%',
