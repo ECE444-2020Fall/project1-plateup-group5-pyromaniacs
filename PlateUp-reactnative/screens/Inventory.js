@@ -26,6 +26,8 @@ class Inventory extends React.Component {
         items={testItems}
         onAddItem={this.handleAddItem}
         onDeleteItem={this.handleDeleteItem}
+        keyName="Ingredient"
+        valName="Quantity"
       />
     );
   }
