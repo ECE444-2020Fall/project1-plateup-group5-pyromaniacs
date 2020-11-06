@@ -15,7 +15,7 @@ enableScreens();
 
 export default () => {
   // Set value to true if you want to use mock data
-  const mockData = false;
+  const mockData = true;
 
   if (mockData) {
     mockHTTP();
