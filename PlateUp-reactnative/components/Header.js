@@ -4,7 +4,7 @@ import {
 } from 'galio-framework';
 import React from 'react';
 import {
-  TouchableOpacity, StyleSheet, Platform, Dimensions
+  StyleSheet, Platform, Dimensions
 } from 'react-native';
 import argonTheme from '../constants/Theme';
 import Icon from './Icon';
@@ -39,26 +39,30 @@ class Header extends React.Component {
           </Button>
         );
       default:
-        break;
+        return null;
     }
   }
 
   renderHeader = () => {
-    const { navigation } = this.props;
+    const { search } = this.props;
 
     return (
-      <Block center style={{ paddingBottom: 15 }}>
-        {this.props.search ? <SearchBar /> : null}
+      <Block>
+        { search
+          && (
+            <Block center style={{ paddingBottom: 15 }}>
+              <SearchBar />
+            </Block>
+          )}
       </Block>
     );
   }
 
   render() {
     const {
-      back, title, transparent, bgColor, iconColor, titleColor, ...props
+      back, title, transparent, bgColor, iconColor, titleColor, noShadow, ...props
     } = this.props;
 
-    const noShadow = ['Search', 'Profile'].includes(title);
     const headerStyles = [
       !noShadow ? styles.shadow : null,
       transparent ? { backgroundColor: 'rgba(0,0,0,0)' } : null,
@@ -94,6 +98,8 @@ class Header extends React.Component {
             { color: argonTheme.COLORS.HEADER },
             titleColor && { color: titleColor }
           ]}
+          // Reasonable to disable here as this is a wrapper component
+          // eslint-disable-next-line react/jsx-props-no-spreading
           {...props}
         />
         {this.renderHeader()}

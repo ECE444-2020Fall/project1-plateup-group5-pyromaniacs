@@ -5,7 +5,7 @@ import { Button } from 'galio-framework';
 
 import argonTheme from '../constants/Theme';
 
-class ArButton extends React.Component {
+class ArButton extends React.PureComponent {
   render() {
     const {
       small, shadowless, children, color, style, ...props
@@ -25,6 +25,8 @@ class ArButton extends React.Component {
         style={buttonStyles}
         shadowless
         textStyle={{ fontSize: 12, fontWeight: '700' }}
+        // Reasonable to disable here as this is a wrapper component
+        // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
       >
         {children}
@@ -32,6 +34,12 @@ class ArButton extends React.Component {
     );
   }
 }
+
+ArButton.defaultProps = {
+  small: false,
+  shadowless: false,
+  color: 'default'
+};
 
 ArButton.propTypes = {
   small: PropTypes.bool,

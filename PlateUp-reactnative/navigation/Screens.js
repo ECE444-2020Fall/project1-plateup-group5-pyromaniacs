@@ -5,11 +5,14 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 // screens
-import Home from '../screens/Home';
+import BrowseRecipes from '../screens/BrowseRecipes';
 import Login from '../screens/Login';
 import Onboarding from '../screens/Onboarding';
 import Register from '../screens/Register';
 import Filters from '../screens/Filters';
+import RecipeDetails from '../screens/RecipeDetails';
+import RecipeStepByStep from '../screens/RecipeStepByStep';
+import Inventory from '../screens/Inventory';
 
 // drawer
 import CustomDrawerContent from './Menu';
@@ -23,12 +26,12 @@ const { width } = Dimensions.get('screen');
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
-function HomeStack(props) {
+function HomeStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="Home"
-        component={Home}
+        component={BrowseRecipes}
         options={{
           header: ({ navigation, scene }) => (
             <Header
@@ -41,12 +44,61 @@ function HomeStack(props) {
           cardStyle: { backgroundColor: argonTheme.COLORS.GREY },
         }}
       />
-      <Stack.Screen name="Filters" component={Filters} />
+      <Stack.Screen
+        name="Filters"
+        component={Filters}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title="Browse"
+              back
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          cardStyle: { backgroundColor: argonTheme.COLORS.GREY },
+        }}
+      />
+      <Stack.Screen
+        name="Recipe"
+        component={RecipeDetails}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title="Browse"
+              back
+              noShadow
+              titleColor={argonTheme.COLORS.WHITE}
+              iconColor={argonTheme.COLORS.WHITE}
+              bgColor={argonTheme.COLORS.PRIMARY}
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="RecipeStepByStep"
+        component={RecipeStepByStep}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title="Recipe Details"
+              back
+              noShadow
+              titleColor={argonTheme.COLORS.SECONDARY}
+              iconColor={argonTheme.COLORS.SECONDARY}
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+        }}
+      />
     </Stack.Navigator>
   );
 }
 
-export default function OnboardingStack(props) {
+export default function OnboardingStack() {
   return (
     <Stack.Navigator mode="card" headerMode="none">
       <Stack.Screen
@@ -63,11 +115,17 @@ export default function OnboardingStack(props) {
   );
 }
 
-function AppStack(props) {
+function AppStack() {
   return (
     <Drawer.Navigator
       style={{ flex: 1 }}
-      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      drawerContent={({ focused, navigation, state }) => (
+        <CustomDrawerContent
+          focused={focused}
+          navigation={navigation}
+          state={state}
+        />
+      )}
       drawerStyle={{
         backgroundColor: 'white',
         width: width * 0.8,
@@ -95,6 +153,7 @@ function AppStack(props) {
       initialRouteName="Home"
     >
       <Drawer.Screen name="Home" component={HomeStack} />
+      <Drawer.Screen name="Inventory" component={Inventory} />
     </Drawer.Navigator>
   );
 }

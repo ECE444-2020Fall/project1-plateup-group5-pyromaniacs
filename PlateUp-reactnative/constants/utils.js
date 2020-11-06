@@ -1,10 +1,8 @@
-import { theme } from 'galio-framework';
 import {
-  AlertIOS, Platform, StatusBar, ToastAndroid
+  AlertIOS, Dimensions, Platform, ToastAndroid
 } from 'react-native';
 
-export const StatusHeight = StatusBar.currentHeight;
-export const HeaderHeight = (theme.SIZES.BASE * 3.5 + (StatusHeight || 0));
+const { height, width } = Dimensions.get('window');
 export const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812);
 
 export function toast(msg) {
@@ -15,12 +13,27 @@ export function toast(msg) {
   }
 }
 
-export function constructQueryParams(queryParams, newParam) {
-  if (queryParams) {
-    queryParams += (`&${newParam}`);
-  } else {
-    queryParams = (`?${newParam}`);
-  }
+export function constructQueryParams(params, keyTransforms) {
+  let queryParams = '';
+
+  Object.keys(params).forEach((param) => {
+    if (params[param]) {
+      const key = keyTransforms[param] ? keyTransforms[param] : param;
+      queryParams = appendQueryParam(queryParams, `${key}=${params[param]}`);
+    }
+  });
 
   return queryParams;
+}
+
+function appendQueryParam(existingQueryParams, newParam) {
+  let updatedQueryParams = '';
+
+  if (existingQueryParams) {
+    updatedQueryParams = `${existingQueryParams}&${newParam}`;
+  } else {
+    updatedQueryParams = `?${newParam}`;
+  }
+
+  return updatedQueryParams;
 }

@@ -1,43 +1,21 @@
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import env from '../../env';
 import { constructQueryParams } from '../../constants/utils';
+import env from '../../env';
 
-// Created using Redux Toolkit documentation example
+export const FETCHING = 'FETCHING';
+export const IDLE = 'IDLE';
 
-const initialState = {
-  data: {},
-  status: 'idle',
-  error: null
-};
-
-const filterQueryParamMapping = {
+const queryParamMapping = {
   maxCost: 'Filter_cost',
   maxCookTimeHour: 'Filter_time_h',
-  maxCookTimeMinutes: 'Filter_time_min'
+  maxCookTimeMinutes: 'Filter_time_min',
+  search: 'Search'
 };
 
 export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRecipes', async (settings, { rejectWithValue }) => {
-  let queryParams = '';
-  const filters = { ...settings.filterSettings };
-  const { searchQuery } = settings;
-
-  if (filters.activateFilters) {
-    delete filters.activateFilters;
-
-    filters.maxCookTimeHour = filters.maxCookTime ? Math.floor(Number(filters.maxCookTime) / 60).toString() : '';
-    filters.maxCookTimeMinutes = filters.maxCookTime ? (Number(filters.maxCookTime) % 60).toString() : '';
-
-    delete filters.maxCookTime;
-
-    for (const filter in filters) {
-      if (filters[filter] && filterQueryParamMapping[filter]) {
-        queryParams = constructQueryParams(queryParams, `${filterQueryParamMapping[filter]}=${filters[filter]}`);
-      }
-    }
-  }
-
-  queryParams = constructQueryParams(queryParams, `Name=${searchQuery}`);
+  const params = processSettingsIntoParams(settings);
+  const queryParams = constructQueryParams(params, queryParamMapping);
 
   try {
     const response = await axios({
@@ -46,30 +24,76 @@ export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRe
       url: `${env.SERVER_URL}/recipe${queryParams}`,
       responseType: 'json'
     });
-
     return response.data;
   } catch (err) {
-    return rejectWithValue(err.response.data);
+    return rejectWithValue(err.response ? err.response.data : 'Unknown error.');
   }
 });
+
+export const processSettingsIntoParams = (settings) => {
+  const filters = { ...settings.filterSettings };
+  const { searchQuery } = settings;
+  let params = {};
+
+  if (filters.activateFilters) {
+    params = { ...filters, search: searchQuery };
+
+    // Convert max cook time to integer before splitting into hours and minutes as the
+    // server expects these values to be integers.
+    if (params.maxCookTime) {
+      const maxCookTime = Math.floor(Number(params.maxCookTime));
+
+      params.maxCookTimeHour = Math.floor(maxCookTime / 60).toString();
+      params.maxCookTimeMinutes = (maxCookTime % 60).toString();
+    }
+
+    // Server expects cost in cents
+    if (params.maxCost) {
+      params.maxCost = (Number(params.maxCost) * 100).toString();
+    } else {
+      delete params.maxCost;
+    }
+
+    delete params.activateFilters;
+    delete params.maxCookTime;
+  } else {
+    params = { search: searchQuery };
+  }
+
+  return params;
+};
+
+const initialState = {
+  data: {},
+  status: IDLE,
+  error: null
+};
 
 const browseRecipesSlice = createSlice({
   name: 'browseRecipes',
   initialState,
   reducers: {},
   extraReducers: {
-    [fetchBrowseRecipes.pending]: (state) => {
-      state.status = 'fetching';
-      state.error = null;
-    },
+    [fetchBrowseRecipes.pending]: (state) => ({
+      ...state,
+      status: FETCHING,
+      error: null
+    }),
     [fetchBrowseRecipes.fulfilled]: (state, action) => {
-      state.status = 'idle';
-      state.data = action.payload;
+      const { recipes, is_random: isRandom } = action.payload;
+      const transformedData = { recipes, isRandom };
+
+      return {
+        ...state,
+        status: IDLE,
+        data: transformedData
+      };
     },
-    [fetchBrowseRecipes.rejected]: (state, action) => {
-      state.status = 'idle';
-      state.error = action.error.message;
-    }
+    [fetchBrowseRecipes.rejected]: (state, action) => ({
+      ...state,
+      status: IDLE,
+      error: action.payload
+    })
   }
 });
 

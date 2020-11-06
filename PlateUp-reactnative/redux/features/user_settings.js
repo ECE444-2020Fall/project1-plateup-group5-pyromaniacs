@@ -18,7 +18,7 @@ export const register = createAsyncThunk('userSettings/register', async (newUser
     const response = await axios.post(`${env.SERVER_URL}/user`, newUser, { timeout: 1000 });
     return response.data;
   } catch (err) {
-    return rejectWithValue(err.response.data);
+    return rejectWithValue(err.response ? err.response.data : 'Unknown error.');
   }
 });
 
@@ -27,7 +27,7 @@ export const login = createAsyncThunk('userSettings/login', async (user, { rejec
     const response = await axios.post(`${env.SERVER_URL}/login`, user, { timeout: 1000 });
     return response.data;
   } catch (err) {
-    return rejectWithValue(err.response.data);
+    return rejectWithValue(err.response ? err.response.data : 'Unknown error.');
   }
 });
 
@@ -44,64 +44,59 @@ const userSettingsSlice = createSlice({
   name: 'userSettings',
   initialState,
   extraReducers: {
-    [register.pending]: (state) => {
-      if (state.status === IDLE) {
-        state.status = REGISTER_IPR;
-        state.error = null;
-      }
-    },
-    [register.fulfilled]: (state) => {
-      if (state.status === REGISTER_IPR) {
-        state.status = IDLE;
-      }
-    },
-    [register.rejected]: (state, action) => {
-      if (state.status === REGISTER_IPR) {
-        state.status = IDLE;
-        state.error = action.payload;
-      }
-    },
+    [register.pending]: (state) => ({
+      ...state,
+      status: REGISTER_IPR,
+      error: null
+    }),
+    [register.fulfilled]: (state) => ({
+      ...state,
+      status: IDLE
 
-    [login.pending]: (state) => {
-      if (state.status === IDLE) {
-        state.status = LOGIN_IPR;
-        state.error = null;
-      }
-    },
+    }),
+    [register.rejected]: (state, action) => ({
+      ...state,
+      status: IDLE,
+      error: action.payload
+    }),
+
+    [login.pending]: (state) => ({
+      ...state,
+      status: LOGIN_IPR,
+      error: null
+    }),
     [login.fulfilled]: (state, action) => {
-      if (state.status === LOGIN_IPR) {
-        state.status = IDLE;
+      const userData = action.payload;
+      // We don't want to store the password hash
+      delete userData.password;
 
-        // We don't want to store the password hash
-        delete action.payload.password;
-        state.user = action.payload;
-      }
+      return {
+        ...state,
+        status: IDLE,
+        user: userData
+      };
     },
-    [login.rejected]: (state, action) => {
-      if (state.status === LOGIN_IPR) {
-        state.status = IDLE;
-        state.error = action.payload;
-      }
-    },
+    [login.rejected]: (state, action) => ({
+      ...state,
+      status: IDLE,
+      error: action.payload
+    }),
 
-    [logout.pending]: (state) => {
-      if (state.status === IDLE) {
-        state.status = LOGOUT_IPR;
-        state.error = null;
-      }
-    },
-    [logout.fulfilled]: (state) => {
-      if (state.status === LOGOUT_IPR) {
-        state.status = IDLE;
-        state.user = null;
-      }
-    },
-    [logout.rejected]: (state, action) => {
-      if (state.status === LOGOUT_IPR) {
-        state.status = IDLE;
-        state.error = action.payload;
-      }
-    },
+    [logout.pending]: (state) => ({
+      ...state,
+      status: LOGOUT_IPR,
+      error: null
+    }),
+    [logout.fulfilled]: (state) => ({
+      ...state,
+      status: IDLE,
+      user: null
+    }),
+    [logout.rejected]: (state, action) => ({
+      ...state,
+      status: IDLE,
+      error: action.payload
+    }),
   }
 });
 

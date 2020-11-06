@@ -11,34 +11,46 @@ import { argonTheme } from '../constants';
 
 const { width } = Dimensions.get('screen');
 
-class Home extends React.Component {
+class BrowseRecipes extends React.Component {
   constructor(props) {
     super(props);
     this.state = { loading: true };
   }
 
   async componentDidMount() {
-    await this.props.fetchBrowseRecipes({
-      filterSettings: this.props.filterSettings,
-      searchQuery: this.props.searchQuery
+    const {
+      filterSettings, searchQuery, fetchBrowseRecipes: fetchBrowseRecipesRequest
+    } = this.props;
+
+    await fetchBrowseRecipesRequest({
+      filterSettings,
+      searchQuery
     });
 
     this.setState({ loading: false });
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    // If the previous state was not loading, this flow was triggered because of filter / search query updates
+    // If the previous state was not loading, this flow was triggered because of prop updates
     // This means that the data is stale and we need to fetch it again
-    // Set state to loading = true and since React setState isn't synchronous, pass a callback function to it
+    // Set state to loading and since setState isn't synchronous, pass a callback function to it
     // The callback function fetches the data, once the data is fetched, set loading to false
+    const {
+      filterSettings, searchQuery, fetchBrowseRecipes: fetchBrowseRecipesRequest
+    } = this.props;
+
     if (
       !prevState.loading
-      && (!deepEqual(prevProps.filterSettings, this.props.filterSettings) || prevProps.searchQuery !== this.props.searchQuery)
+      && (
+        !deepEqual(prevProps.filterSettings, filterSettings)
+        || prevProps.searchQuery !== searchQuery
+      )
     ) {
+      // eslint-disable-next-line react/no-did-update-set-state
       this.setState({ loading: true }, async () => {
-        await this.props.fetchBrowseRecipes({
-          filterSettings: this.props.filterSettings,
-          searchQuery: this.props.searchQuery
+        await fetchBrowseRecipesRequest({
+          filterSettings,
+          searchQuery
         });
 
         this.setState({ loading: false });
@@ -47,7 +59,7 @@ class Home extends React.Component {
   }
 
   renderContent() {
-    const { error } = this.props.browseRecipes;
+    const { browseRecipes: { error } } = this.props;
 
     if (error) {
       return <Text center> Something went wrong. </Text>;
@@ -59,24 +71,24 @@ class Home extends React.Component {
         contentContainerStyle={styles.browsingContainer}
       >
         <Block flex>
-          { this.renderRecipes() }
+          {this.renderRecipes()}
         </Block>
       </ScrollView>
     );
   }
 
   renderRecipes() {
-    const { recipes } = this.props.browseRecipes.data;
+    const { browseRecipes: { data: { recipes, isRandom } }, searchQuery, navigation } = this.props;
 
-    if (!recipes || recipes.length == 0) {
-      return <Text center> No recipes found with given filters and search query. </Text>;
+    if (!recipes || recipes.length === 0) {
+      return <Text center> No recipes found with given filters. </Text>;
     }
 
     const recipeItems = [];
 
-    for (const recipe of recipes) {
+    recipes.forEach((recipe) => {
       recipeItems.push({
-        id: recipe.recipe_id,
+        id: recipe.id,
         title: recipe.name,
         image: recipe.preview_media_url,
         cta: 'View recipe',
@@ -89,11 +101,26 @@ class Home extends React.Component {
           }
         }
       });
-    }
+    });
 
-    const cardsToRender = recipeItems.map((recipeItem, index) => <Card key={index} item={recipeItem} horizontal />);
-
-    return cardsToRender;
+    return (
+      <Block>
+        { isRandom && !!searchQuery.trim()
+          && (
+            <Text style={{ paddingBottom: theme.SIZES.BASE }} center>
+              No recipes found for search query. Showing random results with given filters.
+            </Text>
+          )}
+        { recipeItems.map((recipeItem) => (
+          <Card
+            key={recipeItem.id}
+            item={recipeItem}
+            horizontal
+            handlePress={() => navigation.navigate('Recipe', { id: recipeItem.id })}
+          />
+        ))}
+      </Block>
+    );
   }
 
   render() {
@@ -127,4 +154,4 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = { fetchBrowseRecipes };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(BrowseRecipes);

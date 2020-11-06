@@ -1,23 +1,27 @@
-import React from 'react';
 import { Block, GalioProvider } from 'galio-framework';
-import { NavigationContainer } from '@react-navigation/native';
+import React from 'react';
 import { Provider } from 'react-redux';
+// Nothing wrong with this import, works as expected
+// eslint-disable-next-line import/no-unresolved
 import { enableScreens } from 'react-native-screens';
-import mockHTTP from './mock-http';
+import { NavigationContainer } from '@react-navigation/native';
 import store from './redux/store';
-
-// Before rendering any navigation stack
-
 import Screens from './navigation/Screens';
+import mockHTTP from './mock-http';
 import { argonTheme } from './constants';
 
+// Before rendering any navigation stack
 enableScreens();
 
-export default () =>
+export default () => {
+  // Set value to true if you want to use mock data
+  const mockData = false;
 
-  // Uncomment below line if you want to use stub data when running the application
-  // mockHTTP();
-  (
+  if (mockData) {
+    mockHTTP();
+  }
+
+  return (
     <Provider store={store}>
       <NavigationContainer>
         <GalioProvider theme={argonTheme}>
@@ -28,3 +32,4 @@ export default () =>
       </NavigationContainer>
     </Provider>
   );
+};
