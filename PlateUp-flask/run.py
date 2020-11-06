@@ -602,11 +602,17 @@ def updateInstructionsToDB(recipe_id, instructions):
     for step in instructions:
         new_instruction_step_num = step["number"]
         new_instruction_step_instruction = step["step"]
-        new_instruction_ingredients = json.dumps([{ingredient["name"]:"https://spoonacular.com/cdn/ingredients_250x250/"+ingredient["image"]} for ingredient in step["ingredients"]])
-        new_instruction_equipment = json.dumps([{equipment["name"]:"https://spoonacular.com/cdn/equipment_250x250/"+equipment["image"]} for equipment in step["equipment"]])
+        new_instruction_ingredients = json.dumps([{
+            "name":ingredient["name"], 
+            "img":"https://spoonacular.com/cdn/ingredients_250x250/"+ingredient["image"]
+            } for ingredient in step["ingredients"]])
+        new_instruction_equipment = json.dumps([{
+            "name": equipment["name"], 
+            "img":"https://spoonacular.com/cdn/equipment_250x250/"+equipment["image"]
+            } for equipment in step["equipment"]])
         new_instruction=Instruction(recipe_id, new_instruction_step_num, new_instruction_step_instruction, \
             new_instruction_ingredients, new_instruction_equipment)
-
+        print(new_instruction.ingredients)
         db.session.add(new_instruction)
         
     db.session.commit()
