@@ -406,6 +406,9 @@ class RecipeAPI(Resource):
         recipe_list=recipe_list_same_h+recipe_list
         return recipe_list
 
+    def __filter_by_ingredients(self, recipe_list):
+        pass
+
     def __filter_recipe(self, recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredient):
         if len(recipe_list)==0:
             self.random_pick=True
@@ -415,6 +418,8 @@ class RecipeAPI(Resource):
             recipe_list=self.__filter_by_cost(recipe_list, filter_cost)
         if filter_time_h != None and filter_time_min!=None:
             recipe_list=self.__filter_by_time(recipe_list, filter_time_h, filter_time_min)
+        if filter_has_ingredient == True:
+            recipe_list = self.__filter_by_ingredients(recipe_list)
 
         if len(recipe_list) ==0:
             self.random_pick = True
