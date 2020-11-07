@@ -70,13 +70,13 @@ class Instruction(db.Model):
 class Inventory(db.Model):
     __tablename__ = "inventory"
 
-    id = db.Column(db.String(40), db.ForeignKey('user.id'), primary_key=True)
+    user_id = db.Column(db.String(40), db.ForeignKey('user.id'), primary_key=True)
     ingredient_name = db.Column(db.String(50), primary_key=True)
-    quantity = db.Column(db.Integer)
+    quantity = db.Column(db.Float)
     unit = db.Column(db.String(20))
 
-    def __init__(self, id, ingredient_name, quantity, unit):
-        self.id = id
+    def __init__(self, user_id, ingredient_name, quantity, unit):
+        self.user_id = user_id
         self.ingredient_name = ingredient_name
         self.quantity = quantity
         self.unit = unit
@@ -84,13 +84,13 @@ class Inventory(db.Model):
 class ShoppingList(db.Model):
     __tablename__ = "shoppinglist"
 
-    id = db.Column(db.String(40), db.ForeignKey('user.id'), primary_key=True)
+    user_id = db.Column(db.String(40), db.ForeignKey('user.id'), primary_key=True)
     ingredient_name = db.Column(db.String(50), primary_key=True)
-    quantity = db.Column(db.Integer)
+    quantity = db.Column(db.Float)
     unit = db.Column(db.String(20))
 
-    def __init__(self, id, ingredient_name, quantity, unit):
-        self.id = id
+    def __init__(self, user_id, ingredient_name, quantity, unit):
+        self.user_id = user_id
         self.ingredient_name = ingredient_name
         self.quantity = quantity
         self.unit = unit
