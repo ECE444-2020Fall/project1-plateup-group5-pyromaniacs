@@ -493,7 +493,7 @@ class InventoryAPI(Resource):
     })
 
     @inventoryR.doc(description="Retrieving the user's current inventory.")
-    #@login_required
+    @login_required
     def get(self, id):
         user_id = id
         inventory_res = Inventory.query.filter_by(id=user_id).all()
@@ -505,7 +505,7 @@ class InventoryAPI(Resource):
 
     @inventoryR.doc(description="Posting a new or updated version of the user's inventory.")
     @inventoryR.expect(inventory_fields, validate=True)
-    #@login_required
+    @login_required
     def post(self, id):
         user_id = id
         inventory = request.json['inventory']
@@ -544,7 +544,7 @@ class ShoppingListAPI(Resource):
     })
 
     @shoppingR.doc(description="Retrieving the user's current shopping list.")
-    #@login_required
+    @login_required
     def get(self, id):
         user_id = id
         shopping_res = ShoppingList.query.filter_by(id=user_id).all()
@@ -557,7 +557,7 @@ class ShoppingListAPI(Resource):
 
     @shoppingR.doc(description="Posting a new or updated version of the user's shopping list.")
     @shoppingR.expect(shopping_fields, validate=True)
-    #@login_required
+    @login_required
     def post(self, id):
         user_id = id
         shopping = request.json['shopping']
@@ -588,7 +588,7 @@ class ShoppingFlashToInventoryAPI(Resource):
 
     @inventoryR.doc(description="Push the user's shopping list to the user's inventory.")
     @inventoryR.expect(resource_fields, validate=True)
-    #@login_required
+    @login_required
     def post(self):
         user_id =  request.json['user_id']
         shopping_res = ShoppingList.query.filter_by(id=user_id).all()
