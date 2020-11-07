@@ -4,7 +4,7 @@ import DrawerItem from './DrawerItem';
 import Header from './Header';
 import Icon from './Icon';
 import Input from './Input';
-import List from './List';
+import IngredientList from './IngredientList';
 import SearchBar from './SearchBar';
 import Switch from './Switch';
 
@@ -15,7 +15,7 @@ export {
   Header,
   Icon,
   Input,
-  List,
+  IngredientList,
   SearchBar,
   Switch,
 };
