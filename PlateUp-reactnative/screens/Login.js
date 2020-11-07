@@ -16,7 +16,7 @@ import { argonTheme, Images } from '../constants';
 import { Button, Icon, Input } from '../components';
 import { login, LOGIN_IPR, IDLE } from '../redux/features/user_settings';
 
-const { width, height } = Dimensions.get('screen');
+const { width } = Dimensions.get('screen');
 
 class Login extends React.Component {
   constructor(props) {
@@ -81,19 +81,19 @@ class Login extends React.Component {
         ]}
       >
         <StatusBar hidden />
-        <Block flex middle>
-          <Block style={styles.loginContainer}>
-            <Block height={50} middle style={styles.header}>
-              <Text size={12} color={argonTheme.COLORS.TEXT_COLOR}>
-                Welcome back to Plate Up! Please log in.
-              </Text>
-            </Block>
-            <Block flex center>
-              <KeyboardAvoidingView
-                style={{ flex: 1 }}
-                behavior="padding"
-                enabled
-              >
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior="padding"
+          enabled
+        >
+          <Block flex middle>
+            <Block style={styles.loginContainer}>
+              <Block height={50} middle style={styles.header}>
+                <Text size={12} color={argonTheme.COLORS.TEXT_COLOR}>
+                  Welcome back to Plate Up! Please log in.
+                </Text>
+              </Block>
+              <Block middle>
                 <Block
                   width={width * 0.8}
                   style={{ marginBottom: 5, marginTop: 5 }}
@@ -130,14 +130,12 @@ class Login extends React.Component {
                     onChangeText={(password) => this.setState({ password })}
                   />
                 </Block>
-                {userSettings.status === LOGIN_IPR
-                  ? (
-                    <Block style={styles.loading}>
+                <Block middle style={styles.footer}>
+                  {userSettings.status === LOGIN_IPR
+                    ? (
                       <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
-                    </Block>
-                  )
-                  : (
-                    <Block middle>
+                    )
+                    : (
                       <Button
                         color="primary"
                         style={styles.createButton}
@@ -147,18 +145,20 @@ class Login extends React.Component {
                           Login
                         </Text>
                       </Button>
-                    </Block>
-                  )}
-              </KeyboardAvoidingView>
+                    )}
+                </Block>
+              </Block>
             </Block>
           </Block>
-        </Block>
-        { !keyboardIsOpen
+        </KeyboardAvoidingView>
+        {
+          !keyboardIsOpen
           && (
             <Block style={styles.imageContainer}>
               <Image source={Images.PlateUpName} style={styles.nameImage} />
             </Block>
-          )}
+          )
+        }
       </LinearGradient>
     );
   }
@@ -169,8 +169,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   createButton: {
-    width: width * 0.5,
-    marginTop: 30
+    width: width * 0.5
+  },
+  footer: {
+    height: 80,
   },
   header: {
     backgroundColor: argonTheme.COLORS.WHITE,
@@ -186,7 +188,6 @@ const styles = StyleSheet.create({
   },
   loginContainer: {
     width: width * 0.9,
-    height: height * 0.35,
     backgroundColor: argonTheme.COLORS.GREY,
     borderRadius: 4,
     shadowColor: argonTheme.COLORS.BLACK,
@@ -198,11 +199,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     elevation: 1,
     overflow: 'hidden',
-  },
-  loading: {
-    alignContent: 'center',
-    justifyContent: 'center',
-    flex: 1
   },
   imageContainer: {
     alignContent: 'center',

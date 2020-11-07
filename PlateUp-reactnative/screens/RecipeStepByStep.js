@@ -154,8 +154,10 @@ class RecipeStepByStep extends React.Component {
     });
 
     return (
-      imgs.map((image) => (
-        <Block style={{ marginBottom: 50 }}>
+      imgs.map((image, index) => (
+        // Reasonable to disable here as this is a static array
+        // eslint-disable-next-line react/no-array-index-key
+        <Block key={index} style={{ marginBottom: 50 }}>
           <Image
             source={{ uri: image }}
             style={{ width: '100%', height: '100%' }}
@@ -250,7 +252,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 6,
     backgroundColor: theme.COLORS.WHITE,
     elevation: 10,
-    height: '75%'
+    flex: 1
   },
   container: {
     marginHorizontal: theme.SIZES.BASE,
