@@ -8,7 +8,7 @@ from flask import jsonify, request, Response
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_restx import fields, Resource, reqparse
 from initializer import api, app, db, login_manager, ma, scheduler, sp_api
-from models import User, Recipe, Instruction, ShoppingList
+from models import User, Recipe, Instruction, Inventory, ShoppingList
 from werkzeug.security import check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 
@@ -20,8 +20,10 @@ plateupR = api.namespace('plate-up', description='PlateUp operations')
 userR = api.namespace('user', description='User operations')
 loginR = api.namespace('login', description='Login/logout operations')
 mailR = api.namespace('mail', description='Mailing operations')
-recipeR = api.namespace('recipe', description='Preview of recipe')
-recipeDetailR = api.namespace('recipeDetail', description='Insturction of recipe')
+recipeR = api.namespace('recipe', description='Preview of recipes')
+recipeDetailR = api.namespace('recipeDetail', description='Instruction level details for recipes')
+inventoryR = api.namespace('inventory', description='User inventory operations')
+shoppingR = api.namespace('shopping', description='User shopping list operations')
 
 # -----------------------------------------------------------------------------
 # DB Schemas (Marshmallow)
@@ -36,7 +38,7 @@ class RecipeSchema(ma.Schema):
 
 class InstructionSchema(ma.Schema):
     class Meta:
-        fields = ('step_instruction',)
+        fields = ('step_instruction')
 
 # Init schemas
 user_schema = UserSchema()
@@ -474,6 +476,144 @@ class RecipeAPI(Resource):
 
         return_dict = {"recipes": return_result, "is_random": self.random_pick}
         return jsonify(return_dict)
+
+# Inventory API
+@inventoryR.route('<id>', methods=['GET', 'POST'])
+class InventoryAPI(Resource):
+    inventory = inventoryR.model('InventoryDetails', {
+        'inventory': fields.ingredient,
+    })
+
+    ingredient = inventoryR.model('Ingredient', {
+        'name': fields.String,
+        'qty': fields.Float,
+        'unit': fields.String,
+    })
+
+    @inventoryR.doc(description="Logging current user out.")
+    #@login_required
+    def get(self):
+        user_id = id
+        inventory_res = Inventory.query.filter_by(id=user_id).all()
+        inventory = {}
+        for entry in inventory_res:
+            inventory[entry.name] = {"qty": entry.qty, "unit": entry.unit}   
+        response = {"inventory": inventory}
+        return jsonify(response)
+
+    @inventoryR.doc(description="Posting a new or updated version of the user's inventory.")
+    @inventoryR.expect(inventory, validate=True)
+    #@login_required
+    def post(self):
+        user_id = id
+        inventory = request.json['inventory']
+        inventory_res = Inventory.query.filter_by(id=user_id).delete()
+
+        for entry in inventory_res:
+            new_entry = Inventory(user_id, entry["name"], entry["qty"], entry["unit"])
+            db.session.add(new_entry)
+            
+        db.session.commit()
+        
+        inventory_res = Inventory.query.filter_by(id=user_id).all()
+        inventory = {}
+        
+        for entry in inventory_res:
+            inventory[entry.name] = {"qty": entry.qty, "unit": entry.unit}   
+        
+        response = {"inventory": inventory}
+
+        return jsonify(response)
+
+# ShoppingList API
+@shoppingR.route('<id>', methods=['GET', 'POST'])
+class ShoppingListAPI(Resource):
+    shopping = shoppingR.model('ShoppingList', {
+        'shopping': fields.ingredient,
+    })
+
+    ingredient = inventoryR.model('Ingredient', {
+        'name': fields.String,
+        'qty': fields.Float,
+        'unit': fields.String,
+    })
+
+    @inventoryR.doc(description="Logging current user out.")
+    #@login_required
+    def get(self):
+        user_id = id
+        shopping_res = ShoppingList.query.filter_by(id=user_id).all()
+        shopping = {}
+        for entry in shopping_res:
+            shopping[entry.name] = {"qty": entry.qty, "unit": entry.unit}   
+        response = {"shopping": shopping}
+        return jsonify(response)
+
+    @inventoryR.doc(description="Posting a new or updated version of the user's inventory.")
+    @inventoryR.expect(shopping, validate=True)
+    #@login_required
+    def post(self):
+        user_id = id
+        shopping = request.json['inventory']
+        shopping_res = ShoppingList.query.filter_by(id=user_id).delete()
+
+        for entry in shopping_res:
+            new_entry = ShoppingList(user_id, entry["name"], entry["qty"], entry["unit"])
+            db.session.add(new_entry)
+            
+        db.session.commit()
+        
+        shopping_res = ShoppingList.query.filter_by(id=user_id).all()
+        shopping = {}
+        
+        for entry in shopping_res:
+            shopping[entry.name] = {"qty": entry.qty, "unit": entry.unit}   
+        
+        response = {"shopping": shopping}
+
+        return jsonify(response)
+
+# ShoppingList flash to inventory API
+@shoppingR.route('flash', methods=['POST'])
+class ShoppingFlashToInventoryAPI(Resource):
+    resource_fields = shoppingR.model('User', {
+        'user_id': fields.String,
+    })
+
+    @inventoryR.doc(description="Posting a new or updated version of the user's inventory.")
+    @inventoryR.expect(resource_fields, validate=True)
+    #@login_required
+    def post(self):
+        user_id =  request.json['user_id']
+        shopping_res = ShoppingList.query.filter_by(id=user_id).all()
+        inventory_res = Inventory.query.filter_by(id=user_id).all()
+
+        inventory = {}
+        for entry in inventory_res:
+            inventory[entry.name] = entry.qty
+
+        for entry in shopping_res:
+            if entry.name not in inventory:
+                new_entry = Inventory(user_id, entry["name"], entry["qty"], entry["unit"])
+                db.session.add(new_entry)
+            else:
+                inventory_entry = Inventory.query.get(user_id, entry.name)
+                if entry.unit != inventory_entry.unit:
+                    return Response("Bad unit match while flashing to inventory.")
+                inventory_entry.qty = inventory_entry.qty + entry.qty
+
+        shopping_res = ShoppingList.query.filter_by(id=user_id).delete()
+        db.session.commit()
+        
+        inventory_res = Inventory.query.filter_by(id=user_id).all()
+        inventory = {}
+        
+        for entry in inventory_res:
+            inventory[entry.name] = {"qty": entry.qty, "unit": entry.unit}   
+        
+        response = {"inventory": inventory}
+
+        return jsonify(response)
 
 
 # -----------------------------------------------------------------------------

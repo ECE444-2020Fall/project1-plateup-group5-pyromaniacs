@@ -67,15 +67,30 @@ class Instruction(db.Model):
         self.ingredients = ingredients
         self.equipment = equipment
 
+class Inventory(db.Model):
+    __tablename__ = "inventory"
+
+    id = db.Column(db.String(40), db.ForeignKey('user.id'), primary_key=True)
+    ingredient_name = db.Column(db.String(50), primary_key=True)
+    quantity = db.Column(db.Integer)
+    unit = db.Column(db.String(20))
+
+    def __init__(self, id, ingredient_name, quantity, unit):
+        self.id = id
+        self.ingredient_name = ingredient_name
+        self.quantity = quantity
+        self.unit = unit
 
 class ShoppingList(db.Model):
     __tablename__ = "shoppinglist"
 
-    id = db.Column(db.String(40), db.ForeignKey('user.shopping_id'), primary_key=True)
-    ingredient_name = db.Column(db.String(50))
+    id = db.Column(db.String(40), db.ForeignKey('user.id'), primary_key=True)
+    ingredient_name = db.Column(db.String(50), primary_key=True)
     quantity = db.Column(db.Integer)
+    unit = db.Column(db.String(20))
 
-    def __init__(self, id, ingredient_name, quantity):
+    def __init__(self, id, ingredient_name, quantity, unit):
         self.id = id
         self.ingredient_name = ingredient_name
         self.quantity = quantity
+        self.unit = unit
