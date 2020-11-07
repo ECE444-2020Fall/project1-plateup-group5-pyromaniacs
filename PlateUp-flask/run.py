@@ -38,7 +38,7 @@ class RecipeSchema(ma.Schema):
 
 class InstructionSchema(ma.Schema):
     class Meta:
-        fields = ('step_instruction')
+        fields = ('step_instruction',)
 
 # Init schemas
 user_schema = UserSchema()
@@ -68,7 +68,6 @@ class UserAPI(Resource):
 
     # @login_required
     @userR.doc(description="Get information for all users.")
-    @login_required
     def get(self):
         all_users = User.query.all()
         result = users_schema.dump(all_users)
@@ -478,39 +477,42 @@ class RecipeAPI(Resource):
         return jsonify(return_dict)
 
 # Inventory API
-@inventoryR.route('<id>', methods=['GET', 'POST'])
+@inventoryR.route('/<id>', methods=['GET', 'POST'])
 class InventoryAPI(Resource):
-    inventory = inventoryR.model('InventoryDetails', {
-        'inventory': fields.ingredient,
-    })
-
-    ingredient = inventoryR.model('Ingredient', {
-        'name': fields.String,
+    quantity_fields = inventoryR.model('Quantity', {
         'qty': fields.Float,
         'unit': fields.String,
     })
+    
+    ingredient_fields = inventoryR.model('Ingredient', {
+        'name': fields.Nested(quantity_fields),
+    })
 
-    @inventoryR.doc(description="Logging current user out.")
+    inventory_fields = inventoryR.model('InventoryDetails', {
+        'inventory': fields.Nested(ingredient_fields),
+    })
+
+    @inventoryR.doc(description="Retrieving the user's current inventory.")
     #@login_required
-    def get(self):
+    def get(self, id):
         user_id = id
         inventory_res = Inventory.query.filter_by(id=user_id).all()
         inventory = {}
         for entry in inventory_res:
-            inventory[entry.name] = {"qty": entry.qty, "unit": entry.unit}   
+            inventory[entry.ingredient_name] = {"qty": entry.quantity, "unit": entry.unit}   
         response = {"inventory": inventory}
         return jsonify(response)
 
     @inventoryR.doc(description="Posting a new or updated version of the user's inventory.")
-    @inventoryR.expect(inventory, validate=True)
+    @inventoryR.expect(inventory_fields, validate=True)
     #@login_required
-    def post(self):
+    def post(self, id):
         user_id = id
         inventory = request.json['inventory']
         inventory_res = Inventory.query.filter_by(id=user_id).delete()
 
-        for entry in inventory_res:
-            new_entry = Inventory(user_id, entry["name"], entry["qty"], entry["unit"])
+        for entry_name in inventory:
+            new_entry = Inventory(user_id, entry_name, inventory[entry_name]["qty"], inventory[entry_name]["unit"])
             db.session.add(new_entry)
             
         db.session.commit()
@@ -519,46 +521,50 @@ class InventoryAPI(Resource):
         inventory = {}
         
         for entry in inventory_res:
-            inventory[entry.name] = {"qty": entry.qty, "unit": entry.unit}   
+            inventory[entry.ingredient_name] = {"qty": entry.quantity, "unit": entry.unit}   
         
         response = {"inventory": inventory}
 
         return jsonify(response)
 
 # ShoppingList API
-@shoppingR.route('<id>', methods=['GET', 'POST'])
+@shoppingR.route('/<id>', methods=['GET', 'POST'])
 class ShoppingListAPI(Resource):
-    shopping = shoppingR.model('ShoppingList', {
-        'shopping': fields.ingredient,
-    })
-
-    ingredient = inventoryR.model('Ingredient', {
-        'name': fields.String,
+    quantity_fields = shoppingR.model('Quantity', {
         'qty': fields.Float,
         'unit': fields.String,
     })
+    
+    ingredient_fields = shoppingR.model('Ingredient', {
+        'name': fields.Nested(quantity_fields),
+    })
 
-    @inventoryR.doc(description="Logging current user out.")
+    shopping_fields = shoppingR.model('ShoppingList', {
+        'shopping': fields.Nested(ingredient_fields)
+    })
+
+    @shoppingR.doc(description="Retrieving the user's current shopping list.")
     #@login_required
-    def get(self):
+    def get(self, id):
         user_id = id
         shopping_res = ShoppingList.query.filter_by(id=user_id).all()
         shopping = {}
+
         for entry in shopping_res:
-            shopping[entry.name] = {"qty": entry.qty, "unit": entry.unit}   
+            shopping[entry.ingredient_name] = {"qty": entry.quantity, "unit": entry.unit}   
         response = {"shopping": shopping}
         return jsonify(response)
 
-    @inventoryR.doc(description="Posting a new or updated version of the user's inventory.")
-    @inventoryR.expect(shopping, validate=True)
+    @shoppingR.doc(description="Posting a new or updated version of the user's shopping list.")
+    @shoppingR.expect(shopping_fields, validate=True)
     #@login_required
-    def post(self):
+    def post(self, id):
         user_id = id
-        shopping = request.json['inventory']
+        shopping = request.json['shopping']
         shopping_res = ShoppingList.query.filter_by(id=user_id).delete()
 
-        for entry in shopping_res:
-            new_entry = ShoppingList(user_id, entry["name"], entry["qty"], entry["unit"])
+        for entry_name in shopping:
+            new_entry = ShoppingList(user_id, entry_name, shopping[entry_name]["qty"], shopping[entry_name]["unit"])
             db.session.add(new_entry)
             
         db.session.commit()
@@ -567,20 +573,20 @@ class ShoppingListAPI(Resource):
         shopping = {}
         
         for entry in shopping_res:
-            shopping[entry.name] = {"qty": entry.qty, "unit": entry.unit}   
+            shopping[entry.ingredient_name] = {"qty": entry.quantity, "unit": entry.unit}   
         
         response = {"shopping": shopping}
 
         return jsonify(response)
 
 # ShoppingList flash to inventory API
-@shoppingR.route('flash', methods=['POST'])
+@shoppingR.route('/flash', methods=['POST'])
 class ShoppingFlashToInventoryAPI(Resource):
     resource_fields = shoppingR.model('User', {
         'user_id': fields.String,
     })
 
-    @inventoryR.doc(description="Posting a new or updated version of the user's inventory.")
+    @inventoryR.doc(description="Push the user's shopping list to the user's inventory.")
     @inventoryR.expect(resource_fields, validate=True)
     #@login_required
     def post(self):
@@ -590,17 +596,17 @@ class ShoppingFlashToInventoryAPI(Resource):
 
         inventory = {}
         for entry in inventory_res:
-            inventory[entry.name] = entry.qty
+            inventory[entry.ingredient_name] = entry.quantity
 
         for entry in shopping_res:
-            if entry.name not in inventory:
-                new_entry = Inventory(user_id, entry["name"], entry["qty"], entry["unit"])
+            if entry.ingredient_name not in inventory:
+                new_entry = Inventory(user_id, entry.ingredient_name, entry.quantity, entry.unit)
                 db.session.add(new_entry)
             else:
-                inventory_entry = Inventory.query.get(user_id, entry.name)
+                inventory_entry = Inventory.query.get((user_id, entry.ingredient_name))
                 if entry.unit != inventory_entry.unit:
                     return Response("Bad unit match while flashing to inventory.")
-                inventory_entry.qty = inventory_entry.qty + entry.qty
+                inventory_entry.quantity = inventory_entry.quantity + entry.quantity
 
         shopping_res = ShoppingList.query.filter_by(id=user_id).delete()
         db.session.commit()
@@ -609,7 +615,7 @@ class ShoppingFlashToInventoryAPI(Resource):
         inventory = {}
         
         for entry in inventory_res:
-            inventory[entry.name] = {"qty": entry.qty, "unit": entry.unit}   
+            inventory[entry.ingredient_name] = {"qty": entry.quantity, "unit": entry.unit}   
         
         response = {"inventory": inventory}
 
@@ -771,7 +777,7 @@ if __name__ == '__main__':
     db.create_all()
     scheduler.start()
     updateRecipesToDB()
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=True)
 
     # Terminate background tasks
     scheduler.shutdown()
