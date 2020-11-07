@@ -612,7 +612,7 @@ def updateInstructionsToDB(recipe_id, instructions):
             } for equipment in step["equipment"]])
         new_instruction=Instruction(recipe_id, new_instruction_step_num, new_instruction_step_instruction, \
             new_instruction_ingredients, new_instruction_equipment)
-        print(new_instruction.ingredients)
+            
         db.session.add(new_instruction)
         
     db.session.commit()
