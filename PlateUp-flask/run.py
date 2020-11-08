@@ -679,10 +679,13 @@ def updateInstructionsToDB(recipe_id, instructions):
             "name": equipment["name"], 
             "img":"https://spoonacular.com/cdn/equipment_250x250/"+equipment["image"]
             } for equipment in step["equipment"]])
-        new_instruction=Instruction(recipe_id, new_instruction_step_num, new_instruction_step_instruction, \
-            new_instruction_ingredients, new_instruction_equipment)
-            
+        new_instruction=Instruction(recipe_id, new_instruction_step_num, new_instruction_step_instruction)
+        new_equipment=Equipment(recipe_id, new_instruction_step_num, new_instruction_equipment)
+        new_ingredients = Ingredient(recipe_id, new_instruction_step_num, new_instruction_ingredients)
+        
+        db.session.add(new_equipment)
         db.session.add(new_instruction)
+        db.session.add(new_ingredients)
         
     db.session.commit()
 
