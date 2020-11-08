@@ -46,8 +46,6 @@ export const updateShoppingList = createAsyncThunk('shoppingList/updateShoppingL
 export const flashShoppingList = createAsyncThunk('shoppingList/flashShoppingList', async (id, { rejectWithValue }) => {
   try {
     const response = await axios.post(`${env.SERVER_URL}/shopping/flash`, { user_id: id }, { timeout: 2000 });
-
-    console.log(response.data);
     return response.data;
   } catch (err) {
     return rejectWithValue(err.response ? err.response.data : 'Unknown error.');

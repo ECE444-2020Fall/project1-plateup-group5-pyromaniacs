@@ -65,8 +65,6 @@ class ShoppingList extends React.Component {
   renderContent() {
     const { userStorage: { error, shoppingList } } = this.props;
 
-    console.log(shoppingList);
-
     if (error || !shoppingList) {
       <Text
         center
