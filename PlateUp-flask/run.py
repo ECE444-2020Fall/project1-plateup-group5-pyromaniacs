@@ -313,12 +313,14 @@ class RecipeAPI(Resource):
         'cost': fields.Float,
         'preview_text' : fields.String,
         'preview_media_url': fields.String,
-        'tags': fields.String
+        'tags': fields.String,
+        'user_id': fields.String,
+        'Filter_has_ingredients': fields.Boolean
     })
 
     __dataBaseLength=0
     __parser=''
-    __debug=False
+    __debug=True
     random_pick=False
 
     #Retrive JSON stuff
@@ -406,10 +408,33 @@ class RecipeAPI(Resource):
         recipe_list=recipe_list_same_h+recipe_list
         return recipe_list
 
-    def __filter_by_ingredients(self, recipe_list):
-        pass
+    '''
+    [{"name": "apple", "img": "https://spoonacular.com/cdn/ingredients_250x250/apple.jpg"}, 
+    {"name": "squash", "img": "https://spoonacular.com/cdn/ingredients_250x250/butternut-squash.jpg"},
+    {"name": "soup", "img": "https://spoonacular.com/cdn/ingredients_250x250/"}]
+    '''
+    def __get_ingredient_from_recipe(self, recipe):
+        ingredient_json=recipe.ingredients
+        ingredient_list=json.loads(ingredient_json)
+        name_list=[]
+        for ingredient in ingredient_list:
+            name_list.append(ingredient["name"])
+        return name_list
 
-    def __filter_recipe(self, recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredient):
+    def __check_ingredient_in_inventory(self, ingredient_name_list, user_id):
+        return True
+
+    def __filter_by_ingredients(self, recipe_list, user_id):
+        new_recipe_list=[]
+        for recipe in recipe_list:
+            ingredients_name_list=self.__get_ingredient_from_recipe(recipe)
+
+            if self.__check_ingredient_in_inventory(ingredients_name_list, user_id):
+                new_recipe_list.append(recipe)
+        return new_recipe_list
+
+    def __filter_recipe(self, recipe_list, filter_cost, filter_time_h, filter_time_min, \
+                        filter_has_ingredient, user_id):
         if len(recipe_list)==0:
             self.random_pick=True
             recipe_list=db.session.query(Recipe).all()
@@ -419,7 +444,8 @@ class RecipeAPI(Resource):
         if filter_time_h != None and filter_time_min!=None:
             recipe_list=self.__filter_by_time(recipe_list, filter_time_h, filter_time_min)
         if filter_has_ingredient == True:
-            recipe_list = self.__filter_by_ingredients(recipe_list)
+            print("in it")
+            recipe_list = self.__filter_by_ingredients(recipe_list, user_id)
 
         if len(recipe_list) ==0:
             self.random_pick = True
@@ -434,19 +460,19 @@ class RecipeAPI(Resource):
         print("current list")
         for i in range(len(list)):
             print(list[i].name)
-            print("id "+str(list[i].id))
+            print("id "+str(list[i].ingredients))
         print("end")
 
     def __debug_add_recipe(self):
-        data = [{'apple': 1}]
+        data = [{"name": "pepper", "img": "img"},{"name": "pepper red", "img": "img2"},{"name": "pepper blue", "img": "img3"}]
         data_json=json.dumps(data)
-        data2 = [{'driedapple': 2}]
+        data2 = [{"name": "random", "img": "img"},{"name": "random2", "img": "img2"},{"name": "random3", "img": "img3"}]
         data2_json = json.dumps(data2)
-        data3 = [{'apple juice': 3}]
+        data3 = [{"name": "tea", "img": "img"},{"name": "leaf", "img": "img2"},{"name": "beef", "img": "img3"}]
         data3_json = json.dumps(data3)
-        data4 = [{'processed apple process': 4}]
+        data4 = [{"name": "tea", "img": "img"},{"name": "leaf", "img": "img2"},{"name": "beef", "img": "img3"}]
         data4_json = json.dumps(data4)
-        data5 = [{'trappletr': 5}]
+        data5= [{"name": "apple", "img": "img"},{"name": "pie", "img": "img2"},{"name": "orange", "img": "img3"}]
         data5_json = json.dumps(data5)
         new_recipe1 = Recipe('us_meal', data_json, 1, 12, 30, data_json, data_json, "normal")
         new_recipe2 = Recipe('chinese_meal', data2_json, 2, 12, 30.5, data2_json, data2_json, "healthy")
@@ -461,13 +487,12 @@ class RecipeAPI(Resource):
         db.session.commit()
 
     def __debug_clear_table(self):
-
         db.session.query(Recipe).delete()
 
     #insert recipe to database
     @recipeR.doc(description="Insert recipe to database")
     @recipeR.expect(resourceFields, validate=True)
-    @login_required
+    #@login_required
     def post(self):
         new_recipe_name=request.json["Name"]
         new_recipe_ingredients=request.json["Ingredients"]
@@ -504,7 +529,7 @@ class RecipeAPI(Resource):
                     'Limit': {'description': 'number of recipes to return', 'type': 'int'},
                     'Page': {'description': 'page number determines range of data returned: [page x limit -> page x limit + limit]', 'type': 'int'}
                     })
-    @login_required
+    #@login_required
     def get(self):
         #get params
         recipe_list = []
@@ -512,9 +537,10 @@ class RecipeAPI(Resource):
         filter_time_h= request.args.get('Filter_time_h')
         filter_time_min = request.args.get('Filter_time_min')
         filter_cost = request.args.get('Filter_cost')
-        filter_has_ingredients = request.args.get('Filter_has_ingredients')
+        filter_has_ingredients = bool(request.args.get('Filter_has_ingredients')) if request.args.get('Filter_has_ingredients') else False
         limit=int(request.args.get('Limit')) if request.args.get('Limit') else 20
         page=int(request.args.get('Page')) if request.args.get('Page') else 0
+        user_id=request.args.get('user_id') if request.args.get('user_id') else ""
 
 
         if self.__debug==True:
@@ -536,7 +562,8 @@ class RecipeAPI(Resource):
         recipe_list=self.__merge_list(recipe_list_name, recipe_list_ingredient)
         recipe_list=self.__merge_list(recipe_list, recipe_list_tags)
 
-        recipe_list = self.__filter_recipe(recipe_list, filter_cost, filter_time_h, filter_time_min, filter_has_ingredients)
+        recipe_list = self.__filter_recipe(recipe_list, filter_cost, filter_time_h,\
+                                           filter_time_min, filter_has_ingredients, user_id)
 
         if self.random_pick:
             recipe_list = random.sample(recipe_list, k=min(len(recipe_list), int(limit)))
@@ -710,8 +737,8 @@ def constructRecipeTags(recipe):
 if __name__ == '__main__':
     db.create_all()
     scheduler.start()
-    updateRecipesToDB()
-    app.run(host='0.0.0.0')
+    #updateRecipesToDB()
+    app.run(host='0.0.0.0', debug=True)
 
     # Terminate background tasks
     scheduler.shutdown()
