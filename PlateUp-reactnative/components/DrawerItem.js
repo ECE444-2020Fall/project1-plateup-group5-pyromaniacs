@@ -28,7 +28,16 @@ class DrawerItem extends React.Component {
             color={focused ? 'white' : argonTheme.COLORS.TEXT_COLOR}
           />
         );
-      case 'Inventory':
+      case 'Shopping List':
+        return (
+          <Icon
+            name="basket"
+            family="ArgonExtra"
+            size={14}
+            color={focused ? 'white' : argonTheme.COLORS.TEXT_COLOR}
+          />
+        );
+      case 'Grocery Inventory':
         return (
           <Icon
             name="basket"

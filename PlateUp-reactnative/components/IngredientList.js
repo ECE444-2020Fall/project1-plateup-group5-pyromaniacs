@@ -41,9 +41,9 @@ class IngredientList extends React.Component {
 
     const ingredient = dialogIngredient.trim();
     const qty = Number(dialogQuantity.trim());
-    const units = dialogUnits.trim();
+    const unit = dialogUnits.trim();
 
-    if (ingredient.length === 0 || qty.length === 0 || units.length === 0) {
+    if (ingredient.length === 0 || qty.length === 0 || unit.length === 0) {
       toast('Please fill in all fields.');
       return;
     }
@@ -67,7 +67,7 @@ class IngredientList extends React.Component {
 
     const newItems = {
       ...JSON.parse(JSON.stringify(items)),
-      [ingredient]: { qty, units }
+      [ingredient]: { qty, unit }
     };
 
     onAddItem(newItems);
@@ -146,7 +146,7 @@ class IngredientList extends React.Component {
 
     return (
       itemIngredients.map((ingredient) => {
-        const { qty, units } = items[ingredient];
+        const { qty, unit } = items[ingredient];
 
         return (
           <Block key={ingredient} row>
@@ -166,7 +166,7 @@ class IngredientList extends React.Component {
               <Text style={styles.text}>
                 {qty.toString()}
                 {' '}
-                {units}
+                {unit}
               </Text>
             </Block>
           </Block>
@@ -178,7 +178,7 @@ class IngredientList extends React.Component {
   render() {
     return (
       <ScrollView
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator
         style={styles.listContainer}
       >
         {this.renderItems()}
@@ -192,7 +192,7 @@ IngredientList.propTypes = {
   items: PropTypes.objectOf(
     PropTypes.shape({
       qty: PropTypes.number,
-      units: PropTypes.string
+      unit: PropTypes.string
     })
   ).isRequired,
   onDeleteItem: PropTypes.func.isRequired,

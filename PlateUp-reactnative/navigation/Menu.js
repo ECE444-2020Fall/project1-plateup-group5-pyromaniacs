@@ -54,16 +54,23 @@ class CustomDrawerContent extends React.Component {
               focused={state.index === 0}
             />
             <DrawerCustomItem
-              title="Inventory"
+              title="Grocery Inventory"
               navigation={navigation}
-              navigationScreenName="Inventory"
+              navigationScreenName="GroceryInventory"
               key={1}
               focused={state.index === 1}
             />
             <DrawerCustomItem
-              title="Meal Planning"
+              title="Shopping List"
+              navigation={navigation}
+              navigationScreenName="ShoppingList"
               key={2}
               focused={state.index === 2}
+            />
+            <DrawerCustomItem
+              title="Meal Planning"
+              key={3}
+              focused={state.index === 3}
             />
             <Block flex style={{ marginTop: 24, marginVertical: 8, paddingHorizontal: 8 }}>
               <Block style={{ borderColor: 'rgba(0,0,0,0.2)', width: '100%', borderWidth: StyleSheet.hairlineWidth }} />

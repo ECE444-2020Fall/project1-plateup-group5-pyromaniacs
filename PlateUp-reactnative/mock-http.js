@@ -145,6 +145,44 @@ export default function mockHTTP() {
         ],
         is_random: false
       }));
+
+      this.get('/inventory/:id', () => ({
+        inventory: {
+          Milk: { qty: 2, unit: 'L' },
+          'Ground Beef': { qty: 500, unit: 'g' },
+          Shrimp: { qty: 300, unit: 'g' },
+          Milk2: { qty: 2, units: 'L' },
+          'Ground Beef2': { qty: 500, unit: 'g' },
+          Shrimp2: { qty: 300, unit: 'g' },
+          Milk3: { qty: 2, unit: 'L' },
+          'Ground Beef3': { qty: 500, unit: 'g' },
+          Shrimp3: { qty: 300, unit: 'g' },
+          Milk4: { qty: 2, unit: 'L' },
+          'Ground Beef4': { qty: 500, unit: 'g' },
+          Shrimp4: { qty: 300, unit: 'g' },
+          Milk5: { qty: 2, unit: 'L' },
+          'Ground Beef5': { qty: 500, unit: 'g' },
+          Shrimp5: { qty: 300, unit: 'g' },
+        }
+      }));
+
+      this.post('/inventory/:id', (schema, request) => (JSON.parse(request.requestBody)));
+
+      this.get('/shopping/:id', () => ({
+        shopping: {
+          'Orange Juice': { qty: 2, unit: 'L' },
+          'Ground Chicken': { qty: 500, unit: 'g' },
+          Tuna: { qty: 300, unit: 'g' }
+        }
+      }));
+
+      this.post('/shopping/:id', (schema, request) => (JSON.parse(request.requestBody)));
+
+      this.post('/shopping/flash', () => ({
+        inventory: {
+          Flashed: { qty: 2, unit: 'L' }
+        }
+      }));
     }
   });
 }
