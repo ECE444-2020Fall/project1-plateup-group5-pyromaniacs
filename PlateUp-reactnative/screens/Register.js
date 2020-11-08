@@ -16,7 +16,7 @@ import { argonTheme, Images } from '../constants';
 import { Button, Icon, Input } from '../components';
 import { register, REGISTER_IPR, IDLE } from '../redux/features/user_settings';
 
-const { width, height } = Dimensions.get('screen');
+const { width } = Dimensions.get('screen');
 
 class Register extends React.Component {
   constructor(props) {
@@ -83,19 +83,19 @@ class Register extends React.Component {
         ]}
       >
         <StatusBar hidden />
-        <Block flex middle>
-          <Block style={styles.registerContainer}>
-            <Block height={50} middle style={styles.header}>
-              <Text size={12} color={argonTheme.COLORS.TEXT_COLOR}>
-                Welcome to Plate Up! Please create an account.
-              </Text>
-            </Block>
-            <Block flex center>
-              <KeyboardAvoidingView
-                style={{ flex: 1 }}
-                behavior="padding"
-                enabled
-              >
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior="padding"
+          enabled
+        >
+          <Block flex middle>
+            <Block style={styles.registerContainer}>
+              <Block height={50} middle style={styles.header}>
+                <Text size={12} color={argonTheme.COLORS.TEXT_COLOR}>
+                  Welcome to Plate Up! Please create an account.
+                </Text>
+              </Block>
+              <Block center>
                 <Block
                   width={width * 0.8}
                   style={{ marginBottom: 5, marginTop: 5 }}
@@ -173,14 +173,12 @@ class Register extends React.Component {
                     Privacy Policy
                   </Text>
                 </Block>
-                {userSettings.status === REGISTER_IPR
-                  ? (
-                    <Block style={styles.loading}>
+                <Block middle style={styles.footer}>
+                  {userSettings.status === REGISTER_IPR
+                    ? (
                       <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
-                    </Block>
-                  )
-                  : (
-                    <Block middle>
+                    )
+                    : (
                       <Button
                         color="primary"
                         style={styles.createButton}
@@ -190,18 +188,20 @@ class Register extends React.Component {
                           Create Account
                         </Text>
                       </Button>
-                    </Block>
-                  )}
-              </KeyboardAvoidingView>
+                    )}
+                </Block>
+              </Block>
             </Block>
           </Block>
-        </Block>
-        { !keyboardIsOpen
+        </KeyboardAvoidingView>
+        {
+          !keyboardIsOpen
           && (
             <Block style={styles.imageContainer}>
               <Image source={Images.PlateUpName} style={styles.nameImage} />
             </Block>
-          )}
+          )
+        }
       </LinearGradient>
     );
   }
@@ -212,8 +212,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   createButton: {
-    marginTop: 30,
     width: width * 0.5,
+  },
+  footer: {
+    height: 80,
   },
   header: {
     backgroundColor: argonTheme.COLORS.WHITE,
@@ -234,7 +236,6 @@ const styles = StyleSheet.create({
   },
   registerContainer: {
     width: width * 0.9,
-    height: height * 0.52,
     backgroundColor: argonTheme.COLORS.GREY,
     borderRadius: 4,
     shadowColor: argonTheme.COLORS.BLACK,
@@ -246,11 +247,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     elevation: 1,
     overflow: 'hidden',
-  },
-  loading: {
-    alignContent: 'center',
-    justifyContent: 'center',
-    flex: 1
   },
   imageContainer: {
     alignContent: 'center',
