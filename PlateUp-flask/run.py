@@ -9,7 +9,7 @@ from flask_login import current_user, login_user, login_required, logout_user
 from flask_restx import fields, Resource, reqparse
 from initializer import api, app, db, login_manager, ma, scheduler, sp_api
 
-from models import User, Recipe, Instruction, ShoppingList, Ingredient, Equipment
+from models import User, Recipe, Instruction, ShoppingList, Ingredient, Equipment, Inventory
 
 from werkzeug.security import check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -323,7 +323,7 @@ class RecipeAPI(Resource):
 
     __dataBaseLength=0
     __parser=''
-    __debug=True
+    __debug=False
     random_pick=False
 
     #Retrive JSON stuff
@@ -425,7 +425,20 @@ class RecipeAPI(Resource):
         return name_list
 
     def __check_ingredient_in_inventory(self, ingredient_name_list, user_id):
+        for ingredient_name in ingredient_name_list:
+
+            ingredient_in_inventory=db.session.query(Inventory).filter(\
+                Inventory.user_id.like(user_id),\
+                Inventory.ingredient_name.like(ingredient_name)).all()
+            if len(ingredient_in_inventory)==0:
+                return False
+
+            for inventory_entry in ingredient_in_inventory:
+                if inventory_entry.quantity<=0:
+                    return False
+
         return True
+
 
     def __filter_by_ingredients(self, recipe_list, user_id):
         new_recipe_list=[]
@@ -487,15 +500,22 @@ class RecipeAPI(Resource):
         db.session.add(new_recipe3)
         db.session.add(new_recipe4)
         db.session.add(new_recipe5)
+        inventory_entry_one = Inventory("random_user", "tea", 10, "unit")
+        inventory_entry_two = Inventory("random_user", "leaf", 10, "unit")
+        inventory_entry_three = Inventory("random_user", "beef", 10, "unit")
+        db.session.add(inventory_entry_one)
+        db.session.add(inventory_entry_two)
+        db.session.add(inventory_entry_three)
         db.session.commit()
 
     def __debug_clear_table(self):
+        db.session.query(Inventory).delete()
         db.session.query(Recipe).delete()
 
     #insert recipe to database
     @recipeR.doc(description="Insert recipe to database")
     @recipeR.expect(resourceFields, validate=True)
-    #@login_required
+    @login_required
     def post(self):
         new_recipe_name=request.json["Name"]
         new_recipe_ingredients=request.json["Ingredients"]
@@ -532,7 +552,7 @@ class RecipeAPI(Resource):
                     'Limit': {'description': 'number of recipes to return', 'type': 'int'},
                     'Page': {'description': 'page number determines range of data returned: [page x limit -> page x limit + limit]', 'type': 'int'}
                     })
-    #@login_required
+    @login_required
     def get(self):
         #get params
         recipe_list = []
@@ -540,11 +560,10 @@ class RecipeAPI(Resource):
         filter_time_h= request.args.get('Filter_time_h')
         filter_time_min = request.args.get('Filter_time_min')
         filter_cost = request.args.get('Filter_cost')
-        filter_has_ingredients = bool(request.args.get('Filter_has_ingredients')) if request.args.get('Filter_has_ingredients') else False
+        filter_has_ingredients = bool(request.args.get('Filter_has_ingredients')==True) if request.args.get('Filter_has_ingredients') else False
         limit=int(request.args.get('Limit')) if request.args.get('Limit') else 20
         page=int(request.args.get('Page')) if request.args.get('Page') else 0
         user_id=request.args.get('user_id') if request.args.get('user_id') else ""
-
 
         if self.__debug==True:
             self.__debug_clear_table()
@@ -936,8 +955,8 @@ def constructRecipeTags(recipe):
 if __name__ == '__main__':
     db.create_all()
     scheduler.start()
-    #updateRecipesToDB()
-    app.run(host='0.0.0.0', debug=True)
+    updateRecipesToDB()
+    app.run(host='0.0.0.0')
 
     # Terminate background tasks
     scheduler.shutdown()
