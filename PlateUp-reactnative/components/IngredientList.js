@@ -19,13 +19,9 @@ const DEFAULT_DIALOG_STATE = {
 class IngredientList extends React.Component {
   constructor(props) {
     super(props);
-    const { items } = this.props;
 
     this.state = {
-      ...DEFAULT_DIALOG_STATE,
-      // Can't rely on order of JS objects, so instead just sort the
-      // keys and use them to access the items in the props.
-      itemIngredients: Object.keys(items).sort()
+      ...DEFAULT_DIALOG_STATE
     };
   }
 
@@ -36,14 +32,14 @@ class IngredientList extends React.Component {
   handleSubmitDialog = () => {
     const { onAddItem, items } = this.props;
     const {
-      dialogIngredient, dialogQuantity, dialogUnits, itemIngredients
+      dialogIngredient, dialogQuantity, dialogUnits
     } = this.state;
 
     const ingredient = dialogIngredient.trim();
     const qty = Number(dialogQuantity.trim());
-    const units = dialogUnits.trim();
+    const unit = dialogUnits.trim();
 
-    if (ingredient.length === 0 || qty.length === 0 || units.length === 0) {
+    if (ingredient.length === 0 || qty.length === 0 || unit.length === 0) {
       toast('Please fill in all fields.');
       return;
     }
@@ -56,7 +52,7 @@ class IngredientList extends React.Component {
     // Only add item to list if the key isn't already in the list
     // The user's input will be trimmed and lowercased and be
     // compared to all the lowercased keys.
-    const keyExists = itemIngredients.some((itemIngredient) => (
+    const keyExists = Object.keys(items).some((itemIngredient) => (
       itemIngredient.toLowerCase() === ingredient.toLowerCase()
     ));
 
@@ -67,7 +63,7 @@ class IngredientList extends React.Component {
 
     const newItems = {
       ...JSON.parse(JSON.stringify(items)),
-      [ingredient]: { qty, units }
+      [ingredient]: { qty, unit }
     };
 
     onAddItem(newItems);
@@ -141,12 +137,15 @@ class IngredientList extends React.Component {
   }
 
   renderItems() {
-    const { itemIngredients } = this.state;
     const { items } = this.props;
 
+    // Can't rely on order of JS objects, so instead just sort the
+    // keys and use them to access the items in the props.
+    const itemsSorted = Object.keys(items).sort();
+
     return (
-      itemIngredients.map((ingredient) => {
-        const { qty, units } = items[ingredient];
+      itemsSorted.map((ingredient) => {
+        const { qty, unit } = items[ingredient];
 
         return (
           <Block key={ingredient} row>
@@ -166,7 +165,7 @@ class IngredientList extends React.Component {
               <Text style={styles.text}>
                 {qty.toString()}
                 {' '}
-                {units}
+                {unit}
               </Text>
             </Block>
           </Block>
@@ -178,7 +177,7 @@ class IngredientList extends React.Component {
   render() {
     return (
       <ScrollView
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator
         style={styles.listContainer}
       >
         {this.renderItems()}
@@ -192,7 +191,7 @@ IngredientList.propTypes = {
   items: PropTypes.objectOf(
     PropTypes.shape({
       qty: PropTypes.number,
-      units: PropTypes.string
+      unit: PropTypes.string
     })
   ).isRequired,
   onDeleteItem: PropTypes.func.isRequired,
