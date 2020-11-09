@@ -461,7 +461,6 @@ class RecipeAPI(Resource):
         if filter_time_h != None and filter_time_min!=None:
             recipe_list=self.__filter_by_time(recipe_list, filter_time_h, filter_time_min)
         if filter_has_ingredient == True:
-            print("in it")
             recipe_list = self.__filter_by_ingredients(recipe_list, user_id)
 
         if len(recipe_list) ==0:
