@@ -284,9 +284,9 @@ class RecipeDetailAPI(Resource):
         new_instruction_equipment_text = request.json["equipment_text"]
         new_instruction_equipment_image = request.json["equipment_image"]
 
-        new_instruction_description=Instruction(new_instruction_recipe_id, new_instruction_step_num,
+        new_instruction_description = Instruction(new_instruction_recipe_id, new_instruction_step_num,
                                     new_instruction_step_instruction)
-        new_instruction_ingredient=Ingredient(new_instruction_recipe_id, new_instruction_step_num,
+        new_instruction_ingredient = Ingredient(new_instruction_recipe_id, new_instruction_step_num,
                                               new_instruction_ingredients_text,
                                               new_instruction_ingredients_image)
         new_instruction_equipment = Equipment(new_instruction_recipe_id, new_instruction_step_num,
@@ -682,7 +682,7 @@ def updateInstructionsToDB(recipe_id, instructions):
         new_instruction=Instruction(recipe_id, new_instruction_step_num, new_instruction_step_instruction)
         new_equipment=Equipment(recipe_id, new_instruction_step_num, new_instruction_equipment)
         new_ingredients = Ingredient(recipe_id, new_instruction_step_num, new_instruction_ingredients)
-        
+
         db.session.add(new_equipment)
         db.session.add(new_instruction)
         db.session.add(new_ingredients)
