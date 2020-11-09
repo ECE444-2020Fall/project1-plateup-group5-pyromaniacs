@@ -8,7 +8,9 @@ from flask import jsonify, request, Response
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_restx import fields, Resource, reqparse
 from initializer import api, app, db, login_manager, ma, scheduler, sp_api
-from models import User, Recipe, Instruction, ShoppingList
+
+from models import User, Recipe, Instruction, ShoppingList, Ingredient, Equipment
+
 from werkzeug.security import check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 
@@ -20,8 +22,10 @@ plateupR = api.namespace('plate-up', description='PlateUp operations')
 userR = api.namespace('user', description='User operations')
 loginR = api.namespace('login', description='Login/logout operations')
 mailR = api.namespace('mail', description='Mailing operations')
-recipeR = api.namespace('recipe', description='Preview of recipe')
-recipeDetailR = api.namespace('recipeDetail', description='Insturction of recipe')
+recipeR = api.namespace('recipe', description='Preview of recipes')
+recipeDetailR = api.namespace('recipeDetail', description='Instruction level details for recipes')
+inventoryR = api.namespace('inventory', description='User inventory operations')
+shoppingR = api.namespace('shopping', description='User shopping list operations')
 
 # -----------------------------------------------------------------------------
 # DB Schemas (Marshmallow)
@@ -38,12 +42,22 @@ class InstructionSchema(ma.Schema):
     class Meta:
         fields = ('step_instruction',)
 
+class EquipmentSchema(ma.Schema):
+    class Meta:
+        fields = ('name','img',)
+
+class IngredientSchema(ma.Schema):
+    class Meta:
+        fields = ('name','img',)
+
 # Init schemas
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 recipe_schema = RecipeSchema()
 recipes_schema = RecipeSchema(many=True)
 instructions_schema = InstructionSchema(many=True)
+equipments_schema = EquipmentSchema(many=True)
+ingredients_schema = IngredientSchema(many=True)
 
 # -----------------------------------------------------------------------------
 # Flask API start
@@ -66,7 +80,6 @@ class UserAPI(Resource):
 
     # @login_required
     @userR.doc(description="Get information for all users.")
-    @login_required
     def get(self):
         all_users = User.query.all()
         result = users_schema.dump(all_users)
@@ -155,24 +168,37 @@ class RecipeDetailAPI(Resource):
         'recipe_id': fields.String,
         'step_num': fields.Integer,
         'step_instruction': fields.String,
-        'ingredients': fields.String,
-        'equipment': fields.String,
+        'ingredients_text': fields.String,
+        'ingredients_image': fields.String,
+        'equipment_text': fields.String,
+        'equipment_image': fields.String,
     })
 
     def __get_recipe_instructions_by_id(self, recipe_id):
         recipe_found = db.session.query(Instruction).filter(Instruction.recipe_id.like(recipe_id)).all()
         return recipe_found
 
+    def __get_recipe_ingredient_by_id(self, recipe_id):
+        recipe_found = db.session.query(Ingredient).filter(Ingredient.recipe_id.like(recipe_id)).all()
+        return recipe_found
+
+    def __get_recipe_equipment_by_id(self, recipe_id):
+        recipe_found = db.session.query(Equipment).filter(Equipment.recipe_id.like(recipe_id)).all()
+        return recipe_found
+
     def __get_recipe_preview_by_id(self, recipe_id):
         recipe_found = db.session.query(Recipe).filter(Recipe.id.like(recipe_id)).all()
         return recipe_found
 
-    def __sort_recipe_instructions_by_step(self, recipe_instruction_list_unsorted):
-        sorted_list = sorted(recipe_instruction_list_unsorted, key=operator.attrgetter("step_num"), reverse=False)
+    def __sort_by_step(self, unsorted_list):
+        sorted_list = sorted(unsorted_list, key=operator.attrgetter("step_num"), reverse=False)
         return sorted_list
 
     def __debug_delete_table(self):
-        db.session.query(Instruction).delete()
+        Instruction.__table__.drop(db.engine)
+        Ingredient.__table__.drop(db.engine)
+        Equipment.__table__.drop(db.engine)
+        #db.session.query(Instruction).delete()
 
     def __debug_show_table(self):
         list = db.session.query(Instruction).all()
@@ -191,12 +217,48 @@ class RecipeDetailAPI(Resource):
             print(list[i].name)
         print("end")
 
+    def __get_object_for_one_step(self, object_list, step_num):
+        list_for_one_step=[]
+        for i in range(len(object_list)):
+            if object_list[i].step_num==step_num:
+                list_for_one_step.append(object_list[i])
+        return list_for_one_step
+
+    def __not_exist_instruction(self, recipe_instruction_object):
+        instruction_list=self.__get_recipe_instructions_by_id(recipe_instruction_object.recipe_id)
+        for i in range(len(instruction_list)):
+            if instruction_list[i].step_num==recipe_instruction_object.step_num:
+                return False
+        return True
+
+    def __organize_return_object(self, recipe_instruction_list, \
+                                 recipe_ingredient_list_sorted,\
+                                 recipe_equipment_list_sorted):
+        dict_list=[]
+        for i in range(len(recipe_instruction_list)):
+            step_instruction=recipe_instruction_list[i]
+            step_number=step_instruction.step_num
+            step_ingredient=self.__get_object_for_one_step(recipe_ingredient_list_sorted, step_number)
+            step_equipement = self.__get_object_for_one_step(recipe_equipment_list_sorted, step_number)
+
+            return_ingredient = ingredients_schema.dump(step_ingredient)
+            return_equipment = equipments_schema.dump(step_equipement)
+            return_dict = {"step_instruction": step_instruction.step_instruction,\
+                           "ingredients": return_ingredient, "equipment": return_equipment, }
+            dict_list.append(return_dict)
+        return dict_list
+
     @login_required
     def get(self, id):
         recipe_id = id
 
         recipe_instruction_list_unsorted=self.__get_recipe_instructions_by_id(recipe_id)
-        recipe_instruction_list_sorted=self.__sort_recipe_instructions_by_step(recipe_instruction_list_unsorted)
+        recipe_ingredient_list_unsorted = self.__get_recipe_ingredient_by_id(recipe_id)
+        recipe_equipment_list_unsorted = self.__get_recipe_equipment_by_id(recipe_id)
+
+        recipe_instruction_list_sorted=self.__sort_by_step(recipe_instruction_list_unsorted)
+        recipe_ingredient_list_sorted=self.__sort_by_step(recipe_ingredient_list_unsorted)
+        recipe_equipment_list_sorted=self.__sort_by_step(recipe_equipment_list_unsorted)
 
         recipe_preview=self.__get_recipe_preview_by_id(id)
 
@@ -205,12 +267,12 @@ class RecipeDetailAPI(Resource):
 
         if(len(recipe_preview)==0):
             return Response("recipe preview not found!", status=500)
+        return_step_list=self.__organize_return_object(recipe_instruction_list_sorted, recipe_ingredient_list_sorted,\
+                                                    recipe_equipment_list_sorted)
+        return_preview=recipe_schema.dump(recipe_preview[0])
+        return_object={"recipe_preview": return_preview, "recipe_instruction":return_step_list}
 
-        return_instruction = instructions_schema.dump(recipe_instruction_list_sorted)
-        return_preview  = recipe_schema.dump(recipe_preview[0])
-        return_dict = {"recipe_instruction": return_instruction, "recipe_preview": return_preview}
-
-        return jsonify(return_dict)
+        return jsonify(return_object)
 
     @recipeR.doc(description="Insert recipe instruction to database")
     @recipeR.expect(resourceFields, validate=True)
@@ -220,13 +282,23 @@ class RecipeDetailAPI(Resource):
         new_instruction_recipe_id = request.json["recipe_id"]
         new_instruction_step_num = request.json["step_num"]
         new_instruction_step_instruction = request.json["step_instruction"]
-        new_instruction_ingredients = request.json["ingredients"]
-        new_instruction_equipment = request.json["equipment"]
+        new_instruction_ingredients_text = request.json["ingredients_text"]
+        new_instruction_ingredients_image = request.json["ingredients_image"]
+        new_instruction_equipment_text = request.json["equipment_text"]
+        new_instruction_equipment_image = request.json["equipment_image"]
 
-        new_instruction=Instruction(new_instruction_recipe_id, new_instruction_step_num,
-                                    new_instruction_step_instruction, new_instruction_ingredients,
-                                    new_instruction_equipment)
-        db.session.add(new_instruction)
+        new_instruction_description = Instruction(new_instruction_recipe_id, new_instruction_step_num,
+                                    new_instruction_step_instruction)
+        new_instruction_ingredient = Ingredient(new_instruction_recipe_id, new_instruction_step_num,
+                                              new_instruction_ingredients_text,
+                                              new_instruction_ingredients_image)
+        new_instruction_equipment = Equipment(new_instruction_recipe_id, new_instruction_step_num,
+                                               new_instruction_equipment_text,
+                                               new_instruction_equipment_image)
+        if self.__not_exist_instruction(new_instruction_description):
+            db.session.add(new_instruction_description)
+        db.session.add(new_instruction_ingredient)
+        db.session.add(new_instruction_equipment)
         db.session.commit()
 
         #self.__debug_show_table()
@@ -475,6 +547,202 @@ class RecipeAPI(Resource):
         return_dict = {"recipes": return_result, "is_random": self.random_pick}
         return jsonify(return_dict)
 
+# Recipe-inventory checker API
+@recipeR.route('/<recipe_id>/check/<user_id>', methods=['GET'])
+class RecipeInventoryCheckerAPI(Resource):
+    @login_required
+    def get(self, recipe_id, user_id):
+        required_res = Recipe.query.get(recipe_id).ingredients
+        required_res = json.loads(required_res)
+        inventory_res = Inventory.query.filter_by(user_id=user_id).all()
+
+        required = {}
+        for ingredient_name in required_res:
+            required[ingredient_name] = {
+                "quantity": float(required_res[ingredient_name].split()[0]),
+                "unit": required_res[ingredient_name].split()[1] if len(required_res[ingredient_name].split()) > 1 else ""
+            }
+
+        inventory = {}
+        for entry in inventory_res:
+            inventory[entry.ingredient_name] = {
+                "quantity": entry.quantity,
+                "unit": entry.unit
+            }
+
+        has_missing = False
+        for entry in required:
+            if entry in inventory:
+                if required[entry]['unit'] != inventory[entry]['unit']:
+                    return Response("Bad unit match while checking ingredient requirements for recipe.", status=400)
+                if inventory[entry]['quantity'] - required[entry]['quantity'] >= 0:
+                    inventory[entry]['quantity'] -= required[entry]['quantity'] 
+                else:
+                    has_missing = True
+                    new_entry = ShoppingList(user_id, entry, required[entry]['quantity']-inventory[entry]['quantity'], inventory[entry]['quantity'])
+                    db.session.add(new_entry)
+            else: 
+                has_missing = True
+                new_entry = ShoppingList(user_id, entry, required[entry]['quantity'], required[entry]['unit'])
+                db.session.add(new_entry)
+
+        if has_missing:
+            db.session.commit()
+            return Response("Not enough ingredients, added to shopping list", status=200)
+
+        for entry in inventory:
+            inventory_entry = Inventory.query.get((user_id, entry))
+            if inventory[entry]['quantity'] != 0:
+                inventory_entry.quantity = inventory[entry]['quantity']
+            else:
+                db.session.delete(inventory_entry)
+        
+        db.session.commit()
+
+        return Response("Inventory updated, enough ingredients to proceed!", status=200)
+
+# Inventory API
+@inventoryR.route('/<user_id>', methods=['GET', 'POST'])
+class InventoryAPI(Resource):
+    quantity_fields = inventoryR.model('Quantity', {
+        'qty': fields.Float,
+        'unit': fields.String,
+    })
+    
+    ingredient_fields = inventoryR.model('Ingredient', {
+        'name': fields.Nested(quantity_fields),
+    })
+
+    inventory_fields = inventoryR.model('InventoryDetails', {
+        'inventory': fields.Nested(ingredient_fields),
+    })
+
+    @inventoryR.doc(description="Retrieving the user's current inventory.")
+    @login_required
+    def get(self, user_id):
+        inventory_res = Inventory.query.filter_by(user_id=user_id).all()
+        inventory = {}
+        for entry in inventory_res:
+            inventory[entry.ingredient_name] = {"qty": entry.quantity, "unit": entry.unit}   
+        response = {"inventory": inventory}
+        return jsonify(response)
+
+    @inventoryR.doc(description="Posting a new or updated version of the user's inventory.")
+    @inventoryR.expect(inventory_fields, validate=True)
+    @login_required
+    def post(self, user_id):
+        inventory = request.json['inventory']
+        inventory_res = Inventory.query.filter_by(user_id=user_id).delete()
+
+        for entry_name in inventory:
+            new_entry = Inventory(user_id, entry_name, inventory[entry_name]["qty"], inventory[entry_name]["unit"])
+            db.session.add(new_entry)
+            
+        db.session.commit()
+        
+        inventory_res = Inventory.query.filter_by(user_id=user_id).all()
+        inventory = {}
+        
+        for entry in inventory_res:
+            inventory[entry.ingredient_name] = {"qty": entry.quantity, "unit": entry.unit}   
+        
+        response = {"inventory": inventory}
+
+        return jsonify(response)
+
+# ShoppingList API
+@shoppingR.route('/<user_id>', methods=['GET', 'POST'])
+class ShoppingListAPI(Resource):
+    quantity_fields = shoppingR.model('Quantity', {
+        'qty': fields.Float,
+        'unit': fields.String,
+    })
+    
+    ingredient_fields = shoppingR.model('Ingredient', {
+        'name': fields.Nested(quantity_fields),
+    })
+
+    shopping_fields = shoppingR.model('ShoppingList', {
+        'shopping': fields.Nested(ingredient_fields)
+    })
+
+    @shoppingR.doc(description="Retrieving the user's current shopping list.")
+    @login_required
+    def get(self, user_id):
+
+        shopping_res = ShoppingList.query.filter_by(user_id=user_id).all()
+        shopping = {}
+
+        for entry in shopping_res:
+            shopping[entry.ingredient_name] = {"qty": entry.quantity, "unit": entry.unit}   
+        response = {"shopping": shopping}
+        return jsonify(response)
+
+    @shoppingR.doc(description="Posting a new or updated version of the user's shopping list.")
+    @shoppingR.expect(shopping_fields, validate=True)
+    @login_required
+    def post(self, user_id):
+        shopping = request.json['shopping']
+        shopping_res = ShoppingList.query.filter_by(user_id=user_id).delete()
+
+        for entry_name in shopping:
+            new_entry = ShoppingList(user_id, entry_name, shopping[entry_name]["qty"], shopping[entry_name]["unit"])
+            db.session.add(new_entry)
+            
+        db.session.commit()
+        
+        shopping_res = ShoppingList.query.filter_by(user_id=user_id).all()
+        shopping = {}
+        
+        for entry in shopping_res:
+            shopping[entry.ingredient_name] = {"qty": entry.quantity, "unit": entry.unit}   
+        
+        response = {"shopping": shopping}
+
+        return jsonify(response)
+
+# ShoppingList flash to inventory API
+@shoppingR.route('/flash', methods=['POST'])
+class ShoppingFlashToInventoryAPI(Resource):
+    resource_fields = shoppingR.model('User', {
+        'user_id': fields.String,
+    })
+
+    @inventoryR.doc(description="Push the user's shopping list to the user's inventory.")
+    @inventoryR.expect(resource_fields, validate=True)
+    @login_required
+    def post(self):
+        user_id =  request.json['user_id']
+        shopping_res = ShoppingList.query.filter_by(user_id=user_id).all()
+        inventory_res = Inventory.query.filter_by(user_id=user_id).all()
+
+        inventory = {}
+        for entry in inventory_res:
+            inventory[entry.ingredient_name] = entry.quantity
+
+        for entry in shopping_res:
+            if entry.ingredient_name not in inventory:
+                new_entry = Inventory(user_id, entry.ingredient_name, entry.quantity, entry.unit)
+                db.session.add(new_entry)
+            else:
+                inventory_entry = Inventory.query.get((user_id, entry.ingredient_name))
+                if entry.unit != inventory_entry.unit:
+                    return Response("Bad unit match while flashing to inventory.", status=400)
+                inventory_entry.quantity = inventory_entry.quantity + entry.quantity
+
+        shopping_res = ShoppingList.query.filter_by(user_id=user_id).delete()
+        db.session.commit()
+        
+        inventory_res = Inventory.query.filter_by(user_id=user_id).all()
+        inventory = {}
+        
+        for entry in inventory_res:
+            inventory[entry.ingredient_name] = {"qty": entry.quantity, "unit": entry.unit}   
+        
+        response = {"inventory": inventory}
+
+        return jsonify(response)
+
 
 # -----------------------------------------------------------------------------
 # Utility functions
@@ -593,7 +861,7 @@ def updateRecipesToDB():
                     db.session.commit()
 
             except Exception as e:
-                print("recipe not updated due to missing fields or other error: %s \n"%e)
+                print("One recipe not updated due to missing fields or other error: %s \n"%e)
                 print("skipping...")
 
     print("done updating recipes.")
@@ -610,10 +878,13 @@ def updateInstructionsToDB(recipe_id, instructions):
             "name": equipment["name"], 
             "img":"https://spoonacular.com/cdn/equipment_250x250/"+equipment["image"]
             } for equipment in step["equipment"]])
-        new_instruction=Instruction(recipe_id, new_instruction_step_num, new_instruction_step_instruction, \
-            new_instruction_ingredients, new_instruction_equipment)
-            
+        new_instruction=Instruction(recipe_id, new_instruction_step_num, new_instruction_step_instruction)
+        new_equipment=Equipment(recipe_id, new_instruction_step_num, new_instruction_equipment)
+        new_ingredients = Ingredient(recipe_id, new_instruction_step_num, new_instruction_ingredients)
+
+        db.session.add(new_equipment)
         db.session.add(new_instruction)
+        db.session.add(new_ingredients)
         
     db.session.commit()
 
@@ -637,7 +908,7 @@ if __name__ == '__main__':
     db.create_all()
     scheduler.start()
     updateRecipesToDB()
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=False)
 
     # Terminate background tasks
     scheduler.shutdown()

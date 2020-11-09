@@ -1,7 +1,7 @@
 import { Block, Text } from 'galio-framework';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet } from 'react-native';
 import Dialog from 'react-native-dialog';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -11,14 +11,22 @@ import { toast } from '../constants/utils';
 
 const DEFAULT_DIALOG_STATE = {
   addItemDialogVisible: false,
-  dialogKey: '',
-  dialogVal: '',
+  dialogIngredient: '',
+  dialogQuantity: '',
+  dialogUnits: '',
 };
 
-class List extends React.Component {
+class IngredientList extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { ...DEFAULT_DIALOG_STATE };
+    const { items } = this.props;
+
+    this.state = {
+      ...DEFAULT_DIALOG_STATE,
+      // Can't rely on order of JS objects, so instead just sort the
+      // keys and use them to access the items in the props.
+      itemIngredients: Object.keys(items).sort()
+    };
   }
 
   handleCancelDialog = () => {
@@ -27,61 +35,89 @@ class List extends React.Component {
 
   handleSubmitDialog = () => {
     const { onAddItem, items } = this.props;
-    const { dialogKey, dialogVal } = this.state;
-    const key = dialogKey.trim();
-    const val = dialogVal.trim();
+    const {
+      dialogIngredient, dialogQuantity, dialogUnits, itemIngredients
+    } = this.state;
 
-    if (key.length === 0 || val.length === 0) {
+    const ingredient = dialogIngredient.trim();
+    const qty = Number(dialogQuantity.trim());
+    const units = dialogUnits.trim();
+
+    if (ingredient.length === 0 || qty.length === 0 || units.length === 0) {
       toast('Please fill in all fields.');
+      return;
+    }
+
+    if (Number.isNaN(qty)) {
+      toast('Please enter a number for the quantity.');
       return;
     }
 
     // Only add item to list if the key isn't already in the list
     // The user's input will be trimmed and lowercased and be
     // compared to all the lowercased keys.
-    if (items.some(({ key: itemKey, }) => itemKey.toLowerCase() === key.toLowerCase())) {
-      toast(`Cannot add "${key}" as it already exists!`);
+    const keyExists = itemIngredients.some((itemIngredient) => (
+      itemIngredient.toLowerCase() === ingredient.toLowerCase()
+    ));
+
+    if (keyExists) {
+      toast(`Cannot add "${ingredient}" as it already exists!`);
       return;
     }
 
-    onAddItem(key, val);
+    const newItems = {
+      ...JSON.parse(JSON.stringify(items)),
+      [ingredient]: { qty, units }
+    };
+
+    onAddItem(newItems);
     this.setState(DEFAULT_DIALOG_STATE);
   };
 
   handleDeleteItem = (key) => {
-    const { onDeleteItem } = this.props;
-    onDeleteItem(key);
+    const { onDeleteItem, items } = this.props;
+
+    const newItems = { ...JSON.parse(JSON.stringify(items)) };
+    delete newItems[key];
+
+    onDeleteItem(newItems);
   }
 
   renderAddItem() {
     const { addItemDialogVisible } = this.state;
-    const { keyName, valName } = this.props;
 
     return (
       <Block>
-        <Dialog.Container visible={addItemDialogVisible}>
-          <Dialog.Title>Enter new item</Dialog.Title>
-          <Dialog.Input
-            placeholder={keyName}
-            wrapperStyle={styles.dialogTextInput}
-            onChangeText={(dialogKey) => this.setState({ dialogKey })}
-          />
-          <Dialog.Input
-            placeholder={valName}
-            wrapperStyle={styles.dialogTextInput}
-            onChangeText={(dialogVal) => this.setState({ dialogVal })}
-          />
-          <Dialog.Button
-            label="Cancel"
-            color={argonTheme.COLORS.PRIMARY}
-            onPress={() => this.handleCancelDialog()}
-          />
-          <Dialog.Button
-            label="Submit"
-            color={argonTheme.COLORS.PRIMARY}
-            onPress={() => this.handleSubmitDialog()}
-          />
-        </Dialog.Container>
+        <KeyboardAvoidingView>
+          <Dialog.Container visible={addItemDialogVisible}>
+            <Dialog.Title>Enter new item</Dialog.Title>
+            <Dialog.Input
+              placeholder="Ingredient"
+              wrapperStyle={styles.dialogTextInput}
+              onChangeText={(dialogIngredient) => this.setState({ dialogIngredient })}
+            />
+            <Dialog.Input
+              placeholder="Quantity"
+              wrapperStyle={styles.dialogTextInput}
+              onChangeText={(dialogQuantity) => this.setState({ dialogQuantity })}
+            />
+            <Dialog.Input
+              placeholder="Units"
+              wrapperStyle={styles.dialogTextInput}
+              onChangeText={(dialogUnits) => this.setState({ dialogUnits })}
+            />
+            <Dialog.Button
+              label="Cancel"
+              color={argonTheme.COLORS.PRIMARY}
+              onPress={() => this.handleCancelDialog()}
+            />
+            <Dialog.Button
+              label="Submit"
+              color={argonTheme.COLORS.PRIMARY}
+              onPress={() => this.handleSubmitDialog()}
+            />
+          </Dialog.Container>
+        </KeyboardAvoidingView>
 
         <TouchableOpacity
           style={styles.addItemContainer}
@@ -105,34 +141,37 @@ class List extends React.Component {
   }
 
   renderItems() {
+    const { itemIngredients } = this.state;
     const { items } = this.props;
 
     return (
-      <Block>
-        {
-        items.map(({ key, value }) => (
-          <Block key={key} row>
+      itemIngredients.map((ingredient) => {
+        const { qty, units } = items[ingredient];
+
+        return (
+          <Block key={ingredient} row>
             <TouchableOpacity style={styles.deleteIconContainer}>
               <Icon
                 name="minus"
                 family="EvilIcons"
                 size={24}
                 color={argonTheme.COLORS.TEXT_COLOR}
-                onPress={() => this.handleDeleteItem(key)}
+                onPress={() => this.handleDeleteItem(ingredient)}
               />
             </TouchableOpacity>
             <Block style={styles.listItemContainer}>
               <Text style={styles.text}>
-                {key}
+                {ingredient}
               </Text>
               <Text style={styles.text}>
-                {value}
+                {qty.toString()}
+                {' '}
+                {units}
               </Text>
             </Block>
           </Block>
-        ))
-        }
-      </Block>
+        );
+      })
     );
   }
 
@@ -149,21 +188,15 @@ class List extends React.Component {
   }
 }
 
-List.propTypes = {
-  items: PropTypes.arrayOf(PropTypes.shape({
-    key: PropTypes.string,
-    value: PropTypes.string
-  })).isRequired,
+IngredientList.propTypes = {
+  items: PropTypes.objectOf(
+    PropTypes.shape({
+      qty: PropTypes.number,
+      units: PropTypes.string
+    })
+  ).isRequired,
   onDeleteItem: PropTypes.func.isRequired,
   onAddItem: PropTypes.func.isRequired,
-
-  keyName: PropTypes.string,
-  valName: PropTypes.string,
-};
-
-List.defaultProps = {
-  keyName: 'Key',
-  valName: 'Value',
 };
 
 const styles = StyleSheet.create({
@@ -208,4 +241,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default List;
+export default IngredientList;
