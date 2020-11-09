@@ -1,5 +1,6 @@
 import userStorageReducer, {
-  IDLE, IN_FLIGHT, getGroceryInventory, updateGroceryInventory, getShoppingList, updateShoppingList
+  IDLE, IN_FLIGHT, getGroceryInventory, updateGroceryInventory,
+  getShoppingList, updateShoppingList, flashShoppingList
 } from './user_storage';
 
 describe('get grocery inventory', () => {
@@ -306,6 +307,105 @@ describe('update shopping list', () => {
     const expectedState = {
       groceryInventory: null,
       shoppingList: action.payload.shopping,
+      status: IDLE,
+      error: null
+    };
+
+    expect(userStorageReducer(previousState, action)).toEqual(expectedState);
+  });
+});
+
+describe('flash shopping list', () => {
+  test('correctly updates state on request fetching', () => {
+    const action = {
+      type: flashShoppingList.pending,
+      payload: null
+    };
+
+    const previousState = {
+      groceryInventory: null,
+      shoppingList: {
+        shopping: {
+          name: {
+            qty: 0,
+            unit: 'string'
+          }
+        }
+      },
+      status: IDLE,
+      error: null
+    };
+
+    const expectedState = {
+      groceryInventory: previousState.groceryInventory,
+      shoppingList: previousState.shoppingList,
+      status: IN_FLIGHT,
+      error: null
+    };
+
+    expect(userStorageReducer(previousState, action)).toEqual(expectedState);
+  });
+
+  test('correctly updates state on response error', () => {
+    const action = {
+      type: flashShoppingList.rejected,
+      payload: 'Error Message'
+    };
+
+    const previousState = {
+      groceryInventory: null,
+      shoppingList: {
+        shopping: {
+          name: {
+            qty: 0,
+            unit: 'string'
+          }
+        }
+      },
+      status: IN_FLIGHT,
+      error: null
+    };
+
+    const expectedState = {
+      groceryInventory: previousState.groceryInventory,
+      shoppingList: previousState.shoppingList,
+      status: IDLE,
+      error: action.payload
+    };
+
+    expect(userStorageReducer(previousState, action)).toEqual(expectedState);
+  });
+
+  test('correctly updates state on response success', () => {
+    const action = {
+      type: flashShoppingList.fulfilled,
+      payload: {
+        inventory: {
+          name: {
+            qty: 0,
+            unit: 'string'
+          }
+        }
+      }
+    };
+
+    const previousState = {
+      groceryInventory: null,
+      shoppingList: {
+        shopping: {
+          name: {
+            qty: 0,
+            unit: 'string'
+          }
+        }
+      },
+      status: IN_FLIGHT,
+      error: null
+    };
+
+    const expectedState = {
+      groceryInventory: action.payload.inventory,
+      shoppingList: null,
       status: IDLE,
       error: null
     };
