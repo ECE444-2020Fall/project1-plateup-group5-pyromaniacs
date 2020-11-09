@@ -8,7 +8,6 @@ from flask import jsonify, request, Response
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_restx import fields, Resource, reqparse
 from initializer import api, app, db, login_manager, ma, scheduler, sp_api
-
 from models import User, Recipe, Instruction, ShoppingList, Ingredient, Equipment, Inventory
 
 from werkzeug.security import check_password_hash
@@ -625,7 +624,7 @@ class RecipeInventoryCheckerAPI(Resource):
         for entry in required:
             if entry in inventory:
                 if required[entry]['unit'] != inventory[entry]['unit']:
-                    return Response("Bad unit match while checking ingredient requirements for recipe.", status=200)
+                    return Response("Bad unit match while checking ingredient requirements for recipe.", status=400)
                 if inventory[entry]['quantity'] - required[entry]['quantity'] >= 0:
                     inventory[entry]['quantity'] -= required[entry]['quantity'] 
                 else:
@@ -778,7 +777,7 @@ class ShoppingFlashToInventoryAPI(Resource):
             else:
                 inventory_entry = Inventory.query.get((user_id, entry.ingredient_name))
                 if entry.unit != inventory_entry.unit:
-                    return Response("Bad unit match while flashing to inventory.")
+                    return Response("Bad unit match while flashing to inventory.", status=400)
                 inventory_entry.quantity = inventory_entry.quantity + entry.quantity
 
         shopping_res = ShoppingList.query.filter_by(user_id=user_id).delete()
@@ -956,7 +955,7 @@ if __name__ == '__main__':
     db.create_all()
     scheduler.start()
     updateRecipesToDB()
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=False)
 
     # Terminate background tasks
     scheduler.shutdown()
