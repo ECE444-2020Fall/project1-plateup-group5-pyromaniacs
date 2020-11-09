@@ -8,7 +8,9 @@ from flask import jsonify, request, Response
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_restx import fields, Resource, reqparse
 from initializer import api, app, db, login_manager, ma, scheduler, sp_api
+
 from models import User, Recipe, Instruction, ShoppingList, Ingredient, Equipment, Inventory
+
 
 from werkzeug.security import check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -286,9 +288,9 @@ class RecipeDetailAPI(Resource):
         new_instruction_equipment_text = request.json["equipment_text"]
         new_instruction_equipment_image = request.json["equipment_image"]
 
-        new_instruction_description=Instruction(new_instruction_recipe_id, new_instruction_step_num,
+        new_instruction_description = Instruction(new_instruction_recipe_id, new_instruction_step_num,
                                     new_instruction_step_instruction)
-        new_instruction_ingredient=Ingredient(new_instruction_recipe_id, new_instruction_step_num,
+        new_instruction_ingredient = Ingredient(new_instruction_recipe_id, new_instruction_step_num,
                                               new_instruction_ingredients_text,
                                               new_instruction_ingredients_image)
         new_instruction_equipment = Equipment(new_instruction_recipe_id, new_instruction_step_num,
@@ -928,10 +930,13 @@ def updateInstructionsToDB(recipe_id, instructions):
             "name": equipment["name"], 
             "img":"https://spoonacular.com/cdn/equipment_250x250/"+equipment["image"]
             } for equipment in step["equipment"]])
-        new_instruction=Instruction(recipe_id, new_instruction_step_num, new_instruction_step_instruction, \
-            new_instruction_ingredients, new_instruction_equipment)
-            
+        new_instruction=Instruction(recipe_id, new_instruction_step_num, new_instruction_step_instruction)
+        new_equipment=Equipment(recipe_id, new_instruction_step_num, new_instruction_equipment)
+        new_ingredients = Ingredient(recipe_id, new_instruction_step_num, new_instruction_ingredients)
+
+        db.session.add(new_equipment)
         db.session.add(new_instruction)
+        db.session.add(new_ingredients)
         
     db.session.commit()
 
