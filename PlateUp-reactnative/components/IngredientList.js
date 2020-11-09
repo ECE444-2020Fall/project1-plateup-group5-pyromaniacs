@@ -19,13 +19,9 @@ const DEFAULT_DIALOG_STATE = {
 class IngredientList extends React.Component {
   constructor(props) {
     super(props);
-    const { items } = this.props;
 
     this.state = {
-      ...DEFAULT_DIALOG_STATE,
-      // Can't rely on order of JS objects, so instead just sort the
-      // keys and use them to access the items in the props.
-      itemIngredients: Object.keys(items).sort()
+      ...DEFAULT_DIALOG_STATE
     };
   }
 
@@ -36,7 +32,7 @@ class IngredientList extends React.Component {
   handleSubmitDialog = () => {
     const { onAddItem, items } = this.props;
     const {
-      dialogIngredient, dialogQuantity, dialogUnits, itemIngredients
+      dialogIngredient, dialogQuantity, dialogUnits
     } = this.state;
 
     const ingredient = dialogIngredient.trim();
@@ -56,7 +52,7 @@ class IngredientList extends React.Component {
     // Only add item to list if the key isn't already in the list
     // The user's input will be trimmed and lowercased and be
     // compared to all the lowercased keys.
-    const keyExists = itemIngredients.some((itemIngredient) => (
+    const keyExists = Object.keys(items).some((itemIngredient) => (
       itemIngredient.toLowerCase() === ingredient.toLowerCase()
     ));
 
@@ -141,11 +137,14 @@ class IngredientList extends React.Component {
   }
 
   renderItems() {
-    const { itemIngredients } = this.state;
     const { items } = this.props;
 
+    // Can't rely on order of JS objects, so instead just sort the
+    // keys and use them to access the items in the props.
+    const itemsSorted = Object.keys(items).sort();
+
     return (
-      itemIngredients.map((ingredient) => {
+      itemsSorted.map((ingredient) => {
         const { qty, unit } = items[ingredient];
 
         return (
