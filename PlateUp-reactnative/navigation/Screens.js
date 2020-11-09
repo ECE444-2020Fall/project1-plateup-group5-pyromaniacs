@@ -12,7 +12,8 @@ import Register from '../screens/Register';
 import Filters from '../screens/Filters';
 import RecipeDetails from '../screens/RecipeDetails';
 import RecipeStepByStep from '../screens/RecipeStepByStep';
-import Inventory from '../screens/Inventory';
+import GroceryInventory from '../screens/GroceryInventory';
+import ShoppingList from '../screens/ShoppingList';
 
 // drawer
 import CustomDrawerContent from './Menu';
@@ -98,6 +99,48 @@ function HomeStack() {
   );
 }
 
+function GroceryInventoryStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="GroceryInventory"
+        component={GroceryInventory}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title="Grocery Inventory"
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          cardStyle: { backgroundColor: argonTheme.COLORS.GREY },
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function ShoppingListStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="ShoppingList"
+        component={ShoppingList}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title="Shopping List"
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          cardStyle: { backgroundColor: argonTheme.COLORS.GREY },
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
 export default function OnboardingStack() {
   return (
     <Stack.Navigator mode="card" headerMode="none">
@@ -153,7 +196,8 @@ function AppStack() {
       initialRouteName="Home"
     >
       <Drawer.Screen name="Home" component={HomeStack} />
-      <Drawer.Screen name="Inventory" component={Inventory} />
+      <Drawer.Screen name="GroceryInventory" component={GroceryInventoryStack} />
+      <Drawer.Screen name="ShoppingList" component={ShoppingListStack} />
     </Drawer.Navigator>
   );
 }
