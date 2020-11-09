@@ -104,7 +104,6 @@ class Inventory(db.Model):
         self.quantity = quantity
         self.unit = unit
 
-
 class ShoppingList(db.Model):
     __tablename__ = "shoppinglist"
 
