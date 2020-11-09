@@ -10,11 +10,7 @@ export const getGroceryInventory = createAsyncThunk('groceryInventory/getGrocery
   try {
     const response = await axios.get(`${env.SERVER_URL}/inventory/${userId}`, { timeout: 2000 });
 
-    console.log("redux");
-    console.log(response);
-
-    if (response === 'Unexpected end of stream') {
-      console.log('thrown');
+    if (response.data === 'unexpected end of stream') {
       throw new Error('Unexpected end of stream');
     }
 
@@ -28,11 +24,7 @@ export const updateGroceryInventory = createAsyncThunk('groceryInventory/updateG
   try {
     const response = await axios.post(`${env.SERVER_URL}/inventory/${userId}`, data, { timeout: 2000 });
 
-    console.log("redux");
-    console.log(response);
-
-    if (response === 'Unexpected end of stream') {
-      console.log('thrown');
+    if (response.data === 'unexpected end of stream') {
       throw new Error('Unexpected end of stream');
     }
 
@@ -47,11 +39,7 @@ export const getShoppingList = createAsyncThunk('shoppingList/getShoppingList', 
   try {
     const response = await axios.get(`${env.SERVER_URL}/shopping/${userId}`, { timeout: 2000 });
 
-    console.log("redux");
-    console.log(response);
-
-    if (response === 'Unexpected end of stream') {
-      console.log('thrown');
+    if (response.data === 'unexpected end of stream') {
       throw new Error('Unexpected end of stream');
     }
 
@@ -65,11 +53,7 @@ export const updateShoppingList = createAsyncThunk('shoppingList/updateShoppingL
   try {
     const response = await axios.post(`${env.SERVER_URL}/shopping/${userId}`, data, { timeout: 2000 });
 
-    console.log("redux");
-    console.log(response);
-
-    if (response === 'Unexpected end of stream') {
-      console.log('thrown');
+    if (response.data === 'unexpected end of stream') {
       throw new Error('Unexpected end of stream');
     }
 
@@ -83,12 +67,7 @@ export const flashShoppingList = createAsyncThunk('shoppingList/flashShoppingLis
   try {
     const response = await axios.post(`${env.SERVER_URL}/shopping/flash`, { user_id: userId }, { timeout: 2000 });
 
-    console.log(userId);
-    console.log("redux");
-    console.log(response);
-
-    if (response === 'Unexpected end of stream') {
-      console.log('thrown');
+    if (response.data === 'unexpected end of stream') {
       throw new Error('Unexpected end of stream');
     }
 

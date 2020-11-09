@@ -55,12 +55,14 @@ class ShoppingList extends React.Component {
     const { userStorage: { error, shoppingList } } = this.props;
 
     if (error) {
-      <Text
-        center
-        onPress={this.handleReload}
-      >
-        Something went wrong. Click to reload.
-      </Text>;
+      return (
+        <Text
+          center
+          onPress={this.handleReload}
+        >
+          Something went wrong. Click to reload.
+        </Text>
+      );
     }
 
     return (
