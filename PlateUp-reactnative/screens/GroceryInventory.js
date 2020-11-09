@@ -29,23 +29,12 @@ class GroceryInventory extends React.Component {
     });
   }
 
-  handleDeleteItem = async (newItems) => {
+  handlePostInventory = async (newItems) => {
     const { updateGroceryInventory: updateGroceryInventoryRequest, userId } = this.props;
 
     this.setState({ loading: true }, async () => {
       await updateGroceryInventoryRequest({
-        id: userId, data: { inventory: newItems }
-      });
-      this.setState({ loading: false });
-    });
-  }
-
-  handleAddItem = async (newItems) => {
-    const { updateGroceryInventory: updateGroceryInventoryRequest, userId } = this.props;
-
-    this.setState({ loading: true }, async () => {
-      await updateGroceryInventoryRequest({
-        id: userId, data: { inventory: newItems }
+        userId, data: { inventory: newItems }
       });
       this.setState({ loading: false });
     });
@@ -54,7 +43,7 @@ class GroceryInventory extends React.Component {
   renderContent() {
     const { userStorage: { error, groceryInventory } } = this.props;
 
-    if (error || !groceryInventory) {
+    if (error) {
       return (
         <Text
           center
@@ -67,9 +56,9 @@ class GroceryInventory extends React.Component {
 
     return (
       <IngredientList
-        items={groceryInventory}
-        onAddItem={this.handleAddItem}
-        onDeleteItem={this.handleDeleteItem}
+        items={groceryInventory || {}}
+        onAddItem={this.handlePostInventory}
+        onDeleteItem={this.handlePostInventory}
       />
     );
   }

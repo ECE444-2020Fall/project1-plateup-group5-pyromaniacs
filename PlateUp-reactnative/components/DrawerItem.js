@@ -19,15 +19,6 @@ class DrawerItem extends React.Component {
             color={focused ? 'white' : argonTheme.COLORS.PRIMARY}
           />
         );
-      case 'Meal Planning':
-        return (
-          <Icon
-            name="calendar-date"
-            family="ArgonExtra"
-            size={14}
-            color={focused ? 'white' : argonTheme.COLORS.TEXT_COLOR}
-          />
-        );
       case 'Shopping List':
         return (
           <Icon

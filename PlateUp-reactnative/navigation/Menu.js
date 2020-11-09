@@ -67,11 +67,6 @@ class CustomDrawerContent extends React.Component {
               key={2}
               focused={state.index === 2}
             />
-            <DrawerCustomItem
-              title="Meal Planning"
-              key={3}
-              focused={state.index === 3}
-            />
             <Block flex style={{ marginTop: 24, marginVertical: 8, paddingHorizontal: 8 }}>
               <Block style={{ borderColor: 'rgba(0,0,0,0.2)', width: '100%', borderWidth: StyleSheet.hairlineWidth }} />
             </Block>

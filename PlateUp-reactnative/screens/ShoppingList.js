@@ -31,23 +31,12 @@ class ShoppingList extends React.Component {
     });
   }
 
-  handleDeleteItem = async (newItems) => {
+  handlePostShoppingList = async (newItems) => {
     const { updateShoppingList: updateShoppingListRequest, userId } = this.props;
 
     this.setState({ loading: true }, async () => {
       await updateShoppingListRequest({
-        id: userId, data: { shopping: newItems }
-      });
-      this.setState({ loading: false });
-    });
-  }
-
-  handleAddItem = async (newItems) => {
-    const { updateShoppingList: updateShoppingListRequest, userId } = this.props;
-
-    this.setState({ loading: true }, async () => {
-      await updateShoppingListRequest({
-        id: userId, data: { shopping: newItems }
+        userId, data: { shopping: newItems }
       });
       this.setState({ loading: false });
     });
@@ -65,7 +54,7 @@ class ShoppingList extends React.Component {
   renderContent() {
     const { userStorage: { error, shoppingList } } = this.props;
 
-    if (error || !shoppingList) {
+    if (error) {
       <Text
         center
         onPress={this.handleReload}
@@ -78,9 +67,9 @@ class ShoppingList extends React.Component {
       <Block flex>
         <Block flex>
           <IngredientList
-            items={shoppingList}
-            onAddItem={this.handleAddItem}
-            onDeleteItem={this.handleDeleteItem}
+            items={shoppingList || {}}
+            onAddItem={this.handlePostShoppingList}
+            onDeleteItem={this.handlePostShoppingList}
           />
         </Block>
         <Block center>
@@ -119,6 +108,11 @@ const styles = StyleSheet.create({
     shadowRadius: 0,
     shadowOpacity: 0,
     backgroundColor: argonTheme.COLORS.PRIMARY
+  },
+  buttonText: {
+    fontWeight: 'bold',
+    fontSize: 14,
+    color: argonTheme.COLORS.WHITE,
   },
   container: {
     paddingVertical: theme.SIZES.BASE,
