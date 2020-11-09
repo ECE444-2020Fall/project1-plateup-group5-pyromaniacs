@@ -1,42 +1,40 @@
 import React from 'react';
 
-import { List } from '../components';
+import { IngredientList } from '../components';
 
-const testItems = [
-  { key: 'Milk', value: '2L' },
-  { key: 'Ground Beef', value: '500g' },
-  { key: 'Shrimp', value: '300g' },
-  { key: 'Milk2', value: '2L' },
-  { key: 'Ground Beef2', value: '500g' },
-  { key: 'Shrimp2', value: '300g' },
-  { key: 'Milk3', value: '2L' },
-  { key: 'Ground Beef3', value: '500g' },
-  { key: 'Shrimp3', value: '300g' },
-  { key: 'Milk4', value: '2L' },
-  { key: 'Ground Beef4', value: '500g' },
-  { key: 'Shrimp4', value: '300g' },
-  { key: 'Milk5', value: '2L' },
-  { key: 'Ground Beef5', value: '500g' },
-  { key: 'Shrimp5', value: '300g' },
-];
+const testItems = {
+  Milk: { qty: 2, units: 'L' },
+  'Ground Beef': { qty: 500, units: 'g' },
+  Shrimp: { qty: 300, units: 'g' },
+  Milk2: { qty: 2, units: 'L' },
+  'Ground Beef2': { qty: 500, units: 'g' },
+  Shrimp2: { qty: 300, units: 'g' },
+  Milk3: { qty: 2, units: 'L' },
+  'Ground Beef3': { qty: 500, units: 'g' },
+  Shrimp3: { qty: 300, units: 'g' },
+  Milk4: { qty: 2, units: 'L' },
+  'Ground Beef4': { qty: 500, units: 'g' },
+  Shrimp4: { qty: 300, units: 'g' },
+  Milk5: { qty: 2, units: 'L' },
+  'Ground Beef5': { qty: 500, units: 'g' },
+  Shrimp5: { qty: 300, units: 'g' },
+};
 
 class Inventory extends React.Component {
-  handleDeleteItem = (key) => {
-    console.log(`Item with key '${key}' deleted!`);
+  handleDeleteItem = (newItems) => {
+    console.log('Items after deletion: ', newItems);
   }
 
-  handleAddItem = (key, val) => {
-    console.log(`Item with (key,val) '(${key},${val})' added!`);
+  handleAddItem = (newItems) => {
+    console.log('Items after addition: ', newItems);
   }
 
   render() {
     return (
-      <List
+      <IngredientList
         items={testItems}
         onAddItem={this.handleAddItem}
         onDeleteItem={this.handleDeleteItem}
-        keyName="Ingredient"
-        valName="Quantity"
       />
     );
   }

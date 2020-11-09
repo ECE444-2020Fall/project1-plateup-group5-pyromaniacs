@@ -8,7 +8,9 @@ from flask import jsonify, request, Response
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_restx import fields, Resource, reqparse
 from initializer import api, app, db, login_manager, ma, scheduler, sp_api
+
 from models import User, Recipe, Instruction, ShoppingList, Ingredient, Equipment
+
 from werkzeug.security import check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 
@@ -20,8 +22,10 @@ plateupR = api.namespace('plate-up', description='PlateUp operations')
 userR = api.namespace('user', description='User operations')
 loginR = api.namespace('login', description='Login/logout operations')
 mailR = api.namespace('mail', description='Mailing operations')
-recipeR = api.namespace('recipe', description='Preview of recipe')
-recipeDetailR = api.namespace('recipeDetail', description='Insturction of recipe')
+recipeR = api.namespace('recipe', description='Preview of recipes')
+recipeDetailR = api.namespace('recipeDetail', description='Instruction level details for recipes')
+inventoryR = api.namespace('inventory', description='User inventory operations')
+shoppingR = api.namespace('shopping', description='User shopping list operations')
 
 # -----------------------------------------------------------------------------
 # DB Schemas (Marshmallow)
@@ -76,7 +80,6 @@ class UserAPI(Resource):
 
     # @login_required
     @userR.doc(description="Get information for all users.")
-    @login_required
     def get(self):
         all_users = User.query.all()
         result = users_schema.dump(all_users)
@@ -544,6 +547,202 @@ class RecipeAPI(Resource):
         return_dict = {"recipes": return_result, "is_random": self.random_pick}
         return jsonify(return_dict)
 
+# Recipe-inventory checker API
+@recipeR.route('/<recipe_id>/check/<user_id>', methods=['GET'])
+class RecipeInventoryCheckerAPI(Resource):
+    @login_required
+    def get(self, recipe_id, user_id):
+        required_res = Recipe.query.get(recipe_id).ingredients
+        required_res = json.loads(required_res)
+        inventory_res = Inventory.query.filter_by(user_id=user_id).all()
+
+        required = {}
+        for ingredient_name in required_res:
+            required[ingredient_name] = {
+                "quantity": float(required_res[ingredient_name].split()[0]),
+                "unit": required_res[ingredient_name].split()[1] if len(required_res[ingredient_name].split()) > 1 else ""
+            }
+
+        inventory = {}
+        for entry in inventory_res:
+            inventory[entry.ingredient_name] = {
+                "quantity": entry.quantity,
+                "unit": entry.unit
+            }
+
+        has_missing = False
+        for entry in required:
+            if entry in inventory:
+                if required[entry]['unit'] != inventory[entry]['unit']:
+                    return Response("Bad unit match while checking ingredient requirements for recipe.", status=400)
+                if inventory[entry]['quantity'] - required[entry]['quantity'] >= 0:
+                    inventory[entry]['quantity'] -= required[entry]['quantity'] 
+                else:
+                    has_missing = True
+                    new_entry = ShoppingList(user_id, entry, required[entry]['quantity']-inventory[entry]['quantity'], inventory[entry]['quantity'])
+                    db.session.add(new_entry)
+            else: 
+                has_missing = True
+                new_entry = ShoppingList(user_id, entry, required[entry]['quantity'], required[entry]['unit'])
+                db.session.add(new_entry)
+
+        if has_missing:
+            db.session.commit()
+            return Response("Not enough ingredients, added to shopping list", status=200)
+
+        for entry in inventory:
+            inventory_entry = Inventory.query.get((user_id, entry))
+            if inventory[entry]['quantity'] != 0:
+                inventory_entry.quantity = inventory[entry]['quantity']
+            else:
+                db.session.delete(inventory_entry)
+        
+        db.session.commit()
+
+        return Response("Inventory updated, enough ingredients to proceed!", status=200)
+
+# Inventory API
+@inventoryR.route('/<user_id>', methods=['GET', 'POST'])
+class InventoryAPI(Resource):
+    quantity_fields = inventoryR.model('Quantity', {
+        'qty': fields.Float,
+        'unit': fields.String,
+    })
+    
+    ingredient_fields = inventoryR.model('Ingredient', {
+        'name': fields.Nested(quantity_fields),
+    })
+
+    inventory_fields = inventoryR.model('InventoryDetails', {
+        'inventory': fields.Nested(ingredient_fields),
+    })
+
+    @inventoryR.doc(description="Retrieving the user's current inventory.")
+    @login_required
+    def get(self, user_id):
+        inventory_res = Inventory.query.filter_by(user_id=user_id).all()
+        inventory = {}
+        for entry in inventory_res:
+            inventory[entry.ingredient_name] = {"qty": entry.quantity, "unit": entry.unit}   
+        response = {"inventory": inventory}
+        return jsonify(response)
+
+    @inventoryR.doc(description="Posting a new or updated version of the user's inventory.")
+    @inventoryR.expect(inventory_fields, validate=True)
+    @login_required
+    def post(self, user_id):
+        inventory = request.json['inventory']
+        inventory_res = Inventory.query.filter_by(user_id=user_id).delete()
+
+        for entry_name in inventory:
+            new_entry = Inventory(user_id, entry_name, inventory[entry_name]["qty"], inventory[entry_name]["unit"])
+            db.session.add(new_entry)
+            
+        db.session.commit()
+        
+        inventory_res = Inventory.query.filter_by(user_id=user_id).all()
+        inventory = {}
+        
+        for entry in inventory_res:
+            inventory[entry.ingredient_name] = {"qty": entry.quantity, "unit": entry.unit}   
+        
+        response = {"inventory": inventory}
+
+        return jsonify(response)
+
+# ShoppingList API
+@shoppingR.route('/<user_id>', methods=['GET', 'POST'])
+class ShoppingListAPI(Resource):
+    quantity_fields = shoppingR.model('Quantity', {
+        'qty': fields.Float,
+        'unit': fields.String,
+    })
+    
+    ingredient_fields = shoppingR.model('Ingredient', {
+        'name': fields.Nested(quantity_fields),
+    })
+
+    shopping_fields = shoppingR.model('ShoppingList', {
+        'shopping': fields.Nested(ingredient_fields)
+    })
+
+    @shoppingR.doc(description="Retrieving the user's current shopping list.")
+    @login_required
+    def get(self, user_id):
+
+        shopping_res = ShoppingList.query.filter_by(user_id=user_id).all()
+        shopping = {}
+
+        for entry in shopping_res:
+            shopping[entry.ingredient_name] = {"qty": entry.quantity, "unit": entry.unit}   
+        response = {"shopping": shopping}
+        return jsonify(response)
+
+    @shoppingR.doc(description="Posting a new or updated version of the user's shopping list.")
+    @shoppingR.expect(shopping_fields, validate=True)
+    @login_required
+    def post(self, user_id):
+        shopping = request.json['shopping']
+        shopping_res = ShoppingList.query.filter_by(user_id=user_id).delete()
+
+        for entry_name in shopping:
+            new_entry = ShoppingList(user_id, entry_name, shopping[entry_name]["qty"], shopping[entry_name]["unit"])
+            db.session.add(new_entry)
+            
+        db.session.commit()
+        
+        shopping_res = ShoppingList.query.filter_by(user_id=user_id).all()
+        shopping = {}
+        
+        for entry in shopping_res:
+            shopping[entry.ingredient_name] = {"qty": entry.quantity, "unit": entry.unit}   
+        
+        response = {"shopping": shopping}
+
+        return jsonify(response)
+
+# ShoppingList flash to inventory API
+@shoppingR.route('/flash', methods=['POST'])
+class ShoppingFlashToInventoryAPI(Resource):
+    resource_fields = shoppingR.model('User', {
+        'user_id': fields.String,
+    })
+
+    @inventoryR.doc(description="Push the user's shopping list to the user's inventory.")
+    @inventoryR.expect(resource_fields, validate=True)
+    @login_required
+    def post(self):
+        user_id =  request.json['user_id']
+        shopping_res = ShoppingList.query.filter_by(user_id=user_id).all()
+        inventory_res = Inventory.query.filter_by(user_id=user_id).all()
+
+        inventory = {}
+        for entry in inventory_res:
+            inventory[entry.ingredient_name] = entry.quantity
+
+        for entry in shopping_res:
+            if entry.ingredient_name not in inventory:
+                new_entry = Inventory(user_id, entry.ingredient_name, entry.quantity, entry.unit)
+                db.session.add(new_entry)
+            else:
+                inventory_entry = Inventory.query.get((user_id, entry.ingredient_name))
+                if entry.unit != inventory_entry.unit:
+                    return Response("Bad unit match while flashing to inventory.", status=400)
+                inventory_entry.quantity = inventory_entry.quantity + entry.quantity
+
+        shopping_res = ShoppingList.query.filter_by(user_id=user_id).delete()
+        db.session.commit()
+        
+        inventory_res = Inventory.query.filter_by(user_id=user_id).all()
+        inventory = {}
+        
+        for entry in inventory_res:
+            inventory[entry.ingredient_name] = {"qty": entry.quantity, "unit": entry.unit}   
+        
+        response = {"inventory": inventory}
+
+        return jsonify(response)
+
 
 # -----------------------------------------------------------------------------
 # Utility functions
@@ -662,7 +861,7 @@ def updateRecipesToDB():
                     db.session.commit()
 
             except Exception as e:
-                print("recipe not updated due to missing fields or other error: %s \n"%e)
+                print("One recipe not updated due to missing fields or other error: %s \n"%e)
                 print("skipping...")
 
     print("done updating recipes.")
@@ -709,7 +908,7 @@ if __name__ == '__main__':
     db.create_all()
     scheduler.start()
     updateRecipesToDB()
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', debug=False)
 
     # Terminate background tasks
     scheduler.shutdown()
