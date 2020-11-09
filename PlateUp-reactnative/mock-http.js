@@ -166,6 +166,8 @@ export default function mockHTTP() {
         }
       }));
 
+      // Return the body sent as the response as this is how the real server would behave
+      // assuming a successful request
       this.post('/inventory/:id', (schema, request) => (JSON.parse(request.requestBody)));
 
       this.get('/shopping/:id', () => ({
@@ -176,6 +178,8 @@ export default function mockHTTP() {
         }
       }));
 
+      // Return the body sent as the response as this is how the real server would behave
+      // assuming a successful request
       this.post('/shopping/:id', (schema, request) => (JSON.parse(request.requestBody)));
 
       this.post('/shopping/flash', () => ({
