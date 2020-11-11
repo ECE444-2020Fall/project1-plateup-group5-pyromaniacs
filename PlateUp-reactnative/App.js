@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 // eslint-disable-next-line import/no-unresolved
 import { enableScreens } from 'react-native-screens';
 import { NavigationContainer } from '@react-navigation/native';
-import store from './redux/store';
+import { store } from './redux/store';
 import Screens from './navigation/Screens';
 import mockHTTP from './mock-http';
 import { argonTheme } from './constants';
