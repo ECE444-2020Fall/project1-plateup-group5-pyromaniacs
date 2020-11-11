@@ -16,7 +16,7 @@ class DrawerItem extends React.Component {
             name="shop"
             family="ArgonExtra"
             size={14}
-            color={focused ? 'white' : argonTheme.COLORS.PRIMARY}
+            color={focused ? 'white' : argonTheme.COLORS.TEXT_COLOR}
           />
         );
       case 'Shopping List':
