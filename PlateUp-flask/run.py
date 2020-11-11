@@ -1,4 +1,3 @@
-import time
 import random
 import json
 import os
@@ -157,7 +156,8 @@ class UserAPI(Resource):
         Validates the User Information resource fields.
         Login is not required as this is for new user account creation.
     '''
-    @userR.doc(description="Register a new user to the system with complete information.")
+    @userR.doc(description="Register a new user to the system with \
+        complete information.")
     @userR.expect(resource_fields, validate=True)
     def post(self):
         name = request.json['name']
@@ -176,7 +176,8 @@ class UserAPI(Resource):
 
         new_user = User(name, email, password)
 
-        # Sends welcome email to user, if it doesn't work, then the email address is likely invalid
+        # Sends welcome email to user, if it doesn't work, then the email 
+        # address is likely invalid
         if not send_welcome_email(email, new_user):
             return Response(
                 "Mail not sent! Invalid email or server issues, user not saved.",
@@ -219,11 +220,10 @@ class LoginAPI(Resource):
         HTTP POST /login
         Logins the user into the system with the provided email and password.
         The password is checked against the hash stored in the database.
-        A hash of the password is stored for security purposes (uncrackable if DB leak).
+        A hash of the password is stored for security purposes.
     '''
-    @loginR.doc(
-        description="Logging a user into the system and authenticating for access to deeper APIs."
-    )
+    @loginR.doc(description="Logging a user into the system and authenticating for \
+         access to deeper APIs.")
     @loginR.expect(resource_fields, validate=True)
     def post(self):
         email = request.json['email']
@@ -235,13 +235,14 @@ class LoginAPI(Resource):
             return user_schema.jsonify(user)
 
         return Response(
-            "Login failed! Please confirm that the email and password are correct.",
+            "Login failed! Please confirm that the email and password \
+                are correct.",
             status=403
         )
 
     '''
         HTTP DELETE /login
-        Logs the current user out, based on session id from the client side. 
+        Logs the current user out, based on session id from the client side.
     '''
     @loginR.doc(description="Logging current user out.")
     @login_required
@@ -251,8 +252,8 @@ class LoginAPI(Resource):
         return Response("Logout successful. User %s" % userId, status=200)
 
 
-# The mail route used for sending messages to the user, including welcome emails
-# and shopping list reminders.
+# The mail route used for sending messages to the user, including
+# welcome emails and shopping list reminders.
 @mailR.route('')
 class MailAPI(Resource):
     '''
@@ -276,9 +277,8 @@ class MailAPI(Resource):
 
         return Response("NOT OK - Mail NOT Sent!", status=400)
 
+
 # Comment
-
-
 @recipeR.route('/<id>', methods=['GET', 'POST'])
 class RecipeDetailAPI(Resource):
     resourceFields = recipeR.model('Information to get recipe instruction', {
@@ -345,8 +345,10 @@ class RecipeDetailAPI(Resource):
 
             return_ingredient = ingredients_schema.dump(step_ingredient)
             return_equipment = equipments_schema.dump(step_equipement)
-            return_dict = {"step_instruction": step_instruction.step_instruction,
-                           "ingredients": return_ingredient, "equipment": return_equipment, }
+            return_dict = {
+                "step_instruction": step_instruction.step_instruction,
+                "ingredients": return_ingredient, "equipment": return_equipment
+            }
             dict_list.append(return_dict)
         return dict_list
 
@@ -354,19 +356,19 @@ class RecipeDetailAPI(Resource):
     def get(self, id):
         recipe_id = id
 
-        recipe_instruction_list_unsorted = self.__get_recipe_instructions_by_id(
-            recipe_id)
-        recipe_ingredient_list_unsorted = self.__get_recipe_ingredient_by_id(
-            recipe_id)
-        recipe_equipment_list_unsorted = self.__get_recipe_equipment_by_id(
-            recipe_id)
+        recipe_instruction_list_unsorted = \
+            self.__get_recipe_instructions_by_id(recipe_id)
+        recipe_ingredient_list_unsorted = \
+            self.__get_recipe_ingredient_by_id(recipe_id)
+        recipe_equipment_list_unsorted = \
+            self.__get_recipe_equipment_by_id(recipe_id)
 
-        recipe_instruction_list_sorted = self.__sort_by_step(
-            recipe_instruction_list_unsorted)
-        recipe_ingredient_list_sorted = self.__sort_by_step(
-            recipe_ingredient_list_unsorted)
-        recipe_equipment_list_sorted = self.__sort_by_step(
-            recipe_equipment_list_unsorted)
+        recipe_instruction_list_sorted = \
+            self.__sort_by_step(recipe_instruction_list_unsorted)
+        recipe_ingredient_list_sorted = \
+            self.__sort_by_step(recipe_ingredient_list_unsorted)
+        recipe_equipment_list_sorted = \
+            self.__sort_by_step(recipe_equipment_list_unsorted)
 
         recipe_preview = self.__get_recipe_preview_by_id(id)
 
@@ -375,8 +377,11 @@ class RecipeDetailAPI(Resource):
 
         if len(recipe_preview) == 0:
             return Response("recipe preview not found!", status=500)
-        return_step_list = self.__organize_return_object(recipe_instruction_list_sorted, recipe_ingredient_list_sorted,
-                                                         recipe_equipment_list_sorted)
+        return_step_list = self.__organize_return_object(
+                recipe_instruction_list_sorted,
+                recipe_ingredient_list_sorted,
+                recipe_equipment_list_sorted
+            )
         return_preview = recipe_schema.dump(recipe_preview[0])
         return_object = {"recipe_preview": return_preview,
                          "recipe_instruction": return_step_list}
@@ -395,16 +400,27 @@ class RecipeDetailAPI(Resource):
         new_instruction_equipment_text = request.json["equipment_text"]
         new_instruction_equipment_image = request.json["equipment_image"]
 
-        new_instruction_description = Instruction(new_instruction_recipe_id, new_instruction_step_num,
-                                                  new_instruction_step_instruction)
-        new_instruction_ingredient = Ingredient(new_instruction_recipe_id, new_instruction_step_num,
-                                                new_instruction_ingredients_text,
-                                                new_instruction_ingredients_image)
-        new_instruction_equipment = Equipment(new_instruction_recipe_id, new_instruction_step_num,
-                                              new_instruction_equipment_text,
-                                              new_instruction_equipment_image)
+        new_instruction_description = Instruction(
+                new_instruction_recipe_id,
+                new_instruction_step_num,
+                new_instruction_step_instruction
+            )
+        new_instruction_ingredient = Ingredient(
+                new_instruction_recipe_id,
+                new_instruction_step_num,
+                new_instruction_ingredients_text,
+                new_instruction_ingredients_image
+            )
+        new_instruction_equipment = Equipment(
+            new_instruction_recipe_id,
+            new_instruction_step_num,
+            new_instruction_equipment_text,
+            new_instruction_equipment_image
+        )
+
         if self.__not_exist_instruction(new_instruction_description):
             db.session.add(new_instruction_description)
+
         db.session.add(new_instruction_ingredient)
         db.session.add(new_instruction_equipment)
         db.session.commit()
@@ -524,20 +540,34 @@ class RecipeAPI(Resource):
         filter_time_h = int(filter_time_h)
         filter_time_min = int(filter_time_min)
         recipe_list_same_h = [
-            recipe for recipe in recipe_list if recipe.time_h == int(filter_time_h)]
+            recipe for recipe in recipe_list
+            if recipe.time_h == int(filter_time_h)
+        ]
         recipe_list_same_h = [
-            recipe for recipe in recipe_list_same_h if recipe.time_min <= int(filter_time_min)]
+            recipe for recipe in recipe_list_same_h
+            if recipe.time_min <= int(filter_time_min)
+        ]
         recipe_list = [
-            recipe for recipe in recipe_list if recipe.time_h < int(filter_time_h)]
+            recipe for recipe in recipe_list
+            if recipe.time_h < int(filter_time_h)
+        ]
         recipe_list = recipe_list_same_h+recipe_list
         return recipe_list
 
     '''
-    [{"name": "apple", "img": "https://spoonacular.com/cdn/ingredients_250x250/apple.jpg"}, 
-    {"name": "squash", "img": "https://spoonacular.com/cdn/ingredients_250x250/butternut-squash.jpg"},
-    {"name": "soup", "img": "https://spoonacular.com/cdn/ingredients_250x250/"}]
+    [
+        {
+            "name": "apple",
+            "img": "https://spoonacular.com/cdn/ingredients_250x250/apple.jpg"
+        },
+        {   "name": "squash",
+            "img": "https://spoonacular.com/cdn/ingredients_250x250/ \
+                butternut-squash.jpg"},
+        {   "name": "soup",
+            "img": "https://spoonacular.com/cdn/ingredients_250x250/"
+        }
+    ]
     '''
-
     def __get_ingredient_from_recipe(self, recipe):
         ingredient_json = recipe.ingredients
         ingredient_list = json.loads(ingredient_json)
@@ -566,22 +596,24 @@ class RecipeAPI(Resource):
         for recipe in recipe_list:
             ingredients_name_list = self.__get_ingredient_from_recipe(recipe)
 
-            if self.__check_ingredient_in_inventory(ingredients_name_list, user_id):
+            if self.__check_ingredient_in_inventory(
+                ingredients_name_list, user_id
+            ):
                 new_recipe_list.append(recipe)
         return new_recipe_list
 
-    def __filter_recipe(self, recipe_list, filter_cost, filter_time_h, filter_time_min,
-                        filter_has_ingredient, user_id):
+    def __filter_recipe(self, recipe_list, filter_cost, filter_time_h,
+                        filter_time_min, filter_has_ingredient, user_id):
         if len(recipe_list) == 0:
             self.random_pick = True
             recipe_list = db.session.query(Recipe).all()
 
-        if filter_cost != None:
+        if filter_cost is not None:
             recipe_list = self.__filter_by_cost(recipe_list, filter_cost)
-        if filter_time_h != None and filter_time_min != None:
+        if filter_time_h is not None and filter_time_min is not None:
             recipe_list = self.__filter_by_time(
                 recipe_list, filter_time_h, filter_time_min)
-        if filter_has_ingredient == True:
+        if filter_has_ingredient:
             recipe_list = self.__filter_by_ingredients(recipe_list, user_id)
 
         if len(recipe_list) == 0:
@@ -607,9 +639,16 @@ class RecipeAPI(Resource):
             new_recipe_time_h = new_recipe_time_h+int(new_recipe_time_min/60)
             new_recipe_time_min = new_recipe_time_min % 60
 
-        new_recipe = Recipe(new_recipe_name, new_recipe_ingredients, new_recipe_time_h,
-                            new_recipe_time_min, new_recipe_cost, new_recipe_preview_text,
-                            new_recipe_preview_media_url, new_recipe_tags)
+        new_recipe = Recipe(
+            new_recipe_name,
+            new_recipe_ingredients,
+            new_recipe_time_h,
+            new_recipe_time_min,
+            new_recipe_cost,
+            new_recipe_preview_text,
+            new_recipe_preview_media_url,
+            new_recipe_tags
+        )
 
         db.session.add(new_recipe)
         db.session.commit()
@@ -618,7 +657,14 @@ class RecipeAPI(Resource):
         return Response("recipe inserted!", status=200)
 
     # search recipe by Name and Filter
-    # Example: http://127.0.0.1:5000/recipe?Search=juice&Filter_time_h=10&Filter_time_min=0&Filter_cost=10000&Page=0&Limit=2
+    # Example: 
+    # http://127.0.0.1:5000/recipe?
+    # Search=juice&
+    # Filter_time_h=10&
+    # Filter_time_min=0&
+    # Filter_cost=10000&
+    # Page=0&
+    # Limit=2
     @recipeR.doc(description="Get recipe preview json by name and filter",
                  params={'Search': {'description': 'search by an ingredient, recipe name, or tag', 'type': 'string'},
                          'Filter_time_h': {'description': 'filter by max hours', 'type': 'int'},
@@ -636,8 +682,7 @@ class RecipeAPI(Resource):
         filter_time_h = request.args.get('Filter_time_h')
         filter_time_min = request.args.get('Filter_time_min')
         filter_cost = request.args.get('Filter_cost')
-        filter_has_ingredients = bool(request.args.get(
-            'Filter_has_ingredients') == True) if request.args.get('Filter_has_ingredients') else False
+        filter_has_ingredients = bool(request.args.get('Filter_has_ingredients') == True) if request.args.get('Filter_has_ingredients') else False
         limit = int(request.args.get('Limit')
                     ) if request.args.get('Limit') else 20
         page = int(request.args.get('Page')) if request.args.get('Page') else 0
@@ -807,13 +852,14 @@ class InventoryAPI(Resource):
     '''
     HTTP {POST} /inventory/<user_id>
 
-    Updates the user's current inventory, given an input formatted as depicted in the 
-    resource field "inventory_fields" documentation. 
+    Updates the user's current inventory, given an input formatted as depicted
+    in the resource field "inventory_fields" documentation.
 
-    Returns the updated inventory, which should be the same as the posted document
-    less any errors.
+    Returns the updated inventory, which should be the same as the posted
+    document less any errors.
     '''
-    @inventoryR.doc(description="Posting a new or updated version of the user's inventory.")
+    @inventoryR.doc(description="Posting a new or updated version of the \
+        user's inventory.")
     @inventoryR.expect(inventory_fields, validate=True)
     @login_required
     def post(self, user_id):
@@ -822,7 +868,10 @@ class InventoryAPI(Resource):
 
         for entry_name in inventory:
             new_entry = Inventory(
-                user_id, entry_name, inventory[entry_name]["qty"], inventory[entry_name]["unit"])
+                user_id, entry_name,
+                inventory[entry_name]["qty"], 
+                inventory[entry_name]["unit"]
+            )
             db.session.add(new_entry)
 
         db.session.commit()
@@ -839,15 +888,16 @@ class InventoryAPI(Resource):
         return jsonify(response)
 
 
-# The shopping route is used in a similar manner as the inventory route, for getting and
-# setting the user's shopping list.
+# The shopping route is used in a similar manner as the inventory route, 
+# for getting and setting the user's shopping list.
 @shoppingR.route('/<user_id>', methods=['GET', 'POST'])
 class ShoppingListAPI(Resource):
     '''
-        Resource model definitions for the inventory details required to update a
-        user's shopping list. It is defined in three components to clarify the nested
-        structure. Deliberately formatted similarly to inventory as these two
-        are made to be easily transferrable (shopping list > inventory and vice versa).
+        Resource model definitions for the inventory details required
+        to update a user's shopping list. It is defined in three components
+        to clarify the nested structure. Deliberately formatted similarly to
+        inventory as these two are made to be easily transferrable
+        (shopping list > inventory and vice versa).
 
         The full structure looks like this:
         shopping: {
@@ -877,8 +927,8 @@ class ShoppingListAPI(Resource):
     '''
     HTTP GET /shopping/<user_id>
 
-    Returns the user's current shopping list formatted as depicted in the resource
-    field "shopping_fields" documentation. 
+    Returns the user's current shopping list formatted as depicted in the
+    resource field "shopping_fields" documentation.
     '''
     @shoppingR.doc(description="Retrieving the user's current shopping list.")
     @login_required
@@ -896,13 +946,14 @@ class ShoppingListAPI(Resource):
     '''
     HTTP {POST} /shopping/<user_id>
 
-    Updates the user's current shopping list, given an input formatted as depicted in the 
-    resource field "shopping_fields" documentation. 
+    Updates the user's current shopping list, given an input formatted
+    as depicted in the resource field "shopping_fields" documentation.
 
-    Returns the updated shopping list, which should be the same as the posted document
-    less any errors.
+    Returns the updated shopping list, which should be the same as the
+    posted document less any errors.
     '''
-    @shoppingR.doc(description="Posting a new or updated version of the user's shopping list.")
+    @shoppingR.doc(description="Posting a new or updated version of the \
+        user's shopping list.")
     @shoppingR.expect(shopping_fields, validate=True)
     @login_required
     def post(self, user_id):
@@ -911,7 +962,10 @@ class ShoppingListAPI(Resource):
 
         for entry_name in shopping:
             new_entry = ShoppingList(
-                user_id, entry_name, shopping[entry_name]["qty"], shopping[entry_name]["unit"])
+                user_id, entry_name,
+                shopping[entry_name]["qty"], 
+                shopping[entry_name]["unit"]
+            )
             db.session.add(new_entry)
 
         db.session.commit()
@@ -928,15 +982,16 @@ class ShoppingListAPI(Resource):
         return jsonify(response)
 
 
-# The shopping flash root that pushes all the user's shopping list items into
-# their inventory, assuming that the user has purchased all the required ingredients.
+# The shopping flash root that pushes all the user's shopping list items
+# into their inventory, assuming that the user has purchased all the
+# required ingredients.
 # TODO: expand flash functionality to allow partial flashes
 @shoppingR.route('/flash', methods=['POST'])
 class ShoppingFlashToInventoryAPI(Resource):
     '''
-    The only field required is the user id, but used as a post to follow REST protocols
-    as this endpoint updates the data, not suitable for get. More param can be more 
-    easily added in the future with a defined resource model. 
+    The only field required is the user id, but used as a post to follow REST
+    protocols as this endpoint updates the data, not suitable for get. More
+    param can be more easily added in the future with a defined resource model.
     '''
     resource_fields = shoppingR.model('User', {
         'user_id': fields.String,
@@ -945,14 +1000,16 @@ class ShoppingFlashToInventoryAPI(Resource):
     '''
     HTTP {POST} /shopping/flash
 
-    Updates the user's current inventory based on the items in the shopping list.
+    Updates the user's current inventory based on the items in the
+    shopping list.
 
     For items that don't exist, new items are created in the user's inventory.
-    For items that already exist, their quantities are modified. 
+    For items that already exist, their quantities are modified.
 
     Returns the updated user inventory.
     '''
-    @inventoryR.doc(description="Push the user's shopping list to the user's inventory.")
+    @inventoryR.doc(description="Push the user's shopping list to the \
+        user's inventory.")
     @inventoryR.expect(resource_fields, validate=True)
     @login_required
     def post(self):
@@ -973,8 +1030,12 @@ class ShoppingFlashToInventoryAPI(Resource):
                 inventory_entry = Inventory.query.get(
                     (user_id, entry.ingredient_name))
                 if entry.unit != inventory_entry.unit:
-                    return Response("Bad unit match while flashing to inventory.", status=400)
-                inventory_entry.quantity = inventory_entry.quantity + entry.quantity
+                    return Response(
+                        "Bad unit match while flashing to inventory.",
+                        status=400
+                    )
+                inventory_entry.quantity = \
+                    inventory_entry.quantity + entry.quantity
 
         # Clear shopping list, after updating inventory
         shopping_res = ShoppingList.query.filter_by(user_id=user_id).delete()
@@ -997,13 +1058,15 @@ class ShoppingFlashToInventoryAPI(Resource):
 # Utility functions
 # -----------------------------------------------------------------------------
 # Flattens list into a string
-def flat_list(l):
-    return ["%s" % v for v in l]
+def flat_list(list):
+    return ["%s" % v for v in list]
+
 
 # Callback to reload the user object
 @login_manager.user_loader
 def load_user(uid):
     return User.query.get(uid)
+
 
 # Sends the welcome email, including the template
 def send_welcome_email(receipient, user):
@@ -1040,6 +1103,7 @@ def send_welcome_email(receipient, user):
     </html>''' % (email, str(user.id), password)
 
     return send_email_as_plateup(receipient, subject, body)
+
 
 # Function to update the recipes read in from the json files stored in relative
 # path /recipes to the database in the format expected by the various recipe routes.
@@ -1094,6 +1158,7 @@ def update_recipes():
 
     print("done updating recipes.")
 
+
 # Helper function to update the instructions for each recipe into the database.
 # Pulled out of the update_recipes function for better modularity and readability.
 def update_instructions(recipe_id, instructions):
@@ -1121,6 +1186,7 @@ def update_instructions(recipe_id, instructions):
 
     db.session.commit()
 
+
 # Helper function to construct a string based on the tags on the recipe, for simplified storage and search
 def construct_tag_string(recipe):
     new_recipe_tags = ""
@@ -1134,6 +1200,7 @@ def construct_tag_string(recipe):
     new_recipe_tags = new_recipe_tags.strip(", ")
 
     return new_recipe_tags
+
 
 # -----------------------------------------------------------------------------
 # Background tasks

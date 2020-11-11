@@ -1,7 +1,7 @@
-from flask_login import UserMixin
-from initializer import db
 from uuid import uuid1
+from flask_login import UserMixin
 from werkzeug.security import generate_password_hash
+from initializer import db
 
 
 # -----------------------------------------------------------------------------
@@ -45,7 +45,8 @@ class Recipe(db.Model):
     preview_media_url = db.Column(db.String)
     tags = db.Column(db.String)
 
-    def __init__(self, name, ingredients, time_h, time_min, cost, preview_text, preview_media, tags):
+    def __init__(self, name, ingredients, time_h, time_min, cost,
+                 preview_text, preview_media, tags):
         self.id = str(uuid1())
         self.name = name
         self.ingredients = ingredients
