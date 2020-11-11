@@ -67,7 +67,7 @@ class Register extends React.Component {
       return;
     }
 
-    registerRequest({ ...this.state });
+    registerRequest({ name, email, password });
   }
 
   render() {
