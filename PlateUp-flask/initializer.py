@@ -18,7 +18,8 @@ app = Flask("PlateUp")
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Database set up
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \
+    os.path.join(basedir, 'db.sqlite')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.urandom(4)
 
@@ -28,7 +29,8 @@ db = SQLAlchemy(app)
 # Init ma
 ma = Marshmallow(app)
 
-api = Api(app, version='1.1', title='PLATEUP API', description='The backend API for PlateUp, a chef\'s co-pilot!')
+api = Api(app, version='1.1', title='PLATEUP API',
+          description='The backend API for PlateUp, a chef\'s co-pilot!')
 
 # Init login manager
 login_manager = LoginManager()
@@ -39,5 +41,3 @@ scheduler = BackgroundScheduler()
 
 # Init Spoonacular API service
 sp_api = spoonacular.API("2285bbff227b4b198ef446e6dfb192e3")
-
-
