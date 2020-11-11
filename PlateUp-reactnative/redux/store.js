@@ -4,6 +4,7 @@ import filterSettingsReducer from './features/filter_settings';
 import recipeDetailsReducer from './features/get_recipe_details';
 import searchQueryReducer from './features/search_query';
 import userSettingsReducer from './features/user_settings';
+import userStorageReducer from './features/user_storage';
 
 const store = configureStore({
   reducer: {
@@ -11,7 +12,8 @@ const store = configureStore({
     filterSettings: filterSettingsReducer,
     recipeDetails: recipeDetailsReducer,
     searchQuery: searchQueryReducer,
-    userSettings: userSettingsReducer
+    userSettings: userSettingsReducer,
+    userStorage: userStorageReducer
   }
 });
 
