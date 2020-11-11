@@ -11,7 +11,6 @@ from initializer import api, app, db, login_manager, ma, scheduler, sp_api
 
 from models import User, Recipe, Instruction, ShoppingList, Ingredient, Equipment, Inventory
 
-
 from werkzeug.security import check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 
@@ -30,28 +29,38 @@ shoppingR = api.namespace('shopping', description='User shopping list operations
 
 # -----------------------------------------------------------------------------
 # DB Schemas (Marshmallow)
+#
+# These schemas define the serialization from sqlalchemy objects to JSON
+# documents suitable for return from the API, and vice-versa (loading json
+# into objects).
 # -----------------------------------------------------------------------------
+
+# Schema to serialize and deserialize the user object
 class UserSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name', 'email', 'password', 'settings_id', 'shopping_id', 'inventory_id')
 
+# Schema to serialize and deserialize the recipe overview object
 class RecipeSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name', 'ingredients', 'time_h', 'time_min', 'cost', 'preview_text', 'preview_media_url', 'tags')
 
+# Schema to serialize and deserialize the recipe instruction object
 class InstructionSchema(ma.Schema):
     class Meta:
         fields = ('step_instruction',)
 
+# Schema to serialize and deserialize the step equipment object
 class EquipmentSchema(ma.Schema):
     class Meta:
         fields = ('name','img',)
 
+# Schema to serialize and deserialize the step ingredient object
 class IngredientSchema(ma.Schema):
     class Meta:
         fields = ('name','img',)
 
-# Init schemas
+# Initialize schemas (many = True auto formats several objects into an array)
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 recipe_schema = RecipeSchema()
@@ -62,15 +71,24 @@ ingredients_schema = IngredientSchema(many=True)
 
 # -----------------------------------------------------------------------------
 # Flask API start
+#
+# All routes are defined subsequently
 # -----------------------------------------------------------------------------
+
+# The default route, for testing basic user login and access. A hello world
+# message for the backend service.
 @plateupR.route("")
 class Main(Resource):
+    '''
+        HTTP GET /
+        Returns a hello world message if and only if the user is logged in.
+    '''
     @login_required
     def get(self):
         return "Hello! This is the backend for PlateUp - a chef's co-pilot."
 
-
-# User API
+# The user route, for all user related functinoality such as creating users,
+# retrieving users, and deleting users.
 @userR.route('')
 class UserAPI(Resource):
     resource_fields = userR.model('User Information', {
@@ -79,7 +97,11 @@ class UserAPI(Resource):
         'password': fields.String,
     })
 
-    # @login_required
+    '''
+        HTTP GET /
+        Returns a hello world message if and only if the user is logged in.
+    '''
+    @login_required
     @userR.doc(description="Get information for all users.")
     def get(self):
         all_users = User.query.all()
