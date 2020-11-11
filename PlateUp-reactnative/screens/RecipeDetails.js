@@ -163,7 +163,7 @@ class RecipeDetails extends React.Component {
               style={styles.recipeImage}
             />
           </Block>
-          <Block>
+          <Block middle>
             <ScrollView
               showsHorizontalScrollIndicator={false}
               horizontal
