@@ -2,12 +2,13 @@ import os
 import urllib3
 import spoonacular
 
-from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
 from flask_login import LoginManager
 from flask_marshmallow import Marshmallow
 from flask_restx import Api
 from flask_sqlalchemy import SQLAlchemy
+
+from apscheduler.schedulers.background import BackgroundScheduler
 
 # Disable SSL warning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

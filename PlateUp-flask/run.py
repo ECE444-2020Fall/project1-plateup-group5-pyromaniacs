@@ -3,16 +3,16 @@ import random
 import json
 import os
 import operator
-from emailservice import send_email_as_plateup
+
 from flask import jsonify, request, Response
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_restx import fields, Resource, reqparse
-from initializer import api, app, db, login_manager, ma, scheduler, sp_api
-
-from models import User, Recipe, Instruction, ShoppingList, Ingredient, Equipment, Inventory
-
-from werkzeug.security import check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+
+from emailservice import send_email_as_plateup
+from initializer import api, app, db, login_manager, ma, scheduler, sp_api
+from models import User, Recipe, Instruction, ShoppingList, Ingredient, Equipment, Inventory
+from werkzeug.security import check_password_hash
 
 
 # -----------------------------------------------------------------------------
