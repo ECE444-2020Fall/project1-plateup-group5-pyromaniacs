@@ -285,10 +285,8 @@ class RecipeDetailAPI(Resource):
         'recipe_id': fields.String,
         'step_num': fields.Integer,
         'step_instruction': fields.String,
-        'ingredients_text': fields.String,
-        'ingredients_image': fields.String,
-        'equipment_text': fields.String,
-        'equipment_image': fields.String,
+        'ingredients': fields.String,
+        'equipment': fields.String
     })
 
     def __get_recipe_instructions_by_id(self, recipe_id):
@@ -331,24 +329,17 @@ class RecipeDetailAPI(Resource):
                 return False
         return True
 
-    def __organize_return_object(self, recipe_instruction_list,
-                                 recipe_ingredient_list_sorted,
-                                 recipe_equipment_list_sorted):
-        dict_list = []
-        for i in range(len(recipe_instruction_list)):
-            step_instruction = recipe_instruction_list[i]
-            step_number = step_instruction.step_num
-            step_ingredient = self.__get_object_for_one_step(
-                recipe_ingredient_list_sorted, step_number)
-            step_equipement = self.__get_object_for_one_step(
-                recipe_equipment_list_sorted, step_number)
 
-            return_ingredient = ingredients_schema.dump(step_ingredient)
-            return_equipment = equipments_schema.dump(step_equipement)
-            return_dict = {
-                "step_instruction": step_instruction.step_instruction,
-                "ingredients": return_ingredient, "equipment": return_equipment
-            }
+    def __organize_return_object(self, recipe_instruction_list):
+        dict_list=[]
+        for instructions in recipe_instruction_list:
+            equipment_list=json.loads(instructions.equipment)
+            ingredient_list=json.loads(instructions.ingredient)
+            return_ingredient = ingredients_schema.dump(equipment_list)
+            return_equipment = equipments_schema.dump(ingredient_list)
+            return_dict = {"step_instruction": instructions.step_instruction,\
+                           "ingredients": return_ingredient, "equipment": return_equipment, }
+
             dict_list.append(return_dict)
         return dict_list
 
@@ -356,19 +347,9 @@ class RecipeDetailAPI(Resource):
     def get(self, id):
         recipe_id = id
 
-        recipe_instruction_list_unsorted = \
-            self.__get_recipe_instructions_by_id(recipe_id)
-        recipe_ingredient_list_unsorted = \
-            self.__get_recipe_ingredient_by_id(recipe_id)
-        recipe_equipment_list_unsorted = \
-            self.__get_recipe_equipment_by_id(recipe_id)
+        recipe_instruction_list_unsorted=self.__get_recipe_instructions_by_id(recipe_id)
 
-        recipe_instruction_list_sorted = \
-            self.__sort_by_step(recipe_instruction_list_unsorted)
-        recipe_ingredient_list_sorted = \
-            self.__sort_by_step(recipe_ingredient_list_unsorted)
-        recipe_equipment_list_sorted = \
-            self.__sort_by_step(recipe_equipment_list_unsorted)
+        recipe_instruction_list_sorted=self.__sort_by_step(recipe_instruction_list_unsorted)
 
         recipe_preview = self.__get_recipe_preview_by_id(id)
 
@@ -377,14 +358,10 @@ class RecipeDetailAPI(Resource):
 
         if len(recipe_preview) == 0:
             return Response("recipe preview not found!", status=500)
-        return_step_list = self.__organize_return_object(
-                recipe_instruction_list_sorted,
-                recipe_ingredient_list_sorted,
-                recipe_equipment_list_sorted
-            )
-        return_preview = recipe_schema.dump(recipe_preview[0])
-        return_object = {"recipe_preview": return_preview,
-                         "recipe_instruction": return_step_list}
+
+        return_step_list=self.__organize_return_object(recipe_instruction_list_sorted)
+        return_preview=recipe_schema.dump(recipe_preview[0])
+        return_object={"recipe_preview": return_preview, "recipe_instruction":return_step_list}
 
         return jsonify(return_object)
 
@@ -395,34 +372,16 @@ class RecipeDetailAPI(Resource):
         new_instruction_recipe_id = request.json["recipe_id"]
         new_instruction_step_num = request.json["step_num"]
         new_instruction_step_instruction = request.json["step_instruction"]
-        new_instruction_ingredients_text = request.json["ingredients_text"]
-        new_instruction_ingredients_image = request.json["ingredients_image"]
-        new_instruction_equipment_text = request.json["equipment_text"]
-        new_instruction_equipment_image = request.json["equipment_image"]
 
-        new_instruction_description = Instruction(
-                new_instruction_recipe_id,
-                new_instruction_step_num,
-                new_instruction_step_instruction
-            )
-        new_instruction_ingredient = Ingredient(
-                new_instruction_recipe_id,
-                new_instruction_step_num,
-                new_instruction_ingredients_text,
-                new_instruction_ingredients_image
-            )
-        new_instruction_equipment = Equipment(
-            new_instruction_recipe_id,
-            new_instruction_step_num,
-            new_instruction_equipment_text,
-            new_instruction_equipment_image
-        )
+        new_instruction_ingredients = request.json["ingredients"]
+        new_instruction_equipment = request.json["equipment"]
+
+        new_instruction_description = Instruction(new_instruction_recipe_id, new_instruction_step_num,\
+                                    new_instruction_step_instruction, new_instruction_ingredients, new_instruction_equipment)
 
         if self.__not_exist_instruction(new_instruction_description):
             db.session.add(new_instruction_description)
 
-        db.session.add(new_instruction_ingredient)
-        db.session.add(new_instruction_equipment)
         db.session.commit()
 
         return Response("recipe instruction inserted!", status=200)
@@ -1172,17 +1131,11 @@ def update_instructions(recipe_id, instructions):
         new_instruction_equipment = json.dumps([{
             "name": equipment["name"],
             "img":"https://spoonacular.com/cdn/equipment_250x250/"+equipment["image"]
-        } for equipment in step["equipment"]])
-        new_instruction = Instruction(
-            recipe_id, new_instruction_step_num, new_instruction_step_instruction)
-        new_equipment = Equipment(
-            recipe_id, new_instruction_step_num, new_instruction_equipment)
-        new_ingredients = Ingredient(
-            recipe_id, new_instruction_step_num, new_instruction_ingredients)
+            } for equipment in step["equipment"]])
+        new_instruction=Instruction(recipe_id, new_instruction_step_num, new_instruction_step_instruction,\
+                                    new_instruction_equipment, new_instruction_ingredients)
 
-        db.session.add(new_equipment)
         db.session.add(new_instruction)
-        db.session.add(new_ingredients)
 
     db.session.commit()
 

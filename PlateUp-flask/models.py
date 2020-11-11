@@ -96,11 +96,16 @@ class Instruction(db.Model):
         'recipe.id'), primary_key=True)
     step_num = db.Column(db.Integer, primary_key=True)
     step_instruction = db.Column(db.String)
+    equipment = db.Column(db.String)
+    ingredient = db.Column(db.String)
 
-    def __init__(self, recipe_id, step_num, step):
+    def __init__(self, recipe_id, step_num, step, equipement, ingredient):
         self.recipe_id = recipe_id
         self.step_num = step_num
         self.step_instruction = step
+        self.equipment = equipement
+        self.ingredient = ingredient
+
 
 
 class Inventory(db.Model):
