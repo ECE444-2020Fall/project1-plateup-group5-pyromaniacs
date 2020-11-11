@@ -16,11 +16,6 @@ To build and start the system, first clone the repository <br>
 
 You now need to run the client application and server application.
 
-## Instructions for Staging Development
-See our api endpoint hosted on heroku: https://sheltered-thicket-73220.herokuapp.com/
-
-The front end instructions remain the same, with XXX changed to this endpoint.
-
 **Development Requirements:**
 1) Docker - Find installation instructions at https://docs.docker.com/get-started/ <br>
 2) Mobile Development - Useful to have an android or iOS emulator working. Refer to https://www.youtube.com/watch?v=0-S5a0eXPoc for a tutorial on getting this working.
@@ -36,3 +31,7 @@ You can use ctrl-C to exit the container.
 Refer to https://www.youtube.com/watch?v=0-S5a0eXPoc for a general guide on getting a React Native application going. 
 
 You should be good to go now!
+
+## Staging Application / Deployment
+Our backend server is hosted on heroku at https://sheltered-thicket-73220.herokuapp.com/. 
+Our client application is distributed at https://expo.io/@pyromaniacs/projects/plate-up-uoft-ece444.

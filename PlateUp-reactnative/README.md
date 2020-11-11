@@ -46,6 +46,8 @@ export default env;
 
 Run `npm start`
 
-## Current Status
+## Deployment
 
-The repo is still in its early stages, it is primarily the Argon React Native app template. Over time, custom functionality will be introduced.
+The application can be distributed through the use of Expo publish. The application can be found at https://expo.io/@pyromaniacs/projects/plate-up-uoft-ece444 and it uses our staging server found at https://sheltered-thicket-73220.herokuapp.com/. Publishing a new version requires access to our Expo account, this is confidential to the developers of this repo.
+
+The client application can be developed locally against the staging server by updating your SERVER_URL env variable to https://sheltered-thicket-73220.herokuapp.com/.
