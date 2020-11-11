@@ -17,6 +17,14 @@ from flask_sqlalchemy import SQLAlchemy
 
 # -----------------------------------------------------------------------------
 # Configure Namespaces
+# Same as configuring routes in vanilla flask, but more organized
+# For example, everything in the userR namespace will default attach /user
+# to the root endpoint.
+#
+# The API documentation not only lives through comments and docstrings here,
+# but also presented neatly through OpenAPI (Swagger).
+# It can be viewed here: https://sheltered-thicket-73220.herokuapp.com/
+# Or run locally and access the root endpoint.
 # -----------------------------------------------------------------------------
 plateupR = api.namespace('plate-up', description='PlateUp operations')
 userR = api.namespace('user', description='User operations')
@@ -91,6 +99,12 @@ class Main(Resource):
 # retrieving users, and deleting users.
 @userR.route('')
 class UserAPI(Resource):
+    '''
+        Resource model definition for the user information required to 
+        onboard a new user. 
+
+        Name, email, and password are collected for user acc creation.
+    '''
     resource_fields = userR.model('User Information', {
         'name': fields.String,
         'email': fields.String,
@@ -98,8 +112,8 @@ class UserAPI(Resource):
     })
 
     '''
-        HTTP GET /
-        Returns a hello world message if and only if the user is logged in.
+        HTTP GET /user
+        Returns the complete list of all users in the system.
     '''
     @login_required
     @userR.doc(description="Get information for all users.")
@@ -109,20 +123,27 @@ class UserAPI(Resource):
         result = {"users": result}
         return jsonify(result)
 
-    # @login_required
+    '''
+        HTTP POST /user
+        Creates a new user and returns the new user details.
+        Validates the User Information resource fields.
+        Login is not required as this is for new user account creation.
+    '''
     @userR.doc(description="Register a new user to the system with complete information.")
     @userR.expect(resource_fields, validate=True)
     def post(self):
         name = request.json['name']
         email = request.json['email']
         password = request.json['password']
-
+        
+        # Checks that the user email is unique
         currEmails = flat_list(User.query.with_entities(User.email).all())
         if email in currEmails:
             return Response("The user with email " + email + " already exists! Please log in instead.", status=409)
 
         new_user = User(name, email, password)
 
+        # Sends welcome email to user, if it doesn't work, then the email address is likely invalid
         if not sendWelcomeEmail(email, new_user):
             return Response("Mail not sent! Invalid email or server issues, user not saved.", status=400)
 
@@ -131,7 +152,12 @@ class UserAPI(Resource):
 
         return user_schema.jsonify(new_user)
 
-    # @login_required
+
+    '''
+        HTTP DELETE /user
+        Deletes all the users in the database (same as resetting database for users).
+        Used only in testing, not production friendly.
+    '''
     @userR.doc(description="WARNING: Delete all user information stored in the database.")
     @login_required
     def delete(self):
@@ -140,14 +166,26 @@ class UserAPI(Resource):
         return "%i records deleted." % num_rows_deleted
 
 
-# Login API
+# The login route used for authenticating and de-authenticating users.
 @loginR.route('')
 class LoginAPI(Resource):
+    '''
+        Resource model definition for the login information required to 
+        authenticate a user. Leverages flask-login, session-based.
+
+        Email and password are necessary for login. 
+    '''
     resource_fields = userR.model('Login Information', {
         'email': fields.String,
         'password': fields.String,
     })
 
+    '''
+        HTTP POST /login
+        Logins the user into the system with the provided email and password.
+        The password is checked against the hash stored in the database.
+        A hash of the password is stored for security purposes (uncrackable if DB leak).
+    '''
     @loginR.doc(description="Logging a user into the system and authenticating for access to deeper APIs.")
     @loginR.expect(resource_fields, validate=True)
     def post(self):
@@ -161,6 +199,10 @@ class LoginAPI(Resource):
 
         return Response("Login failed! Please confirm that the email and password are correct.", status=403)
 
+    '''
+        HTTP DELETE /login
+        Logs the current user out, based on session id from the client side. 
+    '''
     @loginR.doc(description="Logging current user out.")
     @login_required
     def delete(self):
@@ -169,11 +211,15 @@ class LoginAPI(Resource):
         return Response("Logout successful. User %s" % userId, status=200)
 
 
-# Mail API
+# The mail route used for sending messages to the user, including welcome emails and shopping list reminders.
 @mailR.route('')
 class MailAPI(Resource):
-    # @login_required
-    @mailR.doc(description="Sends a welcome email to user with their client ID and default password information (Development Email Only).")
+    '''
+        HTTP GET /mail?userID=<user_id>
+        Sends a welcome email to user with user_id. Used mainly for testing the mailing pipeline. Emails are often
+        sent directly and not through nested API calls.
+    '''
+    @mailR.doc(description="Sends a welcome email to user with their client ID and default password information.")
     @mailR.param("userID")
     @login_required
     def get(self):
@@ -185,6 +231,7 @@ class MailAPI(Resource):
 
         return Response("NOT OK - Mail NOT Sent!", status=400)
 
+# Comment
 @recipeR.route('/<id>', methods=['GET', 'POST'])
 class RecipeDetailAPI(Resource):
     resourceFields = recipeR.model('Information to get recipe instruction', {
@@ -327,8 +374,7 @@ class RecipeDetailAPI(Resource):
         #self.__debug_show_table()
         return Response("recipe instruction inserted!", status=200)
 
-
-# Recipe-preview API
+# Comment
 @recipeR.route('', methods=['GET', 'POST'])
 class RecipeAPI(Resource):
     resourceFields = recipeR.model('Information to get recipe preview', {
@@ -620,9 +666,25 @@ class RecipeAPI(Resource):
         return_dict = {"recipes": return_result, "is_random": self.random_pick}
         return jsonify(return_dict)
 
-# Recipe-inventory checker API
+
+# The recipe checker route performs the function of validating whether or not a user has
+# enough ingredients in their inventory to cook the specified recipe.
 @recipeR.route('/<recipe_id>/check/<user_id>', methods=['GET'])
 class RecipeInventoryCheckerAPI(Resource):
+    '''
+    HTTP GET /recipe/<recipe_id>/check/<user_id>
+
+    This API call does one of two things:
+    1. If the user has all the required ingredients for the recipe, it will deduct
+    the ingredients from their inventory.
+    2. If the user doesn't have all the required ingredients, it will check for the 
+    missing ingredients and add them to the user's shopping list.
+
+    In both cases, it is up to the client app to decide how to handle it. In case 1,
+    the app should allow users to proceed to cooking. In case 2, the app should remind
+    users to buy the required ingredients, or allow a manual override to continue
+    cooking anyways. 
+    '''
     @login_required
     def get(self, recipe_id, user_id):
         required_res = Recipe.query.get(recipe_id).ingredients
@@ -674,9 +736,28 @@ class RecipeInventoryCheckerAPI(Resource):
 
         return Response("Inventory updated, enough ingredients to proceed!", status=200)
 
-# Inventory API
+
+# The inventory route is used for getting and setting the user's existing stock of groceries, 
+# which is referred to as the user's inventory. 
 @inventoryR.route('/<user_id>', methods=['GET', 'POST'])
 class InventoryAPI(Resource):
+    '''
+        Resource model definitions for the inventory details required to update a
+        user's inventory. It is defined in three components to clarify the nested
+        structure.
+
+        The full structure looks like this:
+        inventory: {
+            name0: {
+                qty: xxx
+                unit:xxx
+            },
+            name1: {
+                qty: xxx
+                unit:xxx
+            },
+        }
+    '''
     quantity_fields = inventoryR.model('Quantity', {
         'qty': fields.Float,
         'unit': fields.String,
@@ -690,6 +771,12 @@ class InventoryAPI(Resource):
         'inventory': fields.Nested(ingredient_fields),
     })
 
+    '''
+    HTTP GET /inventory/<user_id>
+
+    Returns the user's current inventory formatted as depicted in the resource
+    field "inventory_fields" documentation. 
+    '''
     @inventoryR.doc(description="Retrieving the user's current inventory.")
     @login_required
     def get(self, user_id):
@@ -700,6 +787,15 @@ class InventoryAPI(Resource):
         response = {"inventory": inventory}
         return jsonify(response)
 
+    '''
+    HTTP {POST} /inventory/<user_id>
+
+    Updates the user's current inventory, given an input formatted as depicted in the 
+    resource field "inventory_fields" documentation. 
+
+    Returns the updated inventory, which should be the same as the posted document
+    less any errors.
+    '''
     @inventoryR.doc(description="Posting a new or updated version of the user's inventory.")
     @inventoryR.expect(inventory_fields, validate=True)
     @login_required
@@ -723,9 +819,29 @@ class InventoryAPI(Resource):
 
         return jsonify(response)
 
-# ShoppingList API
+
+# The shopping route is used in a similar manner as the inventory route, for getting and
+# setting the user's shopping list. 
 @shoppingR.route('/<user_id>', methods=['GET', 'POST'])
 class ShoppingListAPI(Resource):
+    '''
+        Resource model definitions for the inventory details required to update a
+        user's shopping list. It is defined in three components to clarify the nested
+        structure. Deliberately formatted similarly to inventory as these two
+        are made to be easily transferrable (shopping list > inventory and vice versa).
+
+        The full structure looks like this:
+        shopping: {
+            name0: {
+                qty: xxx
+                unit:xxx
+            },
+            name1: {
+                qty: xxx
+                unit:xxx
+            },
+        }
+    '''
     quantity_fields = shoppingR.model('Quantity', {
         'qty': fields.Float,
         'unit': fields.String,
@@ -739,6 +855,12 @@ class ShoppingListAPI(Resource):
         'shopping': fields.Nested(ingredient_fields)
     })
 
+    '''
+    HTTP GET /shopping/<user_id>
+
+    Returns the user's current shopping list formatted as depicted in the resource
+    field "shopping_fields" documentation. 
+    '''
     @shoppingR.doc(description="Retrieving the user's current shopping list.")
     @login_required
     def get(self, user_id):
@@ -751,6 +873,15 @@ class ShoppingListAPI(Resource):
         response = {"shopping": shopping}
         return jsonify(response)
 
+    '''
+    HTTP {POST} /shopping/<user_id>
+
+    Updates the user's current shopping list, given an input formatted as depicted in the 
+    resource field "shopping_fields" documentation. 
+
+    Returns the updated shopping list, which should be the same as the posted document
+    less any errors.
+    '''
     @shoppingR.doc(description="Posting a new or updated version of the user's shopping list.")
     @shoppingR.expect(shopping_fields, validate=True)
     @login_required
@@ -774,13 +905,30 @@ class ShoppingListAPI(Resource):
 
         return jsonify(response)
 
-# ShoppingList flash to inventory API
+# The shopping flash root that pushes all the user's shopping list items into
+# their inventory, assuming that the user has purchased all the required ingredients.
+# TODO: expand flash functionality to allow partial flashes 
 @shoppingR.route('/flash', methods=['POST'])
 class ShoppingFlashToInventoryAPI(Resource):
+    '''
+    The only field required is the user id, but used as a post to follow REST protocols
+    as this endpoint updates the data, not suitable for get. More param can be more 
+    easily added in the future with a defined resource model. 
+    '''
     resource_fields = shoppingR.model('User', {
         'user_id': fields.String,
     })
 
+    '''
+    HTTP {POST} /shopping/flash
+
+    Updates the user's current inventory based on the items in the shopping list.
+
+    For items that don't exist, new items are created in the user's inventory.
+    For items that already exist, their quantities are modified. 
+
+    Returns the updated user inventory.
+    '''
     @inventoryR.doc(description="Push the user's shopping list to the user's inventory.")
     @inventoryR.expect(resource_fields, validate=True)
     @login_required
@@ -803,9 +951,11 @@ class ShoppingFlashToInventoryAPI(Resource):
                     return Response("Bad unit match while flashing to inventory.", status=400)
                 inventory_entry.quantity = inventory_entry.quantity + entry.quantity
 
+        # Clear shopping list, after updating inventory
         shopping_res = ShoppingList.query.filter_by(user_id=user_id).delete()
         db.session.commit()
         
+        # Fetches the latest inventory from DB to ensure no inconsistencies
         inventory_res = Inventory.query.filter_by(user_id=user_id).all()
         inventory = {}
         
@@ -820,17 +970,16 @@ class ShoppingFlashToInventoryAPI(Resource):
 # -----------------------------------------------------------------------------
 # Utility functions
 # -----------------------------------------------------------------------------
+# Flattens list into a string
 def flat_list(l):
     return ["%s" % v for v in l]
 
-
-# callback to reload the user object
+# Callback to reload the user object
 @login_manager.user_loader
 def load_user(uid):
     return User.query.get(uid)
 
-
-# sends the welcome email
+# Sends the welcome email, including the template
 def sendWelcomeEmail(receipient, user):
     name = user.name
     password = user.password
@@ -866,33 +1015,8 @@ def sendWelcomeEmail(receipient, user):
 
     return send_email_as_plateup(receipient, subject, body)
 
-
-# -----------------------------------------------------------------------------
-# Background tasks
-# -----------------------------------------------------------------------------
-# update stuff as a scheduled job while server is active
-@scheduler.scheduled_job('interval', seconds=3600)
-def fetchRecipes():
-    print("fetching recipes...")
-    i = 0
-    while os.path.exists("recipes/recipes%s.json" % i):
-        i += 1
-
-    response = sp_api.get_random_recipes(number=100)
-    
-    if not os.path.exists('recipes'):
-        os.makedirs('recipes')
-
-    with open('recipes/recipes%s.json' % i, 'w') as outfile:
-        json.dump(response.json(), outfile, ensure_ascii=False, indent=2)
-        
-    # do some process
-    time.sleep(10)
-    print("done fetching recipes.")
-
-    # update recipes
-    updateRecipesToDB()
-
+# Function to update the recipes read in from the json files stored in relative
+# path /recipes to the database in the format expected by the various recipe routes.
 def updateRecipesToDB():
     print("updating recipes...")
 
@@ -939,6 +1063,8 @@ def updateRecipesToDB():
 
     print("done updating recipes.")
 
+# Helper function to update the instructions for each recipe into the database. 
+# Pulled out of the updateRecipesToDB function for better modularity and readability.
 def updateInstructionsToDB(recipe_id, instructions):
     for step in instructions:
         new_instruction_step_num = step["number"]
@@ -961,6 +1087,7 @@ def updateInstructionsToDB(recipe_id, instructions):
         
     db.session.commit()
 
+# Helper function to construct a string based on the tags on the recipe, for simplified storage and search
 def constructRecipeTags(recipe):
     new_recipe_tags = ""
     new_recipe_tags +=  "vegetarian, " if recipe["vegetarian"] else ""
@@ -974,9 +1101,35 @@ def constructRecipeTags(recipe):
 
     return new_recipe_tags
 
+# -----------------------------------------------------------------------------
+# Background tasks
+# -----------------------------------------------------------------------------
+# Fetch recipes every hour while the server is active, to continously bring in
+# fresh recipes from various sources (for now, only spoonacular).
+@scheduler.scheduled_job('interval', seconds=3600)
+def fetchRecipes():
+    print("fetching recipes...")
+    i = 0
+    while os.path.exists("recipes/recipes%s.json" % i):
+        i += 1
+
+    response = sp_api.get_random_recipes(number=100)
+    
+    if not os.path.exists('recipes'):
+        os.makedirs('recipes')
+
+    with open('recipes/recipes%s.json' % i, 'w') as outfile:
+        json.dump(response.json(), outfile, ensure_ascii=False, indent=2)
+        
+    print("done fetching recipes.")
+
+    # update recipes
+    updateRecipesToDB()
+
+    print("done updating recipes.")
 
 
-# Run Server
+# Run API service
 if __name__ == '__main__':
     db.create_all()
     scheduler.start()
