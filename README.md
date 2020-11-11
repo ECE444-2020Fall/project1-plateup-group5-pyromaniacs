@@ -31,3 +31,7 @@ You can use ctrl-C to exit the container.
 Refer to https://www.youtube.com/watch?v=0-S5a0eXPoc for a general guide on getting a React Native application going. 
 
 You should be good to go now!
+
+## Staging Application / Deployment
+Our backend server is hosted on heroku at https://sheltered-thicket-73220.herokuapp.com/. 
+Our client application is distributed at https://expo.io/@pyromaniacs/projects/plate-up-uoft-ece444.
