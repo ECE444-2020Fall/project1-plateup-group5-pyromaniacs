@@ -6,6 +6,11 @@ from werkzeug.security import generate_password_hash
 
 # -----------------------------------------------------------------------------
 # DB Models
+# Models are fairly simple to read, so no additional comments are added
+# to avoid being too verbose.
+#
+# These models define SQL tables as python sqlalchemy objects to allow
+# easy object manipulation using python syntax. 
 # -----------------------------------------------------------------------------
 class User(db.Model, UserMixin):
     __tablename__ = "user"
