@@ -58,38 +58,6 @@ class Recipe(db.Model):
         self.tags = tags
 
 
-class Ingredient(db.Model):
-    __tablename__ = "recipe_ingredient"
-    id = db.Column(db.String(40), primary_key=True)
-    recipe_id = db.Column(db.String(40), db.ForeignKey('recipe.id'))
-    step_num = db.Column(db.Integer)
-    name = db.Column(db.String)
-    img = db.Column(db.String)
-
-    def __init__(self, recipe_id, step_num, ingredient_text, ingredient_image):
-        self.id = str(uuid1())
-        self.recipe_id = recipe_id
-        self.step_num = step_num
-        self.name = ingredient_text
-        self.img = ingredient_image
-
-
-class Equipment(db.Model):
-    __tablename__ = "recipe_equipment"
-    id = db.Column(db.String(40), primary_key=True)
-    recipe_id = db.Column(db.String(40), db.ForeignKey('recipe.id'))
-    step_num = db.Column(db.Integer)
-    name = db.Column(db.String)
-    img = db.Column(db.String)
-
-    def __init__(self, recipe_id, step_num, equipment_text, equipment_image):
-        self.id = str(uuid1())
-        self.recipe_id = recipe_id
-        self.step_num = step_num
-        self.name = equipment_text
-        self.img = equipment_image
-
-
 class Instruction(db.Model):
     __tablename__ = "recipe_instruction"
     recipe_id = db.Column(db.String(40), db.ForeignKey(
@@ -105,7 +73,6 @@ class Instruction(db.Model):
         self.step_instruction = step
         self.equipment = equipement
         self.ingredient = ingredient
-
 
 
 class Inventory(db.Model):
