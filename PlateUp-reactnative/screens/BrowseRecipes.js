@@ -19,12 +19,14 @@ class BrowseRecipes extends React.Component {
 
   async componentDidMount() {
     const {
-      filterSettings, searchQuery, fetchBrowseRecipes: fetchBrowseRecipesRequest
+      filterSettings, searchQuery, user: { id: userId },
+      fetchBrowseRecipes: fetchBrowseRecipesRequest
     } = this.props;
 
     await fetchBrowseRecipesRequest({
       filterSettings,
-      searchQuery
+      searchQuery,
+      userId
     });
 
     this.setState({ loading: false });
@@ -36,7 +38,8 @@ class BrowseRecipes extends React.Component {
     // Set state to loading and since setState isn't synchronous, pass a callback function to it
     // The callback function fetches the data, once the data is fetched, set loading to false
     const {
-      filterSettings, searchQuery, fetchBrowseRecipes: fetchBrowseRecipesRequest
+      filterSettings, searchQuery, user: { id: userId },
+      fetchBrowseRecipes: fetchBrowseRecipesRequest
     } = this.props;
 
     if (
@@ -50,7 +53,8 @@ class BrowseRecipes extends React.Component {
       this.setState({ loading: true }, async () => {
         await fetchBrowseRecipesRequest({
           filterSettings,
-          searchQuery
+          searchQuery,
+          userId
         });
 
         this.setState({ loading: false });
@@ -149,7 +153,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => ({
   browseRecipes: state.browseRecipes,
   filterSettings: state.filterSettings,
-  searchQuery: state.searchQuery
+  searchQuery: state.searchQuery,
+  user: state.userSettings.user
 });
 
 const mapDispatchToProps = { fetchBrowseRecipes };

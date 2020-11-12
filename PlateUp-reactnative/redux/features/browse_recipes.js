@@ -9,7 +9,9 @@ const queryParamMapping = {
   maxCost: 'Filter_cost',
   maxCookTimeHour: 'Filter_time_h',
   maxCookTimeMinutes: 'Filter_time_min',
-  search: 'Search'
+  recipesWithOwnedIngredients: 'Filter_has_ingredients',
+  search: 'Search',
+  userId: 'user_id'
 };
 
 export const fetchBrowseRecipes = createAsyncThunk(
@@ -24,11 +26,11 @@ export const fetchBrowseRecipes = createAsyncThunk(
 
 export const processSettingsIntoParams = (settings) => {
   const filters = { ...settings.filterSettings };
-  const { searchQuery } = settings;
+  const { searchQuery, userId } = settings;
   let params = {};
 
   if (filters.activateFilters) {
-    params = { ...filters, search: searchQuery };
+    params = { ...filters, search: searchQuery, userId };
 
     // Convert max cook time to integer before splitting into hours and minutes as the
     // server expects these values to be integers.
