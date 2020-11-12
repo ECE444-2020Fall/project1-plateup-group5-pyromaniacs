@@ -177,7 +177,13 @@ class RecipeStepByStep extends React.Component {
     return (
       <Block flex style={styles.container}>
         <Block row style={styles.header}>
-          <Text center size={18} bold>
+          <Text
+            numberOfLines={1}
+            style={{ flexShrink: 1, marginRight: theme.SIZES.BASE }}
+            center
+            size={18}
+            bold
+          >
             {recipe.name}
           </Text>
           <Text center size={18} bold color={argonTheme.COLORS.BLUE}>
