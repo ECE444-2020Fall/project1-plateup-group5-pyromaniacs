@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { ActivityIndicator, StyleSheet } from 'react-native';
-import { Block, Text, theme } from 'galio-framework';
+import { ActivityIndicator } from 'react-native';
+import { Block, Text } from 'galio-framework';
 
 import { IngredientList } from '../components';
 import { getGroceryInventory, updateGroceryInventory } from '../redux/features/user_storage';
@@ -70,7 +70,7 @@ class GroceryInventory extends React.Component {
     const { loading } = this.state;
 
     return (
-      <Block flex style={styles.container}>
+      <Block flex>
         { loading ? (
           <Block center>
             <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
@@ -81,12 +81,6 @@ class GroceryInventory extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: theme.SIZES.BASE,
-  }
-});
 
 const mapStateToProps = (state) => ({
   user: state.userSettings.user,

@@ -159,10 +159,10 @@ class IngredientList extends React.Component {
               />
             </TouchableOpacity>
             <Block style={styles.listItemContainer}>
-              <Text style={styles.text}>
+              <Text style={[styles.text, { width: '60%', flexWrap: 'wrap' }]}>
                 {ingredient}
               </Text>
-              <Text style={styles.text}>
+              <Text style={[styles.text, { width: '40%', flexWrap: 'wrap', textAlign: 'right' }]}>
                 {qty.toString()}
                 {' '}
                 {unit}
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   text: {
-    fontSize: 18,
+    fontSize: 16,
   },
   dialogTextInput: {
     paddingLeft: 12,
