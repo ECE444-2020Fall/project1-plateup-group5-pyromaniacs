@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { ActivityIndicator, StyleSheet } from 'react-native';
-import { Block, Text, theme } from 'galio-framework';
+import { ActivityIndicator } from 'react-native';
+import { Block, Text } from 'galio-framework';
 
 import { IngredientList } from '../components';
 import { getGroceryInventory, updateGroceryInventory } from '../redux/features/user_storage';
@@ -14,14 +14,15 @@ class GroceryInventory extends React.Component {
   }
 
   async componentDidMount() {
-    const { getGroceryInventory: getGroceryInventoryRequest, userId } = this.props;
+    const { getGroceryInventory: getGroceryInventoryRequest, user: { id: userId } } = this.props;
+
     await getGroceryInventoryRequest(userId);
 
     this.setState({ loading: false });
   }
 
   handleReload = async () => {
-    const { getGroceryInventory: getGroceryInventoryRequest, userId } = this.props;
+    const { getGroceryInventory: getGroceryInventoryRequest, user: { id: userId } } = this.props;
 
     this.setState({ loading: true }, async () => {
       await getGroceryInventoryRequest(userId);
@@ -30,7 +31,9 @@ class GroceryInventory extends React.Component {
   }
 
   handlePostInventory = async (newItems) => {
-    const { updateGroceryInventory: updateGroceryInventoryRequest, userId } = this.props;
+    const {
+      updateGroceryInventory: updateGroceryInventoryRequest, user: { id: userId }
+    } = this.props;
 
     this.setState({ loading: true }, async () => {
       await updateGroceryInventoryRequest({
@@ -67,7 +70,7 @@ class GroceryInventory extends React.Component {
     const { loading } = this.state;
 
     return (
-      <Block flex style={styles.container}>
+      <Block flex>
         { loading ? (
           <Block center>
             <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
@@ -79,14 +82,8 @@ class GroceryInventory extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: theme.SIZES.BASE,
-  }
-});
-
 const mapStateToProps = (state) => ({
-  userId: state.userSettings.user.id,
+  user: state.userSettings.user,
   userStorage: state.userStorage
 });
 

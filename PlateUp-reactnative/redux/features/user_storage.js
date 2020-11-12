@@ -1,81 +1,35 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
-import env from '../../env';
+import { apiGet, apiPost } from '../api_requests';
 
 export const IN_FLIGHT = 'IN_FLIGHT';
 export const IDLE = 'IDLE';
 
 // Grocery Cart API Calls
-export const getGroceryInventory = createAsyncThunk('groceryInventory/getGroceryInventory', async (userId, { rejectWithValue }) => {
-  try {
-    const response = await axios.get(`${env.SERVER_URL}/inventory/${userId}`, { timeout: 2000 });
+export const getGroceryInventory = createAsyncThunk(
+  'groceryInventory/getGroceryInventory',
+  async (userId, thunkAPI) => (apiGet(`/inventory/${userId}`, thunkAPI))
+);
 
-    if (response.data === 'unexpected end of stream') {
-      throw new Error('Unexpected end of stream');
-    }
-
-    return response.data;
-  } catch (err) {
-    return rejectWithValue(err.response ? err.response.data : 'Unknown error.');
-  }
-});
-
-export const updateGroceryInventory = createAsyncThunk('groceryInventory/updateGroceryInventory', async ({ userId, data }, { rejectWithValue }) => {
-  try {
-    const response = await axios.post(`${env.SERVER_URL}/inventory/${userId}`, data, { timeout: 2000 });
-
-    if (response.data === 'unexpected end of stream') {
-      throw new Error('Unexpected end of stream');
-    }
-
-    return response.data;
-  } catch (err) {
-    return rejectWithValue(err.response ? err.response.data : 'Unknown error.');
-  }
-});
+export const updateGroceryInventory = createAsyncThunk(
+  'groceryInventory/updateGroceryInventory',
+  async ({ userId, data }, thunkAPI) => (apiPost(`/inventory/${userId}`, data, thunkAPI))
+);
 
 // Shopping List API Calls
-export const getShoppingList = createAsyncThunk('shoppingList/getShoppingList', async (userId, { rejectWithValue }) => {
-  try {
-    const response = await axios.get(`${env.SERVER_URL}/shopping/${userId}`, { timeout: 2000 });
+export const getShoppingList = createAsyncThunk(
+  'shoppingList/getShoppingList',
+  async (userId, thunkAPI) => (apiGet(`/shopping/${userId}`, thunkAPI))
+);
 
-    if (response.data === 'unexpected end of stream') {
-      throw new Error('Unexpected end of stream');
-    }
+export const updateShoppingList = createAsyncThunk(
+  'shoppingList/updateShoppingList',
+  async ({ userId, data }, thunkAPI) => (apiPost(`/shopping/${userId}`, data, thunkAPI))
+);
 
-    return response.data;
-  } catch (err) {
-    return rejectWithValue(err.response ? err.response.data : 'Unknown error.');
-  }
-});
-
-export const updateShoppingList = createAsyncThunk('shoppingList/updateShoppingList', async ({ userId, data }, { rejectWithValue }) => {
-  try {
-    const response = await axios.post(`${env.SERVER_URL}/shopping/${userId}`, data, { timeout: 2000 });
-
-    if (response.data === 'unexpected end of stream') {
-      throw new Error('Unexpected end of stream');
-    }
-
-    return response.data;
-  } catch (err) {
-    return rejectWithValue(err.response ? err.response.data : 'Unknown error.');
-  }
-});
-
-export const flashShoppingList = createAsyncThunk('shoppingList/flashShoppingList', async (userId, { rejectWithValue }) => {
-  try {
-    const response = await axios.post(`${env.SERVER_URL}/shopping/flash`, { user_id: userId }, { timeout: 2000 });
-
-    if (response.data === 'unexpected end of stream') {
-      throw new Error('Unexpected end of stream');
-    }
-
-    return response.data;
-  } catch (err) {
-    return rejectWithValue(err.response ? err.response.data : 'Unknown error.');
-  }
-});
+export const flashShoppingList = createAsyncThunk(
+  'shoppingList/flashShoppingList',
+  async (userId, thunkAPI) => (apiPost('/shopping/flash', { user_id: userId }, thunkAPI))
+);
 
 const initialState = {
   groceryInventory: null,

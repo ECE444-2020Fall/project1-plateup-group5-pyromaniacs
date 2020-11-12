@@ -1,13 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { ActivityIndicator, Dimensions, StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 import { Block, Text, theme } from 'galio-framework';
 
 import { Button, IngredientList } from '../components';
 import { getShoppingList, updateShoppingList, flashShoppingList } from '../redux/features/user_storage';
 import { argonTheme } from '../constants';
-
-const { width } = Dimensions.get('screen');
 
 class ShoppingList extends React.Component {
   constructor(props) {
@@ -16,14 +14,14 @@ class ShoppingList extends React.Component {
   }
 
   async componentDidMount() {
-    const { getShoppingList: getShoppingListRequest, userId } = this.props;
+    const { getShoppingList: getShoppingListRequest, user: { id: userId } } = this.props;
     await getShoppingListRequest(userId);
 
     this.setState({ loading: false });
   }
 
   handleReload = async () => {
-    const { getShoppingList: getShoppingListRequest, userId } = this.props;
+    const { getShoppingList: getShoppingListRequest, user: { id: userId } } = this.props;
 
     this.setState({ loading: true }, async () => {
       await getShoppingListRequest(userId);
@@ -32,7 +30,7 @@ class ShoppingList extends React.Component {
   }
 
   handlePostShoppingList = async (newItems) => {
-    const { updateShoppingList: updateShoppingListRequest, userId } = this.props;
+    const { updateShoppingList: updateShoppingListRequest, user: { id: userId } } = this.props;
 
     this.setState({ loading: true }, async () => {
       await updateShoppingListRequest({
@@ -43,7 +41,7 @@ class ShoppingList extends React.Component {
   }
 
   handleFlash = async () => {
-    const { flashShoppingList: flashShoppingListRequest, userId } = this.props;
+    const { flashShoppingList: flashShoppingListRequest, user: { id: userId } } = this.props;
 
     this.setState({ loading: true }, async () => {
       await flashShoppingListRequest(userId);
@@ -74,9 +72,9 @@ class ShoppingList extends React.Component {
             onDeleteItem={this.handlePostShoppingList}
           />
         </Block>
-        <Block center>
+        <Block center style={styles.moveToGroceryInventory}>
           <Button
-            style={styles.button}
+            style={{ backgroundColor: argonTheme.COLORS.PRIMARY }}
             onPress={this.handleFlash}
           >
             <Text style={styles.buttonText}> Move to Grocery Inventory </Text>
@@ -90,7 +88,7 @@ class ShoppingList extends React.Component {
     const { loading } = this.state;
 
     return (
-      <Block flex style={styles.container}>
+      <Block flex>
         { loading ? (
           <Block center>
             <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
@@ -103,26 +101,20 @@ class ShoppingList extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  button: {
-    width: width - theme.SIZES.BASE * 4,
-    height: theme.SIZES.BASE * 3,
-    margin: theme.SIZES.BASE,
-    shadowRadius: 0,
-    shadowOpacity: 0,
-    backgroundColor: argonTheme.COLORS.PRIMARY
+  moveToGroceryInventory: {
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    marginBottom: theme.SIZES.BASE + 10,
   },
   buttonText: {
     fontWeight: 'bold',
     fontSize: 14,
     color: argonTheme.COLORS.WHITE,
   },
-  container: {
-    paddingVertical: theme.SIZES.BASE,
-  }
 });
 
 const mapStateToProps = (state) => ({
-  userId: state.userSettings.user.id,
+  user: state.userSettings.user,
   userStorage: state.userStorage
 });
 

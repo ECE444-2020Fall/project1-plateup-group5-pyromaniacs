@@ -1,18 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
-import env from '../../env';
+import { apiGet } from '../api_requests';
 
 export const FETCHING = 'FETCHING';
 export const IDLE = 'IDLE';
 
-export const getRecipeDetails = createAsyncThunk('recipeDetails/getRecipeDetails', async (id, { rejectWithValue }) => {
-  try {
-    const response = await axios.get(`${env.SERVER_URL}/recipe/${id}`, { timeout: 1000 });
-    return response.data;
-  } catch (err) {
-    return rejectWithValue(err.response ? err.response.data : 'Unknown error.');
-  }
-});
+export const getRecipeDetails = createAsyncThunk(
+  'recipeDetails/getRecipeDetails',
+  async (id, thunkAPI) => (apiGet(`/recipe/${id}`, thunkAPI))
+);
 
 const initialState = {
   data: null,

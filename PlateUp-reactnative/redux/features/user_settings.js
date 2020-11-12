@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
-import env from '../../env';
+import { apiPost, apiDelete } from '../api_requests';
 
 export const REGISTER_IPR = 'REGISTERING';
 export const LOGIN_IPR = 'LOGGING_IN';
@@ -13,32 +12,20 @@ const initialState = {
   error: null
 };
 
-export const register = createAsyncThunk('userSettings/register', async (newUser, { rejectWithValue }) => {
-  try {
-    const response = await axios.post(`${env.SERVER_URL}/user`, newUser, { timeout: 1000 });
-    return response.data;
-  } catch (err) {
-    return rejectWithValue(err.response ? err.response.data : 'Unknown error.');
-  }
-});
+export const register = createAsyncThunk(
+  'userSettings/register',
+  async (newUser, thunkAPI) => (apiPost('/user', newUser, thunkAPI))
+);
 
-export const login = createAsyncThunk('userSettings/login', async (user, { rejectWithValue }) => {
-  try {
-    const response = await axios.post(`${env.SERVER_URL}/login`, user, { timeout: 1000 });
-    return response.data;
-  } catch (err) {
-    return rejectWithValue(err.response ? err.response.data : 'Unknown error.');
-  }
-});
+export const login = createAsyncThunk(
+  'userSettings/login',
+  async (user, thunkAPI) => (apiPost('/login', user, thunkAPI))
+);
 
-export const logout = createAsyncThunk('userSettings/logout', async (_, { rejectWithValue }) => {
-  try {
-    const response = await axios.delete(`${env.SERVER_URL}/login`, { timeout: 1000 });
-    return response.data;
-  } catch (err) {
-    return rejectWithValue('Logout failed!');
-  }
-});
+export const logout = createAsyncThunk(
+  'userSettings/logout',
+  async (_, thunkAPI) => (apiDelete('/login', thunkAPI, 'Logout failed!'))
+);
 
 const userSettingsSlice = createSlice({
   name: 'userSettings',

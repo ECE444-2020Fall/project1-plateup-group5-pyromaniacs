@@ -53,6 +53,7 @@ function HomeStack() {
             <Header
               title="Browse"
               back
+              search={false}
               navigation={navigation}
               scene={scene}
             />
@@ -68,6 +69,7 @@ function HomeStack() {
             <Header
               title="Browse"
               back
+              search={false}
               noShadow
               titleColor={argonTheme.COLORS.WHITE}
               iconColor={argonTheme.COLORS.WHITE}
@@ -86,6 +88,7 @@ function HomeStack() {
             <Header
               title="Recipe Details"
               back
+              search={false}
               noShadow
               titleColor={argonTheme.COLORS.SECONDARY}
               iconColor={argonTheme.COLORS.SECONDARY}
@@ -109,6 +112,7 @@ function GroceryInventoryStack() {
           header: ({ navigation, scene }) => (
             <Header
               title="Grocery Inventory"
+              search={false}
               navigation={navigation}
               scene={scene}
             />
@@ -130,6 +134,7 @@ function ShoppingListStack() {
           header: ({ navigation, scene }) => (
             <Header
               title="Shopping List"
+              search={false}
               navigation={navigation}
               scene={scene}
             />

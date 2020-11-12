@@ -11,7 +11,7 @@ const filterSettingsSlice = createSlice({
   name: 'filterSettings',
   initialState,
   reducers: {
-    saveFilters(state, action) {
+    saveFilters(_, action) {
       return action.payload;
     },
   },

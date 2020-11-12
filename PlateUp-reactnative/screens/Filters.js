@@ -14,6 +14,7 @@ class Filters extends React.Component {
   constructor(props) {
     super(props);
     const { filterSettings } = this.props;
+
     this.state = {
       ...filterSettings,
     };
@@ -119,7 +120,10 @@ class Filters extends React.Component {
           {this.renderFilters()}
         </Block>
         <Block style={styles.applyFilters}>
-          <Button colour="primary" onPress={this.handleApplyFilters}>
+          <Button
+            style={{ backgroundColor: argonTheme.COLORS.PRIMARY }}
+            onPress={this.handleApplyFilters}
+          >
             <Text style={styles.buttonText}>Apply Filters</Text>
           </Button>
         </Block>

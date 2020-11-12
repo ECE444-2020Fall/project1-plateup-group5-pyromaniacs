@@ -65,7 +65,8 @@ class Login extends React.Component {
       toast('Please fill in all fields.');
       return;
     }
-    loginRequest({ ...this.state });
+
+    loginRequest({ email, password });
   }
 
   render() {
