@@ -14,14 +14,15 @@ class GroceryInventory extends React.Component {
   }
 
   async componentDidMount() {
-    const { getGroceryInventory: getGroceryInventoryRequest, userId } = this.props;
+    const { getGroceryInventory: getGroceryInventoryRequest, user: { id: userId } } = this.props;
+
     await getGroceryInventoryRequest(userId);
 
     this.setState({ loading: false });
   }
 
   handleReload = async () => {
-    const { getGroceryInventory: getGroceryInventoryRequest, userId } = this.props;
+    const { getGroceryInventory: getGroceryInventoryRequest, user: { id: userId } } = this.props;
 
     this.setState({ loading: true }, async () => {
       await getGroceryInventoryRequest(userId);
@@ -30,7 +31,9 @@ class GroceryInventory extends React.Component {
   }
 
   handlePostInventory = async (newItems) => {
-    const { updateGroceryInventory: updateGroceryInventoryRequest, userId } = this.props;
+    const {
+      updateGroceryInventory: updateGroceryInventoryRequest, user: { id: userId }
+    } = this.props;
 
     this.setState({ loading: true }, async () => {
       await updateGroceryInventoryRequest({
@@ -86,7 +89,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-  userId: state.userSettings.user.id,
+  user: state.userSettings.user,
   userStorage: state.userStorage
 });
 

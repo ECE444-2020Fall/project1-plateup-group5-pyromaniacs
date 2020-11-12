@@ -14,6 +14,7 @@ class Filters extends React.Component {
   constructor(props) {
     super(props);
     const { filterSettings } = this.props;
+
     this.state = {
       ...filterSettings,
     };

@@ -16,14 +16,14 @@ class ShoppingList extends React.Component {
   }
 
   async componentDidMount() {
-    const { getShoppingList: getShoppingListRequest, userId } = this.props;
+    const { getShoppingList: getShoppingListRequest, user: { id: userId } } = this.props;
     await getShoppingListRequest(userId);
 
     this.setState({ loading: false });
   }
 
   handleReload = async () => {
-    const { getShoppingList: getShoppingListRequest, userId } = this.props;
+    const { getShoppingList: getShoppingListRequest, user: { id: userId } } = this.props;
 
     this.setState({ loading: true }, async () => {
       await getShoppingListRequest(userId);
@@ -32,7 +32,7 @@ class ShoppingList extends React.Component {
   }
 
   handlePostShoppingList = async (newItems) => {
-    const { updateShoppingList: updateShoppingListRequest, userId } = this.props;
+    const { updateShoppingList: updateShoppingListRequest, user: { id: userId } } = this.props;
 
     this.setState({ loading: true }, async () => {
       await updateShoppingListRequest({
@@ -43,7 +43,7 @@ class ShoppingList extends React.Component {
   }
 
   handleFlash = async () => {
-    const { flashShoppingList: flashShoppingListRequest, userId } = this.props;
+    const { flashShoppingList: flashShoppingListRequest, user: { id: userId } } = this.props;
 
     this.setState({ loading: true }, async () => {
       await flashShoppingListRequest(userId);
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (state) => ({
-  userId: state.userSettings.user.id,
+  user: state.userSettings.user,
   userStorage: state.userStorage
 });
 

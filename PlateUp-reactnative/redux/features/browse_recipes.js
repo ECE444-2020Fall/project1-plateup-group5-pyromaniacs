@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { constructQueryParams } from '../../constants/utils';
-import env from '../../env';
+import { apiGet } from '../api_requests';
 
 export const FETCHING = 'FETCHING';
 export const IDLE = 'IDLE';
@@ -13,22 +12,15 @@ const queryParamMapping = {
   search: 'Search'
 };
 
-export const fetchBrowseRecipes = createAsyncThunk('browse_recipes/fetchBrowseRecipes', async (settings, { rejectWithValue }) => {
-  const params = processSettingsIntoParams(settings);
-  const queryParams = constructQueryParams(params, queryParamMapping);
+export const fetchBrowseRecipes = createAsyncThunk(
+  'browse_recipes/fetchBrowseRecipes',
+  async (settings, thunkAPI) => {
+    const params = processSettingsIntoParams(settings);
+    const queryParams = constructQueryParams(params, queryParamMapping);
 
-  try {
-    const response = await axios({
-      method: 'get',
-      timeout: 1000,
-      url: `${env.SERVER_URL}/recipe${queryParams}`,
-      responseType: 'json'
-    });
-    return response.data;
-  } catch (err) {
-    return rejectWithValue(err.response ? err.response.data : 'Unknown error.');
+    return apiGet(`/recipe${queryParams}`, thunkAPI);
   }
-});
+);
 
 export const processSettingsIntoParams = (settings) => {
   const filters = { ...settings.filterSettings };
