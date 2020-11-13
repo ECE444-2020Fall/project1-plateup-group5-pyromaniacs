@@ -2,13 +2,12 @@ import {
   Block, Button, Text, theme
 } from 'galio-framework';
 import React from 'react';
-import { StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { saveFilters } from '../redux/features/filter_settings';
 import { argonTheme } from '../constants';
+import { width } from '../constants/utils';
 import { Switch, Input } from '../components';
-
-const { width } = Dimensions.get('screen');
 
 class Filters extends React.Component {
   constructor(props) {

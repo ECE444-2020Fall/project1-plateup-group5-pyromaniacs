@@ -1,7 +1,6 @@
 import { Block, Text, theme } from 'galio-framework';
 import React from 'react';
 import {
-  Dimensions,
   Image,
   ScrollView,
   StyleSheet,
@@ -12,11 +11,9 @@ import { StackActions } from '@react-navigation/native';
 import { DrawerItem as DrawerCustomItem, Icon } from '../components';
 import Images from '../constants/Images';
 import argonTheme from '../constants/Theme';
-import { toast } from '../constants/utils';
+import { toast, height, width } from '../constants/utils';
 import { store, RESET_STORE } from '../redux/store';
 import { logout, LOGOUT_IPR, IDLE } from '../redux/features/user_settings';
-
-const { width, height } = Dimensions.get('screen');
 
 class CustomDrawerContent extends React.Component {
   componentDidUpdate(prevProps) {

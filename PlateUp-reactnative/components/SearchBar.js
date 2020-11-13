@@ -1,13 +1,12 @@
 import React from 'react';
-import { Dimensions, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 
 import argonTheme from '../constants/Theme';
+import { width } from '../constants/utils';
 import { saveSearch } from '../redux/features/search_query';
 import Icon from './Icon';
 import Input from './Input';
-
-const { width } = Dimensions.get('window');
 
 class SearchBar extends React.Component {
   constructor(props) {

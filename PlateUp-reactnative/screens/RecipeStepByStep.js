@@ -1,7 +1,6 @@
 import { Block, Text, theme } from 'galio-framework';
 import React from 'react';
 import {
-  Dimensions,
   Image,
   ScrollView,
   StyleSheet,
@@ -11,8 +10,8 @@ import Swiper from 'react-native-swiper';
 import { connect } from 'react-redux';
 import { ProgressButton } from 'react-native-progress-button';
 import { argonTheme } from '../constants';
+import { width } from '../constants/utils';
 
-const { width } = Dimensions.get('screen');
 const DEFAULT_STEP_TIME = 10000;
 
 class RecipeStepByStep extends React.Component {

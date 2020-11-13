@@ -3,15 +3,11 @@ import {
   Button, Block, NavBar, Text, theme
 } from 'galio-framework';
 import React from 'react';
-import {
-  StyleSheet, Platform, Dimensions
-} from 'react-native';
-import argonTheme from '../constants/Theme';
+import { StyleSheet } from 'react-native';
 import Icon from './Icon';
 import SearchBar from './SearchBar';
-
-const { height, width } = Dimensions.get('window');
-const iPhoneX = Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
+import argonTheme from '../constants/Theme';
+import { iPhoneX, height, width } from '../constants/utils';
 
 class Header extends React.Component {
   handleLeftPress = () => {

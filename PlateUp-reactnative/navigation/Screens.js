@@ -1,5 +1,4 @@
 import React from 'react';
-import { Dimensions } from 'react-native';
 
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -21,8 +20,7 @@ import CustomDrawerContent from './Menu';
 // header for screens
 import { Header } from '../components';
 import { argonTheme } from '../constants';
-
-const { width } = Dimensions.get('screen');
+import { width } from '../constants/utils';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
