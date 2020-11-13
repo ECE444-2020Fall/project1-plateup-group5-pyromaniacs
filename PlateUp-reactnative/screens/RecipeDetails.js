@@ -237,20 +237,22 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   info: {
-    paddingHorizontal: 40
+    marginTop: 5,
+    paddingHorizontal: 40,
+    height: height * 0.06,
   },
   recipeImageContainer: {
     position: 'relative',
     marginTop: -80
   },
   recipeImage: {
-    width: 124,
-    height: 124,
+    width: width * 0.3,
+    height: width * 0.3,
     borderRadius: 62,
     borderWidth: 0
   },
   recipeName: {
-    margin: 10,
+    margin: theme.SIZES.BASE * 0.5,
   },
   divider: {
     width: '90%',
@@ -259,11 +261,11 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     marginVertical: 10,
-    height: height * 0.29
+    height: height * 0.36,
   },
   infoContainer: {
     marginVertical: 10,
-    height: height * 0.345
+    height: height * 0.43
   },
   stepByStepInstructions: {
     paddingTop: height * 0.02,
@@ -285,14 +287,14 @@ const styles = StyleSheet.create({
   },
   paginationStyle: {
     position: 'absolute',
-    bottom: 0
+    bottom: 0,
   },
   subtitle: {
     fontWeight: 'bold',
     fontSize: 20,
     alignSelf: 'center',
     color: argonTheme.COLORS.TEXT_COLOR,
-    marginVertical: 10,
+    marginTop: 10,
   },
   mainText: {
     fontSize: 15,
