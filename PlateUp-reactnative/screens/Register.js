@@ -11,12 +11,10 @@ import {
   StyleSheet
 } from 'react-native';
 import { connect } from 'react-redux';
-import { toast } from '../constants/utils';
+import { toast, height, width } from '../constants/utils';
 import { argonTheme, Images } from '../constants';
 import { Button, Icon, Input } from '../components';
 import { register, REGISTER_IPR, IDLE } from '../redux/features/user_settings';
-
-const { width } = Dimensions.get('screen');
 
 class Register extends React.Component {
   constructor(props) {
@@ -84,7 +82,7 @@ class Register extends React.Component {
       >
         <StatusBar hidden />
         <KeyboardAvoidingView
-          style={{ flex: 1 }}
+          style={{ height }}
           behavior="padding"
           enabled
         >
@@ -252,8 +250,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    flex: 0.1,
-    paddingBottom: 15
+    flex: 1,
   }
 });
 
