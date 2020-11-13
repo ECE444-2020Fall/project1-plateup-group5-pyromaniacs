@@ -11,7 +11,7 @@ import Icon from './Icon';
 import SearchBar from './SearchBar';
 
 const { height, width } = Dimensions.get('window');
-const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
+const iPhoneX = Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 
 class Header extends React.Component {
   handleLeftPress = () => {
@@ -50,7 +50,7 @@ class Header extends React.Component {
       <Block>
         { search
           && (
-            <Block center style={{ paddingBottom: 15 }}>
+            <Block center style={{ paddingBottom: 10 }}>
               <SearchBar />
             </Block>
           )}
@@ -118,13 +118,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  options: {
-    marginBottom: 16,
-    marginTop: 10,
-    marginEnd: 28,
-    flexDirection: 'column',
-    alignItems: 'flex-end'
-  },
   tab: {
     backgroundColor: theme.COLORS.TRANSPARENT,
     width: width * 0.35,
@@ -140,9 +133,9 @@ const styles = StyleSheet.create({
     color: argonTheme.COLORS.HEADER
   },
   navbar: {
-    paddingVertical: 0,
+    height: height * 0.075,
     paddingBottom: theme.SIZES.BASE * 1.5,
-    paddingTop: iPhoneX ? theme.SIZES.BASE * 4 : theme.SIZES.BASE,
+    paddingTop: iPhoneX ? theme.SIZES.BASE * 4 : theme.SIZES.BASE * 2.75,
     zIndex: 5,
   },
   shadow: {
