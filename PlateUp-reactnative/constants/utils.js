@@ -1,5 +1,5 @@
 import {
-  AlertIOS, Dimensions, Platform, ToastAndroid
+  Alert, Dimensions, Platform, ToastAndroid
 } from 'react-native';
 
 const { height, width } = Dimensions.get('window');
@@ -9,7 +9,7 @@ export function toast(msg) {
   if (Platform.OS === 'android') {
     ToastAndroid.show(msg, ToastAndroid.LONG);
   } else {
-    AlertIOS.alert(msg);
+    Alert.prompt(msg);
   }
 }
 
