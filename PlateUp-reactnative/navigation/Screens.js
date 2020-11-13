@@ -29,7 +29,7 @@ const Drawer = createDrawerNavigator();
 
 function HomeStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator headerMode="screen">
       <Stack.Screen
         name="Home"
         component={BrowseRecipes}
@@ -104,7 +104,7 @@ function HomeStack() {
 
 function GroceryInventoryStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator headerMode="screen">
       <Stack.Screen
         name="GroceryInventory"
         component={GroceryInventory}
@@ -126,7 +126,7 @@ function GroceryInventoryStack() {
 
 function ShoppingListStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator headerMode="screen">
       <Stack.Screen
         name="ShoppingList"
         component={ShoppingList}
