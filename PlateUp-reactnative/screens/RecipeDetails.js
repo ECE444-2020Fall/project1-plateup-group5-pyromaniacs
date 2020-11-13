@@ -35,10 +35,9 @@ class RecipeDetails extends React.Component {
     const { recipeDetails: { data: { recipe_preview: recipe } } } = this.props;
 
     return (
-      <Block>
+      <Block flex>
         <Text style={styles.subtitle}> Description </Text>
         <ScrollView
-          showsVerticalScrollIndicator={false}
           style={styles.descriptionContainer}
         >
           <Block middle>
@@ -73,10 +72,9 @@ class RecipeDetails extends React.Component {
     const { recipeDetails: { data: { recipe_preview: { ingredients } } } } = this.props;
 
     return (
-      <Block>
+      <Block flex>
         <Text style={styles.subtitle}> Ingredients </Text>
         <ScrollView
-          showsVerticalScrollIndicator={false}
           style={styles.infoContainer}
         >
           {
@@ -110,10 +108,9 @@ class RecipeDetails extends React.Component {
     const { recipeDetails: { data: { recipe_instruction: instructions } } } = this.props;
 
     return (
-      <Block>
+      <Block flex>
         <Text style={styles.subtitle}> Instructions </Text>
         <ScrollView
-          showsVerticalScrollIndicator={false}
           style={styles.infoContainer}
         >
           {
@@ -237,9 +234,8 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   info: {
-    marginTop: 5,
+    marginBottom: 20,
     paddingHorizontal: 40,
-    height: height * 0.06,
   },
   recipeImageContainer: {
     position: 'relative',
@@ -261,11 +257,10 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     marginVertical: 10,
-    height: height * 0.36,
   },
   infoContainer: {
-    marginVertical: 10,
-    height: height * 0.43
+    marginTop: 10,
+    marginBottom: 20,
   },
   stepByStepInstructions: {
     paddingTop: height * 0.02,
@@ -286,8 +281,9 @@ const styles = StyleSheet.create({
     backgroundColor: argonTheme.COLORS.PRIMARY
   },
   paginationStyle: {
-    position: 'absolute',
+    position: 'relative',
     bottom: 0,
+    backgroundColor: 'green',
   },
   subtitle: {
     fontWeight: 'bold',
