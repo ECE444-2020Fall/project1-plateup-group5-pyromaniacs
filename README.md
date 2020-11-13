@@ -22,8 +22,6 @@ Privacy Policy:
 There is no privacy for your data in this beta application. We will do our best to safeguard your data and follow security practices (we never store/get access to your password, all passwords are salted and hashed), but consider any information you input public information. We will also have the right to send you a welcome email after you sign up!
 ```
 
-![](./static/images/account.gif)
-
 ### Browse Recipes
 
 Users can browse a maximum of 20 recipes at a time. The recipes shown on initial load are a random selection and not an indication of a small recipe database. At this point in time, pagination is not supported.
@@ -32,25 +30,17 @@ Users can browse a maximum of 20 recipes at a time. The recipes shown on initial
 
 Users can narrow down specific recipes using the search bar at the top. The search functionality is a unified search of (1) ingredient search, (2) recipe name search, (3) tags search. At this time, only single ingredient search is supported.
 
-![](./static/images/search.gif)
-
 #### Filter Selection
 
 Users can further narrow down their searchs by applying specific filters. The current supported filters are: (1) Filter by cost, (2) Filter by cooking time, (3) Filter by grocery cart. 
-
-![](./static/images/filter.gif)
 
 ### Recipe Details
 
 Users can click specific recipes from the browsing page to get more details on the recipe. Through a horizontal slider, users can see the description of the recipe, the ingredients required, and a list of instructions for that recipe. 
 
-![](./static/images/recipe_details.gif)
-
 #### Step-By-Step Instructions
 
 Users can press the "Let's Go" button to start the cooking process and have steps prompted to them while they cook. At this time, data on cooking times for each step is missing. Each step currently has a default time of 10 seconds to showcase the feature. Users can pause (and resume) a given step to work at their own pace. For each step, images for required equipment + ingredients is shown as a slideshow.
-
-![](./static/images/recipe_steps.gif)
 
 ### Account Personalization
 
@@ -60,13 +50,9 @@ Through the Drawer Navigation, users can navigate to their personalized grocery 
 
 A list users can use to reflect what groceries they currently own. The grocery cart directly interacts with the "Filter by grocery cart".
 
-![](./static/images/grocery_cart.gif)
-
 #### Shopping List
 
 A list users can use to reflect what ingredients they need to buy on their next shopping trip. Once users buy their entire list, they can use the "Move to Grocery Cart" functinality to move all items to their grocery cart.
-
-![](./static/images/shopping_list.gif)
 
 ### Future Improvements
 
