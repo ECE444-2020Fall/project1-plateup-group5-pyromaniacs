@@ -2,7 +2,7 @@ import {
   AlertIOS, Dimensions, Platform, StatusBar, ToastAndroid
 } from 'react-native';
 
-export const iPhoneX = Platform.OS === 'ios' && (height === 812 || width === 812);
+export const iPhoneX = Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
 export const { width } = Dimensions.get('window');
 export const height = Platform.OS === 'ios'
   ? Dimensions.get('window').height

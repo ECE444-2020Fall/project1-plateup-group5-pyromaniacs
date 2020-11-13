@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  ActivityIndicator, Dimensions, ScrollView, StyleSheet
+  ActivityIndicator, ScrollView, StyleSheet
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Block, theme, Text } from 'galio-framework';
@@ -8,8 +8,7 @@ import deepEqual from 'deep-equal';
 import { Card } from '../components';
 import { fetchBrowseRecipes } from '../redux/features/browse_recipes';
 import { argonTheme } from '../constants';
-
-const { width } = Dimensions.get('screen');
+import { width } from '../constants/utils';
 
 class BrowseRecipes extends React.Component {
   constructor(props) {

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Image, StyleSheet, StatusBar, Dimensions
+  Image, StyleSheet, StatusBar
 } from 'react-native';
 import {
   Block, Button, Text, theme
@@ -9,8 +9,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import argonTheme from '../constants/Theme';
 import Images from '../constants/Images';
-
-const { width, height } = Dimensions.get('screen');
+import { height, width } from '../constants/utils';
 
 class Onboarding extends React.PureComponent {
   render() {
@@ -58,7 +57,7 @@ class Onboarding extends React.PureComponent {
 const styles = StyleSheet.create({
   button: {
     width: width - theme.SIZES.BASE * 4,
-    height: theme.SIZES.BASE * 3,
+    height: height * 0.075,
     shadowRadius: 0,
     shadowOpacity: 0,
     marginBottom: height * 0.0185,
@@ -83,7 +82,7 @@ const styles = StyleSheet.create({
     left: 0,
   },
   nameImage: {
-    marginTop: height * 0.0677,
+    marginTop: height * 0.04,
     width: width * 0.725,
     height: width * 0.725 * (43 / 272),
   },
