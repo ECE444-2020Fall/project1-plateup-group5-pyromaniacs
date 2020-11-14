@@ -22,7 +22,7 @@ const allReducers = combineReducers({
 // means each reducer will instead use their default state.
 const rootReducer = (state, action) => {
   if (action.type === RESET_STORE) {
-    return allReducers(undefined, {});
+    return allReducers(undefined, action);
   }
 
   return allReducers(state, action);

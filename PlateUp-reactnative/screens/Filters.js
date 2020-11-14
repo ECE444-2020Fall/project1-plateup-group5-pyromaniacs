@@ -6,7 +6,7 @@ import { StyleSheet, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { saveFilters } from '../redux/features/filter_settings';
 import { argonTheme } from '../constants';
-import { width } from '../constants/utils';
+import { height, width } from '../constants/utils';
 import { Switch, Input } from '../components';
 
 class Filters extends React.Component {
@@ -120,7 +120,7 @@ class Filters extends React.Component {
         </Block>
         <Block style={styles.applyFilters}>
           <Button
-            style={{ backgroundColor: argonTheme.COLORS.PRIMARY }}
+            style={styles.button}
             onPress={this.handleApplyFilters}
           >
             <Text style={styles.buttonText}>Apply Filters</Text>
@@ -135,6 +135,11 @@ const styles = StyleSheet.create({
   filterContainer: {
     width,
     padding: theme.SIZES.BASE,
+  },
+  button: {
+    backgroundColor: argonTheme.COLORS.PRIMARY,
+    width: width * 0.85,
+    height: height * 0.07,
   },
   filter: {
     flex: 1,
