@@ -12,7 +12,7 @@ export function toast(msg) {
   if (Platform.OS === 'android') {
     ToastAndroid.show(msg, ToastAndroid.LONG);
   } else {
-    Alert.prompt(msg);
+    Alert.alert(msg);
   }
 }
 
