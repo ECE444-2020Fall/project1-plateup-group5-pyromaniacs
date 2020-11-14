@@ -152,17 +152,30 @@ class RecipeStepByStep extends React.Component {
       imgs.push(ingredient.img);
     });
 
+    if (imgs.length === 0) {
+      return null;
+    }
+
     return (
-      imgs.map((image, index) => (
-        // Reasonable to disable here as this is a static array
-        // eslint-disable-next-line react/no-array-index-key
-        <Block key={index} style={{ marginBottom: 50 }}>
-          <Image
-            source={{ uri: image }}
-            style={{ width: '100%', height: '100%' }}
-          />
-        </Block>
-      ))
+      <Block style={styles.sliderContainer}>
+        <Swiper
+          activeDotColor={argonTheme.COLORS.PRIMARY}
+          autoplay
+          index={0}
+          key={imgs.length}
+        >
+          {imgs.map((image, index) => (
+            // Reasonable to disable here as this is a static array
+            // eslint-disable-next-line react/no-array-index-key
+            <Block key={index} style={{ marginBottom: 50 }}>
+              <Image
+                source={{ uri: image }}
+                style={{ width: '100%', height: '100%' }}
+              />
+            </Block>
+          ))}
+        </Swiper>
+      </Block>
     );
   }
 
@@ -191,17 +204,7 @@ class RecipeStepByStep extends React.Component {
         </Block>
 
         <Block style={styles.card}>
-          <Block style={styles.sliderContainer}>
-            <Swiper
-              activeDotColor={argonTheme.COLORS.PRIMARY}
-              autoplay
-              index={0}
-              key={stepDetails.equipment.length + stepDetails.ingredients.length}
-            >
-              {this.renderImages()}
-            </Swiper>
-          </Block>
-
+          {this.renderImages()}
           <ScrollView>
             <Text size={16}>
               {stepDetails.step_instruction}

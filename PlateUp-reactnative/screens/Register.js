@@ -1,9 +1,8 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { Block, Checkbox, Text } from 'galio-framework';
+import { Block, Text } from 'galio-framework';
 import React from 'react';
 import {
   ActivityIndicator,
-  Dimensions,
   Image,
   Keyboard,
   KeyboardAvoidingView,

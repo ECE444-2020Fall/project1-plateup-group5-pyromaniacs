@@ -7,7 +7,7 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
 import Icon from './Icon';
 import { argonTheme } from '../constants';
-import { toast, height } from '../constants/utils';
+import { toast } from '../constants/utils';
 
 const DEFAULT_DIALOG_STATE = {
   addItemDialogVisible: false,

@@ -1,16 +1,16 @@
 # Plate Up
 
-This repository contains the source code for Group 5 - Pyromanaic's variant of Chef's Co-Pilot. This application allows users to browse new recipes and be provided with the necessary information to be able to recreate these recipes.
+This repository contains the source code for Group 5 - Pyromaniacs' variant of Chef's Co-Pilot. This application allows users to browse new recipes and be provided with the necessary information to be able to recreate these recipes.
 
-The application follows a client-server model. The client is written in React Native as a mobile application and the server is written as a Python Flask web application.
+The application follows a client-server model. The client is written in React Native as a mobile application and is found in `./PlateUp-reactnative`. The server is written as a Python Flask web application. The Python Flask web application is separated as a GitHub submodule found in `./PlateUp-flask`.
 
 ## Distribution
 
-The client application is distributed through Expo and is availiable as a mobile application at: https://expo.io/@pyromaniacs/projects/plate-up-uoft-ece444. The server powering the client is availiable at https://sheltered-thicket-73220.herokuapp.com/. See PlateUp-flask submodule for more details on the server application.
+The client application is distributed through Expo and is availiable as a mobile application at https://expo.io/@pyromaniacs/projects/plate-up-uoft-ece444. The server powering the client is availiable at https://sheltered-thicket-73220.herokuapp.com/. See PlateUp-flask submodule for more details on the server application.
 
 ## Application Features
 
-This section allows the current features implemented for the application.
+This section outlines the current features implemented for the application.
 
 ### Account Management
 
