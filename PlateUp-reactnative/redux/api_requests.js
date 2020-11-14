@@ -2,7 +2,7 @@ import axios from 'axios';
 import env from '../env';
 
 axios.defaults.baseURL = env.SERVER_URL;
-axios.defaults.timeout = 1000;
+axios.defaults.timeout = 5000;
 axios.defaults.headers.Accept = 'application/json';
 axios.defaults.headers['Content-Type'] = 'application/json';
 
