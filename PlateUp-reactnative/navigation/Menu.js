@@ -24,15 +24,7 @@ class CustomDrawerContent extends React.Component {
         // Clearing the store will be done in the top-most component. See Onboarding page
         // for more details.
         toast('Logged out successfully!');
-        navigation.reset({
-          index: 0,
-          routes: [{
-            name: 'Onboarding',
-            params: {
-              resetStore: true,
-            }
-          }]
-        });
+        navigation.popToTop();
       }
     }
   }
