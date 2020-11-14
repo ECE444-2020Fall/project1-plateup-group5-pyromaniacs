@@ -7,12 +7,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { StackActions } from '@react-navigation/native';
 import { DrawerItem as DrawerCustomItem, Icon } from '../components';
 import Images from '../constants/Images';
 import argonTheme from '../constants/Theme';
 import { toast, height, width } from '../constants/utils';
-import { store, RESET_STORE } from '../redux/store';
 import { logout, LOGOUT_IPR, IDLE } from '../redux/features/user_settings';
 
 class CustomDrawerContent extends React.Component {
@@ -23,9 +21,17 @@ class CustomDrawerContent extends React.Component {
       if (userSettings.error) {
         toast(userSettings.error);
       } else {
+        // Clearing the store will be done in the top-most component
         toast('Logged out successfully!');
-        store.dispatch({ type: RESET_STORE });
-        navigation.dispatch(StackActions.popToTop());
+        navigation.reset({
+          index: 0,
+          routes: [{
+            name: 'Onboarding',
+            params: {
+              resetStore: true,
+            }
+          }]
+        });
       }
     }
   }

@@ -37,9 +37,13 @@ class BrowseRecipes extends React.Component {
     // Set state to loading and since setState isn't synchronous, pass a callback function to it
     // The callback function fetches the data, once the data is fetched, set loading to false
     const {
-      filterSettings, searchQuery, user: { id: userId },
+      filterSettings, searchQuery, user,
       fetchBrowseRecipes: fetchBrowseRecipesRequest
     } = this.props;
+
+    if (!user) return;
+
+    const { id: userId } = user;
 
     if (
       !prevState.loading

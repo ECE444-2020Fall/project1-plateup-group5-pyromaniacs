@@ -6,6 +6,7 @@ import { Block, Text, theme } from 'galio-framework';
 import { Button, IngredientList } from '../components';
 import { getShoppingList, updateShoppingList, flashShoppingList } from '../redux/features/user_storage';
 import { argonTheme } from '../constants';
+import { height, width } from '../constants/utils';
 
 class ShoppingList extends React.Component {
   constructor(props) {
@@ -56,6 +57,7 @@ class ShoppingList extends React.Component {
       return (
         <Text
           center
+          style={{ marginTop: 15 }}
           onPress={this.handleReload}
         >
           Something went wrong. Click to reload.
@@ -74,7 +76,7 @@ class ShoppingList extends React.Component {
         </Block>
         <Block center style={styles.moveToGroceryInventory}>
           <Button
-            style={{ backgroundColor: argonTheme.COLORS.PRIMARY }}
+            style={styles.button}
             onPress={this.handleFlash}
           >
             <Text style={styles.buttonText}> Move to Grocery Inventory </Text>
@@ -90,7 +92,7 @@ class ShoppingList extends React.Component {
     return (
       <Block flex>
         { loading ? (
-          <Block center>
+          <Block center style={{ marginTop: 15 }}>
             <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
           </Block>
         )
@@ -105,6 +107,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-end',
     marginBottom: theme.SIZES.BASE + 10,
+  },
+  button: {
+    backgroundColor: argonTheme.COLORS.PRIMARY,
+    width: width * 0.85,
+    height: height * 0.07,
   },
   buttonText: {
     fontWeight: 'bold',

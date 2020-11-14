@@ -50,6 +50,7 @@ class GroceryInventory extends React.Component {
       return (
         <Text
           center
+          style={{ marginTop: 15 }}
           onPress={this.handleReload}
         >
           Something went wrong. Click to reload.
@@ -72,7 +73,7 @@ class GroceryInventory extends React.Component {
     return (
       <Block flex>
         { loading ? (
-          <Block center>
+          <Block center style={{ marginTop: 15 }}>
             <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
           </Block>
         )

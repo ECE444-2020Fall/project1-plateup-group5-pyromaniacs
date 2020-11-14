@@ -6,12 +6,23 @@ import {
   Block, Button, Text, theme
 } from 'galio-framework';
 import { LinearGradient } from 'expo-linear-gradient';
-
 import argonTheme from '../constants/Theme';
 import Images from '../constants/Images';
 import { height, width } from '../constants/utils';
+import { store, RESET_STORE } from '../redux/store';
 
-class Onboarding extends React.PureComponent {
+class Onboarding extends React.Component {
+  componentDidUpdate() {
+    const { route: { resetStore } } = this.props;
+
+    // This is done here so that possible unhandled exceptions when
+    // popping up the navigation stack when logging out due to undefined
+    // objects are avoided.
+    if (resetStore) {
+      store.dispatch({ type: RESET_STORE });
+    }
+  }
+
   render() {
     const { navigation } = this.props;
 
