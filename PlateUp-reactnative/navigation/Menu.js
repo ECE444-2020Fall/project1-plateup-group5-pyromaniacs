@@ -1,22 +1,17 @@
 import { Block, Text, theme } from 'galio-framework';
 import React from 'react';
 import {
-  Dimensions,
   Image,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { StackActions } from '@react-navigation/native';
 import { DrawerItem as DrawerCustomItem, Icon } from '../components';
 import Images from '../constants/Images';
 import argonTheme from '../constants/Theme';
-import { toast } from '../constants/utils';
-import { store, RESET_STORE } from '../redux/store';
+import { toast, height, width } from '../constants/utils';
 import { logout, LOGOUT_IPR, IDLE } from '../redux/features/user_settings';
-
-const { width, height } = Dimensions.get('screen');
 
 class CustomDrawerContent extends React.Component {
   componentDidUpdate(prevProps) {
@@ -26,9 +21,18 @@ class CustomDrawerContent extends React.Component {
       if (userSettings.error) {
         toast(userSettings.error);
       } else {
+        // Clearing the store will be done in the top-most component. See Onboarding page
+        // for more details.
         toast('Logged out successfully!');
-        store.dispatch({ type: RESET_STORE });
-        navigation.dispatch(StackActions.popToTop());
+        navigation.reset({
+          index: 0,
+          routes: [{
+            name: 'Onboarding',
+            params: {
+              resetStore: true,
+            }
+          }]
+        });
       }
     }
   }

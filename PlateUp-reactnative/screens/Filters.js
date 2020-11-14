@@ -2,13 +2,12 @@ import {
   Block, Button, Text, theme
 } from 'galio-framework';
 import React from 'react';
-import { StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { saveFilters } from '../redux/features/filter_settings';
 import { argonTheme } from '../constants';
+import { height, width } from '../constants/utils';
 import { Switch, Input } from '../components';
-
-const { width } = Dimensions.get('screen');
 
 class Filters extends React.Component {
   constructor(props) {
@@ -121,7 +120,7 @@ class Filters extends React.Component {
         </Block>
         <Block style={styles.applyFilters}>
           <Button
-            style={{ backgroundColor: argonTheme.COLORS.PRIMARY }}
+            style={styles.button}
             onPress={this.handleApplyFilters}
           >
             <Text style={styles.buttonText}>Apply Filters</Text>
@@ -136,6 +135,11 @@ const styles = StyleSheet.create({
   filterContainer: {
     width,
     padding: theme.SIZES.BASE,
+  },
+  button: {
+    backgroundColor: argonTheme.COLORS.PRIMARY,
+    width: width * 0.85,
+    height: height * 0.07,
   },
   filter: {
     flex: 1,

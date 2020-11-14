@@ -11,12 +11,10 @@ import {
   StyleSheet
 } from 'react-native';
 import { connect } from 'react-redux';
-import { toast } from '../constants/utils';
+import { toast, height, width } from '../constants/utils';
 import { argonTheme, Images } from '../constants';
 import { Button, Icon, Input } from '../components';
 import { register, REGISTER_IPR, IDLE } from '../redux/features/user_settings';
-
-const { width } = Dimensions.get('screen');
 
 class Register extends React.Component {
   constructor(props) {
@@ -84,7 +82,7 @@ class Register extends React.Component {
       >
         <StatusBar hidden />
         <KeyboardAvoidingView
-          style={{ flex: 1 }}
+          style={{ height }}
           behavior="padding"
           enabled
         >
@@ -131,7 +129,7 @@ class Register extends React.Component {
                     onChangeText={(email) => this.setState({ email })}
                   />
                 </Block>
-                <Block width={width * 0.8} style={{ marginBottom: 10 }}>
+                <Block width={width * 0.8}>
                   <Input
                     password
                     borderless
@@ -147,31 +145,6 @@ class Register extends React.Component {
                     )}
                     onChangeText={(password) => this.setState({ password })}
                   />
-                  <Block row style={styles.passwordCheck}>
-                    <Text size={12} color={argonTheme.COLORS.MUTED}>
-                      password strength:
-                    </Text>
-                    <Text bold size={12} color={argonTheme.COLORS.SUCCESS}>
-                      {' '}
-                      strong
-                    </Text>
-                  </Block>
-                </Block>
-                <Block row width={width * 0.75}>
-                  <Checkbox
-                    checkboxStyle={{
-                      borderWidth: 3
-                    }}
-                    color={argonTheme.COLORS.PRIMARY}
-                    label="I agree with the "
-                  />
-                  <Text
-                    color={argonTheme.COLORS.PRIMARY}
-                    style={{ fontWeight: argonTheme.COLORS.LIGHT_BOLD }}
-                    size={14}
-                  >
-                    Privacy Policy
-                  </Text>
                 </Block>
                 <Block middle style={styles.footer}>
                   {userSettings.status === REGISTER_IPR
@@ -252,8 +225,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    flex: 0.1,
-    paddingBottom: 15
+    flex: 1,
   }
 });
 

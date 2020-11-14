@@ -3,7 +3,6 @@ import { Block, Text } from 'galio-framework';
 import React from 'react';
 import {
   ActivityIndicator,
-  Dimensions,
   Image,
   Keyboard,
   KeyboardAvoidingView,
@@ -11,12 +10,10 @@ import {
   StyleSheet
 } from 'react-native';
 import { connect } from 'react-redux';
-import { toast } from '../constants/utils';
+import { toast, height, width } from '../constants/utils';
 import { argonTheme, Images } from '../constants';
 import { Button, Icon, Input } from '../components';
 import { login, LOGIN_IPR, IDLE } from '../redux/features/user_settings';
-
-const { width } = Dimensions.get('screen');
 
 class Login extends React.Component {
   constructor(props) {
@@ -83,7 +80,7 @@ class Login extends React.Component {
       >
         <StatusBar hidden />
         <KeyboardAvoidingView
-          style={{ flex: 1 }}
+          style={{ height }}
           behavior="padding"
           enabled
         >
@@ -205,8 +202,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    flex: 0.1,
-    paddingBottom: 15
+    flex: 1,
   }
 });
 

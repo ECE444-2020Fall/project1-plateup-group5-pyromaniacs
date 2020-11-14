@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  ActivityIndicator, Dimensions, ScrollView, StyleSheet
+  ActivityIndicator, ScrollView, StyleSheet
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Block, theme, Text } from 'galio-framework';
@@ -8,8 +8,7 @@ import deepEqual from 'deep-equal';
 import { Card } from '../components';
 import { fetchBrowseRecipes } from '../redux/features/browse_recipes';
 import { argonTheme } from '../constants';
-
-const { width } = Dimensions.get('screen');
+import { width } from '../constants/utils';
 
 class BrowseRecipes extends React.Component {
   constructor(props) {
@@ -38,9 +37,16 @@ class BrowseRecipes extends React.Component {
     // Set state to loading and since setState isn't synchronous, pass a callback function to it
     // The callback function fetches the data, once the data is fetched, set loading to false
     const {
-      filterSettings, searchQuery, user: { id: userId },
+      filterSettings, searchQuery, user,
       fetchBrowseRecipes: fetchBrowseRecipesRequest
     } = this.props;
+
+    // This is only done because of an issue when logging out and resetting the redux state.
+    // Even though it's reset after going to Onboarding, possible unhandled exception still
+    // appears here. This function being async may mess with it. Doing this solved the issue.
+    if (!user) return;
+
+    const { id: userId } = user;
 
     if (
       !prevState.loading

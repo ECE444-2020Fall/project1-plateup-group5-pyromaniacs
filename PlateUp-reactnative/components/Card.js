@@ -88,7 +88,6 @@ Card.propTypes = {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: theme.COLORS.WHITE,
-    marginVertical: theme.SIZES.BASE,
     borderWidth: 0,
     minHeight: 114,
     marginBottom: 16

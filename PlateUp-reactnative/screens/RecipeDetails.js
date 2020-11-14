@@ -3,7 +3,6 @@ import { Block, Text, theme } from 'galio-framework';
 import React from 'react';
 import {
   ActivityIndicator,
-  Dimensions,
   Image,
   ScrollView,
   StyleSheet,
@@ -13,10 +12,9 @@ import { connect } from 'react-redux';
 import HTML from 'react-native-render-html';
 
 import { argonTheme } from '../constants';
+import { height, width } from '../constants/utils';
 import { Button } from '../components';
 import { getRecipeDetails } from '../redux/features/get_recipe_details';
-
-const { width, height } = Dimensions.get('screen');
 
 class RecipeDetails extends React.Component {
   constructor(props) {
@@ -37,10 +35,9 @@ class RecipeDetails extends React.Component {
     const { recipeDetails: { data: { recipe_preview: recipe } } } = this.props;
 
     return (
-      <Block>
+      <Block flex>
         <Text style={styles.subtitle}> Description </Text>
         <ScrollView
-          showsVerticalScrollIndicator={false}
           style={styles.descriptionContainer}
         >
           <Block middle>
@@ -75,10 +72,9 @@ class RecipeDetails extends React.Component {
     const { recipeDetails: { data: { recipe_preview: { ingredients } } } } = this.props;
 
     return (
-      <Block>
+      <Block flex>
         <Text style={styles.subtitle}> Ingredients </Text>
         <ScrollView
-          showsVerticalScrollIndicator={false}
           style={styles.infoContainer}
         >
           {
@@ -112,10 +108,9 @@ class RecipeDetails extends React.Component {
     const { recipeDetails: { data: { recipe_instruction: instructions } } } = this.props;
 
     return (
-      <Block>
+      <Block flex>
         <Text style={styles.subtitle}> Instructions </Text>
         <ScrollView
-          showsVerticalScrollIndicator={false}
           style={styles.infoContainer}
         >
           {
@@ -146,8 +141,10 @@ class RecipeDetails extends React.Component {
 
     if (recipeDetails.error) {
       return (
-        <Block flex style={[styles.recipeCard, { flex: 0.8 }]}>
-          <Text center> Something went wrong. </Text>
+        <Block style={{ height: height * 0.9 }}>
+          <Block flex style={styles.recipeCard}>
+            <Text center> Something went wrong. </Text>
+          </Block>
         </Block>
       );
     }
@@ -155,7 +152,7 @@ class RecipeDetails extends React.Component {
     const { data: { recipe_preview: recipe } } = recipeDetails;
 
     return (
-      <Block flex>
+      <Block style={{ height: height * 0.9 }}>
         <Block flex style={styles.recipeCard}>
           <Block middle style={styles.recipeImageContainer}>
             <Image
@@ -185,7 +182,7 @@ class RecipeDetails extends React.Component {
             {this.renderInstructions()}
           </Swiper>
         </Block>
-        <Block style={styles.stepByStepInstructions}>
+        <Block flex style={styles.stepByStepInstructions}>
           <Button
             style={styles.button}
             onPress={() => navigation.navigate('RecipeStepByStep', { id: recipeId })}
@@ -213,8 +210,10 @@ class RecipeDetails extends React.Component {
         >
           {loading
             ? (
-              <Block flex style={[styles.recipeCard, { flex: 0.8 }]}>
-                <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
+              <Block style={{ height: height * 0.9 }}>
+                <Block flex style={styles.recipeCard}>
+                  <ActivityIndicator size="large" color={argonTheme.COLORS.PRIMARY} />
+                </Block>
               </Block>
             )
             : this.renderContent()}
@@ -226,8 +225,8 @@ class RecipeDetails extends React.Component {
 
 const styles = StyleSheet.create({
   recipeCard: {
-    padding: theme.SIZES.BASE,
-    marginHorizontal: theme.SIZES.BASE,
+    padding: theme.SIZES.BASE * 1,
+    marginHorizontal: width * 0.04,
     marginTop: 65,
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
@@ -235,20 +234,21 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   info: {
-    paddingHorizontal: 40
+    marginBottom: 20,
+    paddingHorizontal: 40,
   },
   recipeImageContainer: {
     position: 'relative',
     marginTop: -80
   },
   recipeImage: {
-    width: 124,
-    height: 124,
+    width: width * 0.3,
+    height: width * 0.3,
     borderRadius: 62,
     borderWidth: 0
   },
   recipeName: {
-    margin: 10,
+    margin: theme.SIZES.BASE * 0.5,
   },
   divider: {
     width: '90%',
@@ -256,19 +256,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   descriptionContainer: {
-    marginBottom: 10,
-    marginHorizontal: 10,
-    height: height * 0.29
+    marginVertical: 10,
   },
   infoContainer: {
-    marginBottom: 10,
-    marginHorizontal: 10,
-    height: height * 0.345
+    marginTop: 10,
+    marginBottom: 20,
   },
   stepByStepInstructions: {
+    paddingTop: height * 0.02,
     alignItems: 'center',
-    flex: 0.25,
-    justifyContent: 'flex-end',
+    flex: 0.175,
+    justifyContent: 'center',
   },
   buttonText: {
     fontWeight: 'bold',
@@ -276,26 +274,26 @@ const styles = StyleSheet.create({
     color: argonTheme.COLORS.WHITE,
   },
   button: {
-    width: width - theme.SIZES.BASE * 4,
-    height: theme.SIZES.BASE * 3,
+    width: width * 0.8,
+    height: height * 0.07,
     shadowRadius: 0,
     shadowOpacity: 0,
-    marginBottom: height * 0.04,
     backgroundColor: argonTheme.COLORS.PRIMARY
   },
   paginationStyle: {
-    position: 'absolute',
-    bottom: 0
+    position: 'relative',
+    bottom: 0,
+    backgroundColor: 'green',
   },
   subtitle: {
     fontWeight: 'bold',
     fontSize: 20,
     alignSelf: 'center',
     color: argonTheme.COLORS.TEXT_COLOR,
-    marginVertical: 10,
+    marginTop: 10,
   },
   mainText: {
-    fontSize: 16,
+    fontSize: 15,
     color: argonTheme.COLORS.TEXT_COLOR,
     paddingBottom: 4,
   }

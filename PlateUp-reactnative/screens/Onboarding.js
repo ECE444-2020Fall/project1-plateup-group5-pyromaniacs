@@ -1,18 +1,30 @@
 import React from 'react';
 import {
-  Image, StyleSheet, StatusBar, Dimensions
+  Image, StyleSheet, StatusBar
 } from 'react-native';
 import {
   Block, Button, Text, theme
 } from 'galio-framework';
 import { LinearGradient } from 'expo-linear-gradient';
-
 import argonTheme from '../constants/Theme';
 import Images from '../constants/Images';
+import { height, width } from '../constants/utils';
+import { store, RESET_STORE } from '../redux/store';
 
-const { width, height } = Dimensions.get('screen');
+class Onboarding extends React.Component {
+  componentDidUpdate() {
+    const { route: { resetStore } } = this.props;
 
-class Onboarding extends React.PureComponent {
+    // This is done here because possible unhandled exceptions occur when
+    // popping up the navigation stack after logging out. This is because
+    // when the state is reset, objects that pages access become undefined
+    // Resetting the state after those pages have been removed from the
+    // navigation stack avoids this issue.
+    if (resetStore) {
+      store.dispatch({ type: RESET_STORE });
+    }
+  }
+
   render() {
     const { navigation } = this.props;
 
@@ -58,7 +70,7 @@ class Onboarding extends React.PureComponent {
 const styles = StyleSheet.create({
   button: {
     width: width - theme.SIZES.BASE * 4,
-    height: theme.SIZES.BASE * 3,
+    height: height * 0.075,
     shadowRadius: 0,
     shadowOpacity: 0,
     marginBottom: height * 0.0185,
@@ -83,7 +95,7 @@ const styles = StyleSheet.create({
     left: 0,
   },
   nameImage: {
-    marginTop: height * 0.0677,
+    marginTop: height * 0.04,
     width: width * 0.725,
     height: width * 0.725 * (43 / 272),
   },

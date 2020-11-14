@@ -1,9 +1,12 @@
 import {
-  Alert, Dimensions, Platform, ToastAndroid
+  Alert, Dimensions, Platform, StatusBar, ToastAndroid
 } from 'react-native';
 
-const { height, width } = Dimensions.get('window');
-export const iPhoneX = () => Platform.OS === 'ios' && (height === 812 || width === 812);
+export const iPhoneX = Platform.OS === 'ios' && (height === 812 || width === 812 || height === 896 || width === 896);
+export const { width } = Dimensions.get('window');
+export const height = Platform.OS === 'ios'
+  ? Dimensions.get('window').height
+  : Dimensions.get('window').height - StatusBar.currentHeight;
 
 export function toast(msg) {
   if (Platform.OS === 'android') {

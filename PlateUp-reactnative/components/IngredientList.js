@@ -7,7 +7,7 @@ import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
 import Icon from './Icon';
 import { argonTheme } from '../constants';
-import { toast } from '../constants/utils';
+import { toast, height } from '../constants/utils';
 
 const DEFAULT_DIALOG_STATE = {
   addItemDialogVisible: false,
@@ -39,8 +39,8 @@ class IngredientList extends React.Component {
     const qty = Number(dialogQuantity.trim());
     const unit = dialogUnits.trim();
 
-    if (ingredient.length === 0 || qty.length === 0 || unit.length === 0) {
-      toast('Please fill in all fields.');
+    if (ingredient.length === 0 || qty.length === 0) {
+      toast('Please fill in all required fields.');
       return;
     }
 
@@ -84,35 +84,41 @@ class IngredientList extends React.Component {
 
     return (
       <Block>
-        <KeyboardAvoidingView>
-          <Dialog.Container visible={addItemDialogVisible}>
-            <Dialog.Title>Enter new item</Dialog.Title>
-            <Dialog.Input
-              placeholder="Ingredient"
-              wrapperStyle={styles.dialogTextInput}
-              onChangeText={(dialogIngredient) => this.setState({ dialogIngredient })}
-            />
-            <Dialog.Input
-              placeholder="Quantity"
-              wrapperStyle={styles.dialogTextInput}
-              onChangeText={(dialogQuantity) => this.setState({ dialogQuantity })}
-            />
-            <Dialog.Input
-              placeholder="Units"
-              wrapperStyle={styles.dialogTextInput}
-              onChangeText={(dialogUnits) => this.setState({ dialogUnits })}
-            />
-            <Dialog.Button
-              label="Cancel"
-              color={argonTheme.COLORS.PRIMARY}
-              onPress={() => this.handleCancelDialog()}
-            />
-            <Dialog.Button
-              label="Submit"
-              color={argonTheme.COLORS.PRIMARY}
-              onPress={() => this.handleSubmitDialog()}
-            />
-          </Dialog.Container>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior="padding"
+          enabled
+        >
+          <Block flex middle>
+            <Dialog.Container visible={addItemDialogVisible}>
+              <Dialog.Title>Enter new item</Dialog.Title>
+              <Dialog.Input
+                placeholder="Ingredient"
+                wrapperStyle={styles.dialogTextInput}
+                onChangeText={(dialogIngredient) => this.setState({ dialogIngredient })}
+              />
+              <Dialog.Input
+                placeholder="Quantity"
+                wrapperStyle={styles.dialogTextInput}
+                onChangeText={(dialogQuantity) => this.setState({ dialogQuantity })}
+              />
+              <Dialog.Input
+                placeholder="Units (Optional)"
+                wrapperStyle={styles.dialogTextInput}
+                onChangeText={(dialogUnits) => this.setState({ dialogUnits })}
+              />
+              <Dialog.Button
+                label="Cancel"
+                color={argonTheme.COLORS.PRIMARY}
+                onPress={() => this.handleCancelDialog()}
+              />
+              <Dialog.Button
+                label="Submit"
+                color={argonTheme.COLORS.PRIMARY}
+                onPress={() => this.handleSubmitDialog()}
+              />
+            </Dialog.Container>
+          </Block>
         </KeyboardAvoidingView>
 
         <TouchableOpacity
