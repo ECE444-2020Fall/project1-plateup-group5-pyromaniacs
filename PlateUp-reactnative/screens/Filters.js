@@ -2,7 +2,7 @@ import {
   Block, Button, Text, theme
 } from 'galio-framework';
 import React from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
 import { connect } from 'react-redux';
 import { saveFilters } from '../redux/features/filter_settings';
 import { argonTheme } from '../constants';
@@ -118,14 +118,20 @@ class Filters extends React.Component {
         <Block style={styles.filterContainer}>
           {this.renderFilters()}
         </Block>
-        <Block style={styles.applyFilters}>
-          <Button
-            style={styles.button}
-            onPress={this.handleApplyFilters}
-          >
-            <Text style={styles.buttonText}>Apply Filters</Text>
-          </Button>
-        </Block>
+        <KeyboardAvoidingView
+          enabled={false}
+          style={{ flex: 1, }}
+          behavior="height"
+        >
+          <Block style={styles.applyFilters}>
+            <Button
+              style={styles.button}
+              onPress={this.handleApplyFilters}
+            >
+              <Text style={styles.buttonText}>Apply Filters</Text>
+            </Button>
+          </Block>
+        </KeyboardAvoidingView>
       </Block>
     );
   }
