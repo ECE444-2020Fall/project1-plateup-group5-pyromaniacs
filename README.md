@@ -58,7 +58,7 @@ A list users can use to reflect what ingredients they need to buy on their next 
 2. Shopping List / Grocery Cart - Support automatic unit conversions
 3. Currently, the grocery cart is mostly manually updated (other than the shopping list flush). The API already supports an endpoint that allows users to "check" whether they meet a recipe's ingredients requirements. If the user meets the ingredients, ingredients will automatically be deducted from their grocery cart. If the user does not meet the ingredients, missing ingredients will be added to their shopping list. The mobile application does not support this feature at the moment and this can be an improvement for the next release.
 4. Search bar improvements - Support multiple ingredients search, currently it is limited by one ingredient at a time
-5. Browse recipes - Add pagination support so that a user can brwose more than 20 recipes at a time
+5. Browse recipes - Add pagination support so that a user can browse more than 20 recipes at a time
 
 ## Development
 
