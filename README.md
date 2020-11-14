@@ -18,9 +18,7 @@ The application fully supports login and registration. An account must be create
 
 Privacy Policy:
 
-```
-There is no privacy for your data in this beta application. We will do our best to safeguard your data and follow security practices (we never store/get access to your password, all passwords are salted and hashed), but consider any information you input public information. We will also have the right to send you a welcome email after you sign up!
-```
+> There is no privacy for your data in this beta application. We will do our best to safeguard your data and follow security practices (we never store/get access to your password, all passwords are salted and hashed), but consider any information you input public information. We will also have the right to send you a welcome email after you sign up!
 
 ### Browse Recipes
 
@@ -52,13 +50,15 @@ A list users can use to reflect what groceries they currently own. The grocery c
 
 #### Shopping List
 
-A list users can use to reflect what ingredients they need to buy on their next shopping trip. Once users buy their entire list, they can use the "Move to Grocery Cart" functinality to move all items to their grocery cart.
+A list users can use to reflect what ingredients they need to buy on their next shopping trip. Once users buy their entire list, they can use the "Move to Grocery Cart" functionality to move all items to their grocery cart.
 
 ### Future Improvements
 
-1. Step-By-Step Instructions - Populate real cooking time data
+1. Step-By-Step Instructions - Populate real cooking time data and add a numeric timer
 2. Shopping List / Grocery Cart - Support automatic unit conversions
 3. Currently, the grocery cart is mostly manually updated (other than the shopping list flush). The API already supports an endpoint that allows users to "check" whether they meet a recipe's ingredients requirements. If the user meets the ingredients, ingredients will automatically be deducted from their grocery cart. If the user does not meet the ingredients, missing ingredients will be added to their shopping list. The mobile application does not support this feature at the moment and this can be an improvement for the next release.
+4. Search bar improvements - Support multiple ingredients search, currently it is limited by one ingredient at a time
+5. Browse recipes - Add pagination support so that a user can brwose more than 20 recipes at a time
 
 ## Development
 
@@ -92,7 +92,7 @@ Install all package dependencies using `npm install`.
 
 ***Without Backend Server Running***
 
-There is an option to run the application using stubbed data. We use MirageJS to make this possible. See `mock-http.js` to see what HTTP requests are stubbed out. You may need to add additional ones. To use stubbed data, see `App.js` and uncomment the code `mockHTTP()`.
+There is an option to run the application using stubbed data. We use MirageJS to make this possible. See `mock-http.js` to see what HTTP requests are stubbed out. You may need to add additional ones. To use stubbed data, see `App.js` and set the boolean `mockData` to `true`.
 
 ***With Backend Server Running***
 
