@@ -39,8 +39,8 @@ class IngredientList extends React.Component {
     const qty = Number(dialogQuantity.trim());
     const unit = dialogUnits.trim();
 
-    if (ingredient.length === 0 || qty.length === 0 || unit.length === 0) {
-      toast('Please fill in all fields.');
+    if (ingredient.length === 0 || qty.length === 0) {
+      toast('Please fill in all required fields.');
       return;
     }
 
@@ -103,7 +103,7 @@ class IngredientList extends React.Component {
                 onChangeText={(dialogQuantity) => this.setState({ dialogQuantity })}
               />
               <Dialog.Input
-                placeholder="Units"
+                placeholder="Units (Optional)"
                 wrapperStyle={styles.dialogTextInput}
                 onChangeText={(dialogUnits) => this.setState({ dialogUnits })}
               />

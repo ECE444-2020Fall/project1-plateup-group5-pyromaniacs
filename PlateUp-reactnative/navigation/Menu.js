@@ -21,7 +21,8 @@ class CustomDrawerContent extends React.Component {
       if (userSettings.error) {
         toast(userSettings.error);
       } else {
-        // Clearing the store will be done in the top-most component
+        // Clearing the store will be done in the top-most component. See Onboarding page
+        // for more details.
         toast('Logged out successfully!');
         navigation.reset({
           index: 0,

@@ -15,9 +15,11 @@ class Onboarding extends React.Component {
   componentDidUpdate() {
     const { route: { resetStore } } = this.props;
 
-    // This is done here so that possible unhandled exceptions when
-    // popping up the navigation stack when logging out due to undefined
-    // objects are avoided.
+    // This is done here because possible unhandled exceptions occur when
+    // popping up the navigation stack after logging out. This is because
+    // when the state is reset, objects that pages access become undefined
+    // Resetting the state after those pages have been removed from the
+    // navigation stack avoids this issue.
     if (resetStore) {
       store.dispatch({ type: RESET_STORE });
     }

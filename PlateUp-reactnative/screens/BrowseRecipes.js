@@ -41,6 +41,9 @@ class BrowseRecipes extends React.Component {
       fetchBrowseRecipes: fetchBrowseRecipesRequest
     } = this.props;
 
+    // This is only done because of an issue when logging out and resetting the redux state.
+    // Even though it's reset after going to Onboarding, possible unhandled exception still
+    // appears here. This function being async may mess with it. Doing this solved the issue.
     if (!user) return;
 
     const { id: userId } = user;
