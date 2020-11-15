@@ -24,33 +24,49 @@ Privacy Policy:
 
 Users can browse a maximum of 20 recipes at a time. The recipes shown on initial load are a random selection and not an indication of a small recipe database. At this point in time, pagination is not supported.
 
+![Browse Recipes](assets/browse_recipes.png)
+
 #### Search Functionality
 
 Users can narrow down specific recipes using the search bar at the top. The search functionality is a unified search of (1) ingredient search, (2) recipe name search, (3) tags search. At this time, only single ingredient search is supported.
 
+![Search Functionality](assets/search_functionality.gif)
+
 #### Filter Selection
 
-Users can further narrow down their searchs by applying specific filters. The current supported filters are: (1) Filter by cost, (2) Filter by cooking time, (3) Filter by grocery cart. 
+Users can further narrow down their searchs by applying specific filters. The current supported filters are: (1) Filter by cost, (2) Filter by cooking time, (3) Filter by grocery cart.
+
+![Filter Selection](assets/filter_selection.gif)
 
 ### Recipe Details
 
-Users can click specific recipes from the browsing page to get more details on the recipe. Through a horizontal slider, users can see the description of the recipe, the ingredients required, and a list of instructions for that recipe. 
+Users can click specific recipes from the browsing page to get more details on the recipe. Through a horizontal slider, users can see the description of the recipe, the ingredients required, and a list of instructions for that recipe.
+
+![Recipe Details](assets/recipe_details.gif)
 
 #### Step-By-Step Instructions
 
 Users can press the "Let's Go" button to start the cooking process and have steps prompted to them while they cook. At this time, data on cooking times for each step is missing. Each step currently has a default time of 10 seconds to showcase the feature. Users can pause (and resume) a given step to work at their own pace. For each step, images for required equipment + ingredients is shown as a slideshow.
 
+![Step-By-Step Instructions](assets/recipe_step_by_step.gif)
+
 ### Account Personalization
 
 Through the Drawer Navigation, users can navigate to their personalized grocery cart and shopping list.
+
+![Account Personalization](assets/account_personalization.png)
 
 #### Grocery Cart
 
 A list users can use to reflect what groceries they currently own. The grocery cart directly interacts with the "Filter by grocery cart".
 
+![Grocery Cart](assets/grocery_inventory.gif)
+
 #### Shopping List
 
 A list users can use to reflect what ingredients they need to buy on their next shopping trip. Once users buy their entire list, they can use the "Move to Grocery Cart" functionality to move all items to their grocery cart.
+
+![Shopping List](assets/shopping_list.gif)
 
 ### Future Improvements
 
@@ -72,17 +88,18 @@ Server Application - written in Python using Flask, source code in `PlateUp-flas
 ### Local Development
 
 To build and start the system, first clone the repository <br>
-```git clone https://github.com/ECE444-2020Fall/project1-plateup-group5-pyromaniacs && cd project1-plateup-group5-pyromaniacs```<br><br>
+`git clone https://github.com/ECE444-2020Fall/project1-plateup-group5-pyromaniacs && cd project1-plateup-group5-pyromaniacs`<br><br>
 
 Development Requirements:
-1) Docker - Find installation instructions at https://docs.docker.com/get-started/ <br>
-2) Mobile Development - Android/iOS Emulator required locally
+
+1. Docker - Find installation instructions at https://docs.docker.com/get-started/ <br>
+2. Mobile Development - Android/iOS Emulator required locally
 
 #### Server Application
 
 Running the server application is fairly simple with Docker.
 
-```cd PlateUp-flask && docker-compose up```
+`cd PlateUp-flask && docker-compose up`
 
 #### Client Application
 
@@ -90,15 +107,15 @@ Navigate to `./PlateUp-reactnative`.
 
 Install all package dependencies using `npm install`.
 
-***Without Backend Server Running***
+**_Without Backend Server Running_**
 
 There is an option to run the application using stubbed data. We use MirageJS to make this possible. See `mock-http.js` to see what HTTP requests are stubbed out. You may need to add additional ones. To use stubbed data, see `App.js` and set the boolean `mockData` to `true`.
 
-***With Backend Server Running***
+**_With Backend Server Running_**
 
 For the react-native application to be able to talk to the backend, you must configure the environment variable SERVER_URL. See the next section for configuring environment variables.
 
- ***Client Environment Variables***
+**_Client Environment Variables_**
 
 Environmental variables used in the project must be defined within an `env.js` file in the root directory for the React
 Native portion of the application. This file is not included in the repository, as developers are expected to have their
@@ -116,6 +133,6 @@ export default env;
   over LAN, use the public IPv4 address of the computer running the server, followed by :5000 for the port. E.g.
   SERVER_URL: "http://192.168.0.18:5000";
 
-***Starting React Native Application***
+**_Starting React Native Application_**
 
-Run `npm start` and connect to your specific emulator through expo localhost interface. 
+Run `npm start` and connect to your specific emulator through expo localhost interface.
