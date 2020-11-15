@@ -24,55 +24,111 @@ Privacy Policy:
 
 Users can browse a maximum of 20 recipes at a time. The recipes shown on initial load are a random selection and not an indication of a small recipe database. At this point in time, pagination is not supported.
 
-![Browse Recipes](assets/browse_recipes.png)
+<p align="center">
+    <img
+        src="assets/browse_recipes.png"
+        alt="Browse Recipes"
+        title="Browse Recipes"
+        width="250"
+    />
+</p>
 
 #### Search Functionality
 
 Users can narrow down specific recipes using the search bar at the top. The search functionality is a unified search of (1) ingredient search, (2) recipe name search, (3) tags search. At this time, only single ingredient search is supported.
 
-![Search Functionality](assets/search_functionality.gif)
+<p align="center">
+    <img
+        src="assets/search_functionality.gif"
+        alt="Search Functionality"
+        title="Search Functionality"
+        width="250"
+    />
+</p>
 
 #### Filter Selection
 
-Users can further narrow down their searchs by applying specific filters. The current supported filters are: (1) Filter by cost, (2) Filter by cooking time, (3) Filter by grocery cart.
+Users can further narrow down their searchs by applying specific filters. The current supported filters are: (1) Filter by cost, (2) Filter by cooking time, (3) Filter by grocery inventory.
 
-![Filter Selection](assets/filter_selection.gif)
+<p align="center">
+    <img
+        src="assets/filter_selection.gif"
+        alt="Filter Selection"
+        title="Filter Selection"
+        width="250"
+    />
+</p>
 
 ### Recipe Details
 
 Users can click specific recipes from the browsing page to get more details on the recipe. Through a horizontal slider, users can see the description of the recipe, the ingredients required, and a list of instructions for that recipe.
 
-![Recipe Details](assets/recipe_details.gif)
+<p align="center">
+    <img
+        src="assets/recipe_details.gif"
+        alt="Recipe Details"
+        title="Recipe Details"
+        width="250"
+    />
+</p>
 
 #### Step-By-Step Instructions
 
 Users can press the "Let's Go" button to start the cooking process and have steps prompted to them while they cook. At this time, data on cooking times for each step is missing. Each step currently has a default time of 10 seconds to showcase the feature. Users can pause (and resume) a given step to work at their own pace. For each step, images for required equipment + ingredients is shown as a slideshow.
 
-![Step-By-Step Instructions](assets/recipe_step_by_step.gif)
+<p align="center">
+    <img
+        src="assets/recipe_step_by_step.gif"
+        alt="Step-By-Step Instructions"
+        title="Step-By-Step Instructions"
+        width="250"
+    />
+</p>
 
 ### Account Personalization
 
-Through the Drawer Navigation, users can navigate to their personalized grocery cart and shopping list.
+Through the Drawer Navigation, users can navigate to their personalized grocery inventory and shopping list.
 
-![Account Personalization](assets/account_personalization.png)
+<p align="center">
+    <img
+        src="assets/account_personalization.png"
+        alt="Account Personalization"
+        title="Account Personalization"
+        width="250"
+    />
+</p>
 
-#### Grocery Cart
+#### Grocery Inventory
 
-A list users can use to reflect what groceries they currently own. The grocery cart directly interacts with the "Filter by grocery cart".
+A list users can use to reflect what groceries they currently own. The grocery inventory directly interacts with the "Filter by grocery inventory".
 
-![Grocery Cart](assets/grocery_inventory.gif)
+<p align="center">
+    <img
+        src="assets/grocery_inventory.gif"
+        alt="Grocery Inventory"
+        title="Grocery Inventory"
+        width="250"
+    />
+</p>
 
 #### Shopping List
 
-A list users can use to reflect what ingredients they need to buy on their next shopping trip. Once users buy their entire list, they can use the "Move to Grocery Cart" functionality to move all items to their grocery cart.
+A list users can use to reflect what ingredients they need to buy on their next shopping trip. Once users buy their entire list, they can use the "Move to Grocery Inventory" functionality to move all items to their grocery inventory.
 
-![Shopping List](assets/shopping_list.gif)
+<p align="center">
+    <img
+        src="assets/shopping_list.gif"
+        alt="Shopping List"
+        title="Shopping List"
+        width="250"
+    />
+</p>
 
 ### Future Improvements
 
 1. Step-By-Step Instructions - Populate real cooking time data and add a numeric timer
-2. Shopping List / Grocery Cart - Support automatic unit conversions
-3. Currently, the grocery cart is mostly manually updated (other than the shopping list flush). The API already supports an endpoint that allows users to "check" whether they meet a recipe's ingredients requirements. If the user meets the ingredients, ingredients will automatically be deducted from their grocery cart. If the user does not meet the ingredients, missing ingredients will be added to their shopping list. The mobile application does not support this feature at the moment and this can be an improvement for the next release.
+2. Shopping List / Grocery Inventory - Support automatic unit conversions
+3. Currently, the grocery inventory is mostly manually updated (other than the shopping list flush). The API already supports an endpoint that allows users to "check" whether they meet a recipe's ingredients requirements. If the user meets the ingredients, ingredients will automatically be deducted from their grocery inventory. If the user does not meet the ingredients, missing ingredients will be added to their shopping list. The mobile application does not support this feature at the moment and this can be an improvement for the next release.
 4. Search bar improvements - Support multiple ingredients search, currently it is limited by one ingredient at a time
 5. Browse recipes - Add pagination support so that a user can browse more than 20 recipes at a time
 
