@@ -19,6 +19,7 @@ The client application is distributed through Expo and is availiable as a mobile
         width="90%"
     />
 </p>
+
 #### Dynamic data flow component diagram
 
 <p align="center">
