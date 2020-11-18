@@ -8,6 +8,10 @@ The application follows a client-server model. The client is written in React Na
 
 The client application is distributed through Expo and is availiable as a mobile application at https://expo.io/@pyromaniacs/projects/plate-up-uoft-ece444. The server powering the client is availiable at https://sheltered-thicket-73220.herokuapp.com/. See PlateUp-flask submodule for more details on the server application.
 
+### Privacy Policy	
+
+> There is no privacy for your data in this beta application. We will do our best to safeguard your data and follow security practices (we never store/get access to your password, all passwords are salted and hashed), but consider any information you input public information. We will also have the right to send you a welcome email after you sign up!
+
 ## Development
 
 ### Respository Structure
