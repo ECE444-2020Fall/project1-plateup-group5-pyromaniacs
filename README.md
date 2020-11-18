@@ -1,6 +1,6 @@
 # Plate Up
 
-This repository contains the source code for Group 5 - Pyromaniacs' variant of Chef's Co-Pilot. This application allows users to browse new recipes and be provided with the necessary information to be able to recreate these recipes. Our Wiki is available for more information for end-users. We welcome you to check it out!
+This repository contains the source code for Group 5 - Pyromaniacs' variant of Chef's Co-Pilot. This application allows users to browse new recipes and be provided with the necessary information to be able to recreate these recipes. Our [Wiki](https://github.com/ECE444-2020Fall/project1-plateup-group5-pyromaniacs/wiki) is available for more information for end-users. We welcome you to check it out!
 
 The application follows a client-server model. The client is written in React Native as a mobile application and is found in `./PlateUp-reactnative`. The server is written as a Python Flask web application. The Python Flask web application is separated as a GitHub submodule found in `./PlateUp-flask`. The reason for maintaining a separate submodule for the flask app is for easier deployment to Heroku for staging, as well as better client-server segregation. The group initially had both modules together, hence the issues/tasks are tracked here, but decided to split the module just before beta release. The group will hence forth develop under this layout. 
 
@@ -16,10 +16,6 @@ This repo has two main components: (1) Client Application (2) Server Application
 
 Client Application - written in React Native using Argon React Native Template, source code in `PlateUp-reactnative`. <br><br>
 Server Application - written in Python using Flask, source code in `PlateUp-flask` submodule.
-
-### Linting and Testing
-
-The client application is linted using ESLint. There are no current linting issues. For any contributions to this repo, ensure there are no new linting issues. The client application is tested using Jest. At this moment, we have test coverage for complex reducer logic and certain functions. Components are not currently being tested, this is an area of improvement in the future. The end goal is also to add end to end device integration tests. This was not possible due to time constraints.
 
 ### Local Development
 
@@ -72,6 +68,10 @@ export default env;
 **_Starting React Native Application_**
 
 Run `npm start` and connect to your specific emulator through expo localhost interface.
+
+### Linting and Testing
+
+The client application is linted using ESLint. There are no current linting issues. For any contributions to this repo, ensure there are no new linting issues. The client application is tested using Jest. At this moment, we have test coverage for complex reducer logic and certain functions. Components are not currently being tested, this is an area of improvement in the future. The end goal is also to add end to end device integration tests. This was not possible due to time constraints.
 
 ### Future Improvements
 
