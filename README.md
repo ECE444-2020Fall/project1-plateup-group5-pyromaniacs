@@ -10,7 +10,7 @@ The client application is distributed through Expo and is availiable as a mobile
 
 ### Privacy Policy	
 
-> There is no privacy for your data in this beta application. We will do our best to safeguard your data and follow security practices (we never store/get access to your password, all passwords are salted and hashed), but consider any information you input public information. We will also have the right to send you a welcome email after you sign up!
+> There is no guaranteed privacy for your data in this beta application. We will do our best to safeguard your data and follow security practices (we never store/get access to your password, all passwords are salted and hashed), but consider any information you input public information. We will also have the right to send you a welcome email after you sign up!
 
 ## Development
 
