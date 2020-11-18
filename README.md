@@ -11,7 +11,24 @@ The client application is distributed through Expo and is availiable as a mobile
 ## Architecture
 #### Static module layout diagram
 
+<p align="center">
+    <img
+        src="assets/architecture.png"
+        alt="Module Level Architecture"
+        title="Module Level Architecture"
+        width="90%"
+    />
+</p>
 #### Dynamic data flow component diagram
+
+<p align="center">
+    <img
+        src="assets/componentdiag.png"
+        alt="Component Level Diagram"
+        title="Module Level Architecture"
+        width="90%"
+    />
+</p>
 
 ## Application Features
 
