@@ -13,7 +13,7 @@ The client application is distributed through Expo and is availiable as a mobile
 
 <p align="center">
     <img
-        src="assets/architecture.png"
+        src="assets/architecturediag.png"
         alt="Module Level Architecture"
         title="Module Level Architecture"
         width="90%"
