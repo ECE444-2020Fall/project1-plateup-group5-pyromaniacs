@@ -8,29 +8,6 @@ The application follows a client-server model. The client is written in React Na
 
 The client application is distributed through Expo and is availiable as a mobile application at https://expo.io/@pyromaniacs/projects/plate-up-uoft-ece444. The server powering the client is availiable at https://sheltered-thicket-73220.herokuapp.com/. See PlateUp-flask submodule for more details on the server application.
 
-## Architecture
-#### Static module layout diagram
-
-<p align="center">
-    <img
-        src="assets/architecturediag.png"
-        alt="Module Level Architecture"
-        title="Module Level Architecture"
-        width="90%"
-    />
-</p>
-
-#### Dynamic data flow component diagram
-
-<p align="center">
-    <img
-        src="assets/componentdiag.png"
-        alt="Component Level Diagram"
-        title="Module Level Architecture"
-        width="90%"
-    />
-</p>
-
 ## Application Features
 
 This section outlines the current features implemented for the application.
