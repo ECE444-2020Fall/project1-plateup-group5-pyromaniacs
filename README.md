@@ -2,7 +2,7 @@
 
 This repository contains the source code for Group 5 - Pyromaniacs' variant of Chef's Co-Pilot. This application allows users to browse new recipes and be provided with the necessary information to be able to recreate these recipes.
 
-The application follows a client-server model. The client is written in React Native as a mobile application and is found in `./PlateUp-reactnative`. The server is written as a Python Flask web application. The Python Flask web application is separated as a GitHub submodule found in `./PlateUp-flask`.
+The application follows a client-server model. The client is written in React Native as a mobile application and is found in `./PlateUp-reactnative`. The server is written as a Python Flask web application. The Python Flask web application is separated as a GitHub submodule found in `./PlateUp-flask`. The reason for maintaining a separate module is for easier deployment to Heroku for staging, as well as better client-server segregation. The group initially had both modules together, hence the issues/tasks are tracked here, but decided to split the module just before beta release. The group will hence forth develop under this layout. 
 
 ## Distribution
 
