@@ -24,7 +24,7 @@ Server Application - written in Python using Flask, source code in `PlateUp-flas
 ### Local Development
 
 To build and start the system, first clone the repository <br>
-`git clone https://github.com/ECE444-2020Fall/project1-plateup-group5-pyromaniacs && cd project1-plateup-group5-pyromaniacs`<br><br>
+`git clone --recursive https://github.com/ECE444-2020Fall/project1-plateup-group5-pyromaniacs && cd project1-plateup-group5-pyromaniacs`<br><br>
 
 Development Requirements:
 
