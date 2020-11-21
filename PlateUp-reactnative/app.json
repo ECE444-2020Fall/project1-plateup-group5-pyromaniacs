@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Plate Up",
-    "slug": "plate-up-uoft-ece444",
+    "slug": "plate-up-uoft-ece444-web-test",
     "sdkVersion": "37.0.0",
     "platforms": [
       "ios",
@@ -22,6 +22,15 @@
     ],
     "ios": {
       "supportsTablet": true
+    },
+    "web": {
+      "build": {
+        "babel": {
+          "include": [
+            "galio-framework"
+          ]
+        }
+      }
     },
     "description": "Chef's Co Pilot variant created using Argon React Native app template by Creative Tim. This is for ECE444 Project 1."
   }
