@@ -1,0 +1,28 @@
+### React Native ###
+PlateUp-reactnative/node_modules/**/*
+PlateUp-reactnative/.expo/*
+PlateUp-reactnative/.expo-shared/*
+PlateUp-reactnative/npm-debug.*
+PlateUp-reactnative/yarn.lock
+PlateUp-reactnative/*.jks
+PlateUp-reactnative/*.p12
+PlateUp-reactnative/*.key
+PlateUp-reactnative/*.mobileprovision
+PlateUp-reactnative/*.log
+PlateUp-reactnative/ic/.expo/*
+
+# Each developer should have a local version of this file
+PlateUp-reactnative/env.js
+
+### Flask ###
+PlateUp-flask/email_config.ini
+PlateUp-flask/db.sqlite
+
+### Miscellaneous ###
+setup.cfg
+PlateUp-flask/__pycache__
+PlateUp-reactnative/.vscode/
+PlateUp-flask/tests/__pycache__
+PlateUp-flask/tests/test_db.sqlite
+venv/
+.vscode/

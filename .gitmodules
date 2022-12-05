@@ -1,0 +1,3 @@
+[submodule "PlateUp-flask"]
+	path = PlateUp-flask
+	url = https://github.com/ECE444-2020Fall/project1-plateup-group5-pyromaniacs-flask
